@@ -89,9 +89,10 @@ const data = load()
 export const profiles: Profile[] = []
 
 const listeners = new Set<() => void>()
-/** Runs after the profiles changed through a sync. */
+/** Runs `fn` after a sync changed the profiles, until the returned function is called. */
 export function onSync(fn: () => void) {
   listeners.add(fn)
+  return () => void listeners.delete(fn)
 }
 
 let shown = ''

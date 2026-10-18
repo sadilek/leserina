@@ -5,7 +5,7 @@ import { fullStar, Jar, openJar, Star } from './star'
 import { place } from './layout'
 import { composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
-import { recordRound, save, type Profile, type SavedRound } from './store'
+import { onSync, recordRound, save, type Profile, type SavedRound } from './store'
 import { sync } from './sync'
 
 const words = wordList as Word[]
@@ -70,6 +70,13 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     onHome()
   })
   jarBtn.addEventListener('click', () => showJar(screen, profile.coins))
+  // Stars from another device count as soon as a sync brings them; the celebration sets its own.
+  const off = onSync(() => {
+    if (!screen.isConnected) return off()
+    if (finishing) return
+    jar.set(profile.coins)
+    count.textContent = String(profile.coins)
+  })
 
   const commit = () => save()
 
