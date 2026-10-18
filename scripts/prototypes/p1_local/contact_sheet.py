@@ -25,7 +25,7 @@ from words import WORDS, slug  # noqa: E402
 
 STYLE_NAMES = {"sticker": "Flat sticker", "watercolour": "Watercolour", "clay": "3D clay"}
 NOTES = {
-    "klein-ref": "Apache 2.0. Ball is drawn from the style prompt alone; it is the style reference image for the other eleven.",
+    "klein-ref": "Apache 2.0. Ball is the plain klein picture; it is the style reference image for the other eleven words.",
     "klein": "Apache 2.0. Style prompt only, no reference image.",
     "zimage": "Apache 2.0. Style prompt only; the model takes no reference images.",
 }
@@ -68,7 +68,7 @@ def main():
             rows.append(f'<tr><th class="word">{html.escape(word)}<span>{pid}</span></th>{"".join(cells)}</tr>')
         median = statistics.median(seconds) if seconds else 0
         quant = f"{meta['quantize']}-bit" if meta.get("quantize") else "bf16"
-        facts = f"{meta['steps']} steps · {meta['size']}×{meta['size']} px · {quant} · seed {meta['seed']} · model load {meta['load_seconds']:.0f} s"
+        facts = f"{meta['steps']} steps · {meta['size']}×{meta['size']} px · {quant} · seed {meta['seed']} · peak memory {meta.get('peak_memory_gb', 0):.1f} GB"
         summary.append(
             f'<tr><td><a href="#{gen}">{html.escape(label)}</a></td><td>{median:.1f} s</td>'
             f"<td>{min(seconds):.1f}–{max(seconds):.1f} s</td><td>{len(seconds)}</td></tr>"
@@ -114,7 +114,7 @@ TEMPLATE = """<!doctype html>
 <h1>Picture prototype P1: local generation on the Mac</h1>
 <p class="lede">12 words × 3 styles, generated with mflux 0.23 (MLX) on an M4 Pro with 48 GB.
 One fixed style prompt per style, same seed for every picture. Each picture sits on a rounded white card as in the app.
-Times are per image, model already loaded.</p>
+Times are per image with the model loaded, 8-bit weights, measured while other agents' work shared the Mac's GPU and memory; on an idle Mac they would be shorter.</p>
 <table class="sum"><thead><tr><th>Generator</th><th>Median</th><th>Range</th><th>Images</th></tr></thead><tbody>{summary}</tbody></table>
 {sections}
 </body></html>

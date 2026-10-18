@@ -100,6 +100,11 @@ def main():
     timings_path = out / "timings.json"
     timings = json.loads(timings_path.read_text()) if timings_path.exists() else {}
 
+    import mlx.core as mx
+
+    # MLX keeps freed buffers in a cache that otherwise grows to tens of GB over a run
+    # and pushes the Mac into swap; cap it and empty it after every image.
+    mx.set_cache_limit(1 << 30)
     started = time.perf_counter()
     model = load(args.generator, args.quantize)
     timings["_meta"] = {
@@ -133,8 +138,11 @@ def main():
             image = render(model, args.generator, prompt, reference)
             seconds = round(time.perf_counter() - t0, 1)
             image.save(path=out / style / f"{pid}.png", overwrite=True)
+            del image
+            mx.clear_cache()
             timings.setdefault(style, {})[pid] = {"seconds": seconds, "reference": reference is not None}
-            print(f"{args.generator} {style} {pid}: {seconds}s", flush=True)
+            timings["_meta"]["peak_memory_gb"] = round(mx.get_peak_memory() / 1e9, 1)
+            print(f"{args.generator} {style} {pid}: {seconds}s, peak {timings['_meta']['peak_memory_gb']} GB", flush=True)
             timings_path.write_text(json.dumps(timings, indent=2, ensure_ascii=False))
 
 
