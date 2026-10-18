@@ -5,8 +5,8 @@ It runs in the browser and installs as a full-screen app on a tablet or phone:
 **https://sadilek.github.io/leserina/**. The words and the interface are German.
 
 Pictures and words lie scattered on a mat; the child drags a word onto its picture (or the picture
-onto its word). Each pair fills a slice of a gold coin, and a full coin goes into the child's
-treasure chest. Tapping a picture or a word reads the word aloud, in a parent's own voice. Words
+onto its word). Each pair fills an arm of a gold star, and a full star goes into the child's
+jar of night sky, where the stars collected so far form a constellation. Tapping a picture or a word reads the word aloud, in a parent's own voice. Words
 start easy and get harder per child, and the ones a child gets wrong come back, as with flashcards.
 
 Everything runs on the device: no account, no server, no tracking. Progress stays in the
@@ -29,7 +29,7 @@ runs `npm ci`, `npm run check` and `npm run build` and deploys `dist/` to GitHub
 apps update themselves: the service worker (`registerType: 'autoUpdate'`) fetches the new version
 in the background, and the next start of the app runs it.
 
-The address must never change. An installed app keeps its data (profiles, coins, learning state)
+The address must never change. An installed app keeps its data (profiles, stars, learning state)
 in `localStorage`, which belongs to its origin, `https://sadilek.github.io`, and the app is
 installed for the path `/leserina/`. Under a new address it would start empty. Hence:
 
@@ -78,7 +78,10 @@ reads the word.
 - `src/game.ts`: the game screen; `src/layout.ts`: scattering the cards on the mat;
   `src/start.ts`: picking a child; `src/parents.ts`: the parents' corner (hold the lock at the
   bottom right of the start screen).
-- Profiles, coins, learning state and an unfinished round live in `localStorage`.
+- `src/star.ts`: the round's star (one arm per pair) and the jar. Each star in the jar has a fixed
+  place (`jarSpots`), so a new star never moves the old ones; the jar shows up to 50, its badge
+  counts them all.
+- Profiles, stars, learning state and an unfinished round live in `localStorage`.
 - `mockups/`: static design drafts for themes (space, under the sea, dinosaurs, flower garden,
   building site), not part of the app and not in the published site. With `npm run dev`
   running, open http://localhost:5180/leserina/mockups/.

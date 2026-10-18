@@ -1,4 +1,4 @@
-// Profiles, coins and learning state, in localStorage of the installed home-screen app.
+// Profiles, stars and learning state, in localStorage of the installed home-screen app.
 import { emptyState, type LearningState } from './scheduler'
 
 /** A round in progress, kept when the app is closed so its slices are not lost. */
@@ -23,6 +23,7 @@ export interface Profile {
   startLevel: number
   /** Pairs per round, 4-6. */
   pairs: number
+  /** Stars collected. Called coins since the app's first design; renaming it would empty installed apps' jars. */
   coins: number
   learning: LearningState
   current: SavedRound | null

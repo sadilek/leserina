@@ -129,7 +129,7 @@ function profilePanel(p: Profile, rerender: () => void) {
 
   const seen = Object.keys(p.learning.words).length
   const stats = h('p', 'stats',
-    `${p.learning.round} Runden gespielt, ${p.coins} Münzen, ${seen} von ${words.length} Wörtern gesehen.`)
+    `${p.learning.round} Runden gespielt, ${p.coins} Sterne, ${seen} von ${words.length} Wörtern gesehen.`)
 
   const boxRow = h('div', 'boxes')
   const titles = ['Box 1: kommt jede Runde', 'Box 2', 'Box 3', 'Box 4', 'Box 5: sitzt']
@@ -150,7 +150,7 @@ function profilePanel(p: Profile, rerender: () => void) {
 
   const actions = h('div', 'actions',
     button('Fortschritt zurücksetzen', 'pill quiet', () => {
-      if (!confirm(`Lernstand und Münzen von ${p.name || 'diesem Kind'} zurücksetzen?`)) return
+      if (!confirm(`Lernstand und Sterne von ${p.name || 'diesem Kind'} zurücksetzen?`)) return
       const fresh = newProfile(p.name, p.avatar)
       Object.assign(p, { coins: 0, learning: fresh.learning, current: null })
       save()

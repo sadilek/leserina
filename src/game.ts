@@ -1,7 +1,7 @@
 // The game: pictures and words scattered on the mat, drag one onto its partner to make a pair.
 import wordList from '../words.json'
 import { pictureFace } from './assets'
-import { chestSvg, Coin, fullCoin, openChestSvgs } from './coin'
+import { fullStar, Jar, openJar, Star } from './star'
 import { place } from './layout'
 import { applyResult, composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
@@ -33,15 +33,16 @@ const HOME_ICON =
 const PLAY_ICON = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M17 11 L37 24 L17 37 Z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg>'
 
 export function startGame(root: HTMLElement, profile: Profile, onHome: () => void) {
-  const coin = new Coin()
+  const star = new Star()
+  const jar = new Jar(profile.coins)
   const home = h('button', 'round-btn home')
   home.innerHTML = HOME_ICON
   home.setAttribute('aria-label', 'Zurück zur Auswahl')
-  const count = h('span', 'chest-count', String(profile.coins))
-  const chest = h('button', 'chest', chestSvg(), count)
-  chest.setAttribute('aria-label', 'Schatztruhe')
-  const coinSlot = h('div', 'coin-slot', coin.svg)
-  const bar = h('header', 'bar', home, coinSlot, h('div', 'spacer'), chest)
+  const count = h('span', 'jar-count', String(profile.coins))
+  const jarBtn = h('button', 'jar', jar.svg, count)
+  jarBtn.setAttribute('aria-label', 'Sternenglas')
+  const starSlot = h('div', 'star-slot', star.svg)
+  const bar = h('header', 'bar', home, starSlot, h('div', 'spacer'), jarBtn)
   const mat = h('main', 'mat')
   const shelfCards = h('div', 'shelf-cards')
   const shelf = h('footer', 'shelf', shelfCards)
@@ -67,7 +68,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     if (history.state?.round) history.back()
     onHome()
   })
-  chest.addEventListener('click', () => showChest(screen, profile.coins))
+  jarBtn.addEventListener('click', () => showJar(screen, profile.coins))
 
   const commit = () => save()
 
@@ -84,7 +85,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     mat.replaceChildren()
     shelfCards.replaceChildren()
     sound.preload(round.ids)
-    coin.set(round.matched.length, round.ids.length)
+    star.set(round.matched.length, round.ids.length)
     for (const id of round.matched) shelfCards.append(shelfCard(id))
     const open = round.ids.filter((id) => !round.matched.includes(id))
     items = []
@@ -260,7 +261,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     await card.animate([{ transform: 'scale(.55)' }, { transform: 'scale(1.12)', offset: 0.6 }, { transform: 'scale(1)' }], {
       duration: ms(480), easing: 'ease-out',
     }).finished
-    coin.set(round.matched.length, round.ids.length, true)
+    star.set(round.matched.length, round.ids.length, true)
     void sound.sayWord(word.id, word.word)
     await wait(650)
 
@@ -303,45 +304,65 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   }
 
   async function celebrate() {
-    const from = coin.svg.getBoundingClientRect()
-    const big = fullCoin()
-    big.classList.add('flying-coin')
+    const from = star.svg.getBoundingClientRect()
+    const big = fullStar(round.ids.length)
+    big.classList.add('flying-star')
     fx.append(big)
     Object.assign(big.style, { left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px`, height: `${from.height}px` })
-    coin.set(0, round.ids.length)
-    // The coin scales from its top-left corner, so centre it by its scaled size.
-    const k = Math.min(innerWidth, innerHeight) / 2.6 / from.width
-    const cx = innerWidth / 2 - (k * from.width) / 2, cy = innerHeight / 2.4 - (k * from.height) / 2
+    star.set(0, round.ids.length)
+    // The star scales and turns about its centre; these move that centre.
+    const k = Math.min(innerWidth, innerHeight) / 2.4 / from.width
+    const cx = innerWidth / 2, cy = innerHeight / 2.4
+    const at = (x: number, y: number) => `translate(${x - from.left - from.width / 2}px, ${y - from.top - from.height / 2}px)`
+    const glow = h('div', 'star-glow')
+    const d = k * from.width * 2
+    Object.assign(glow.style, { left: `${cx - d / 2}px`, top: `${cy - d / 2}px`, width: `${d}px`, height: `${d}px` })
+    fx.prepend(glow)
+    glow.animate([{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1)' }], { duration: ms(1100), easing: 'ease-out', fill: 'forwards' })
     sound.fanfare()
     await big.animate(
       [
-        { transform: 'translate(0,0) scale(1) rotateY(0)' },
-        { transform: `translate(${cx - from.left}px, ${cy - from.top}px) scale(${k}) rotateY(720deg)` },
+        { transform: 'translate(0,0) scale(1) rotate(0)' },
+        { transform: `${at(cx, cy)} scale(${k}) rotate(360deg)` },
       ],
       { duration: ms(1100), easing: 'cubic-bezier(.3,.8,.3,1)', fill: 'forwards' },
     ).finished
-    burst(fx, innerWidth / 2, innerHeight / 2.4, 36, ['#ffd84d', '#ffe98a', '#ffffff', '#f5a623'], 1.8)
+    burst(fx, cx, cy, 36, ['#ffd84d', '#ffe98a', '#ffffff', '#f5a623'], 1.8)
     await wait(900)
 
-    const c = chest.getBoundingClientRect()
-    const end = 0.35
-    const tx = c.left + c.width / 2 - (end * from.width) / 2 - from.left
-    const ty = c.top + c.height / 3 - (end * from.height) / 2 - from.top
-    const lid = chest.querySelector<SVGGElement>('.lid')!
-    lid.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-28deg)' }], { duration: ms(300), fill: 'forwards' })
+    // Up to the jar's mouth while its lid lifts, then down into the glass.
+    const c = jar.svg.getBoundingClientRect()
+    const mouth = { x: c.left + c.width / 2, y: c.top + c.height * 0.12 }
+    const end = (0.32 * c.width) / from.width
+    const lid = jar.lid
+    glow.animate([{ opacity: 1 }, { opacity: 0 }], { duration: ms(500), fill: 'forwards' })
+    lid.animate([{ transform: 'none' }, { transform: 'translate(-6px, -70px) rotate(-24deg)' }], {
+      duration: ms(350), easing: 'ease-out', fill: 'forwards',
+    })
     await big.animate(
       [
-        { transform: `translate(${cx - from.left}px, ${cy - from.top}px) scale(${k})` },
-        { transform: `translate(${tx}px, ${ty}px) scale(${end})`, opacity: 0.9 },
+        { transform: `${at(cx, cy)} scale(${k}) rotate(360deg)` },
+        { transform: `${at(mouth.x, mouth.y - c.height * 0.25)} scale(${end}) rotate(720deg)` },
       ],
       { duration: ms(800), easing: 'cubic-bezier(.6,0,.4,1)', fill: 'forwards' },
     ).finished
+    await big.animate(
+      [
+        { transform: `${at(mouth.x, mouth.y - c.height * 0.25)} scale(${end}) rotate(720deg)` },
+        { transform: `${at(mouth.x, mouth.y + c.height * 0.2)} scale(${end * 0.7}) rotate(720deg)`, opacity: 0 },
+      ],
+      { duration: ms(300), easing: 'ease-in', fill: 'forwards' },
+    ).finished
     big.remove()
-    lid.animate([{ transform: 'rotate(-28deg)' }, { transform: 'rotate(0)' }], { duration: ms(250), fill: 'forwards' })
+    glow.remove()
+    lid.animate([{ transform: 'translate(-6px, -70px) rotate(-24deg)' }, { transform: 'none' }], {
+      duration: ms(250), easing: 'cubic-bezier(.5,0,.6,1.4)', fill: 'forwards',
+    })
     sound.clink()
+    jar.set(profile.coins, true)
     count.textContent = String(profile.coins)
-    chest.animate(
-      [{ transform: 'scale(1)' }, { transform: 'scale(1.25) rotate(-6deg)' }, { transform: 'scale(.95) rotate(4deg)' }, { transform: 'scale(1)' }],
+    jarBtn.animate(
+      [{ transform: 'scale(1)' }, { transform: 'scale(1.2) rotate(-6deg)' }, { transform: 'scale(.96) rotate(4deg)' }, { transform: 'scale(1)' }],
       { duration: ms(600), easing: 'ease-out' },
     )
     await wait(500)
@@ -418,29 +439,10 @@ function burst(layer: HTMLElement, x: number, y: number, n: number, colors: stri
   }
 }
 
-/** The chest opened: every coin collected so far, heaped inside it, with the number written large. */
-export function showChest(screen: HTMLElement, coins: number) {
-  const shown = Math.min(coins, 45)
-  // Rows from the bottom up, each one coin shorter, like a heap.
-  const rows: number[] = []
-  let left = shown
-  let w = Math.max(1, Math.ceil((Math.sqrt(8 * shown + 1) - 1) / 2))
-  while (left > 0) {
-    const k = Math.min(w, left)
-    rows.push(k)
-    left -= k
-    w = Math.max(1, w - 1)
-  }
-  const size = Math.min(70, 300 / Math.max(1, rows[0] ?? 1) + 8)
-  const pile = h('div', 'pile')
-  pile.style.setProperty('--coin', `${size}px`)
-  for (const k of rows) {
-    const r = h('div', 'pile-row')
-    for (let i = 0; i < k; i++) r.append(fullCoin())
-    pile.prepend(r)
-  }
-  const [back, front] = openChestSvgs()
-  const panel = h('div', 'chest-panel', h('div', 'chest-open', back, pile, front), h('div', 'chest-number', String(coins)))
+/** The jar opened: every star collected so far, as a constellation, with the number on its shoulder. */
+export function showJar(screen: HTMLElement, stars: number) {
+  const [glass, lid] = openJar(stars)
+  const panel = h('div', 'jar-panel', glass, lid, h('div', 'jar-number', String(stars)))
   const overlay = h('div', 'overlay', panel)
   overlay.addEventListener('click', () => overlay.remove())
   screen.append(overlay)

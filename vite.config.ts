@@ -22,7 +22,7 @@ export default defineConfig({
         id: base,
         start_url: base,
         scope: base,
-        description: 'Wörter lesen, Bilder finden, Goldmünzen sammeln.',
+        description: 'Wörter lesen, Bilder finden, Sterne sammeln.',
         display: 'fullscreen',
         orientation: 'any',
         background_color: '#2f6b6e',

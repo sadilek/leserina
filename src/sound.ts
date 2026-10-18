@@ -85,7 +85,7 @@ export function jingle() {
   ;[C6, E6, G6, C7].forEach((f, i) => bell(t + i * 0.075, f, 0.55, 0.14))
 }
 
-/** The coin is full: a short fanfare and a shimmer. */
+/** The star is full: a short fanfare and a shimmer. */
 export function fanfare() {
   const t = unlock().currentTime + 0.02
   const melody: [number, number, number][] = [
@@ -96,7 +96,7 @@ export function fanfare() {
   for (let i = 0; i < 10; i++) bell(t + 0.7 + i * 0.07, [C7, G6, E6][i % 3] * 1.0, 0.4, 0.05)
 }
 
-/** The coin lands in the chest. */
+/** The star lands in the jar. */
 export function clink() {
   const t = unlock().currentTime + 0.01
   bell(t, NOTE(31), 0.35, 0.12)
