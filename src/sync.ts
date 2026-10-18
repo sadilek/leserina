@@ -58,7 +58,10 @@ export function sync(): Promise<boolean> {
     again = true
     return running
   }
-  running = (async () => {
+  if (!store.family()) return Promise.resolve(false)
+  const run = (async () => {
+    // Settle only after `running` is set below, or `finally` would clear it before it is set.
+    await Promise.resolve()
     try {
       do {
         again = false
@@ -74,7 +77,8 @@ export function sync(): Promise<boolean> {
       running = null
     }
   })()
-  return running
+  running = run
+  return run
 }
 
 /**
