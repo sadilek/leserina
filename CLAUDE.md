@@ -2,7 +2,11 @@
 
 See README.md for what the app is, how to run it and how the learning logic works.
 
-- Check before committing: `npm run check` (tsc and vitest).
+- Check before committing: `npm run check` (tsc and vitest); for changes in `worker/` (the sync
+  server, its own package) also `cd worker && npm run check`.
+- Synced documents (`src/merge.ts`) are read by every installed app of a family, old versions
+  included: change their shape only so that older apps still read them, or bump `v` (older apps
+  skip documents they cannot read).
 - File names for clips and pictures use the word's ASCII `id` (Bär → `baer`); `src/slug.ts` and
   `slug()` in `scripts/render_audio.py` must stay identical.
 - `words.json` is generated: edit `data/words-source.csv` or `scripts/score_words.py`, then run

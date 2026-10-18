@@ -9,8 +9,9 @@ onto its word). Each pair fills an arm of a gold star, and a full star goes into
 jar of night sky, where the stars collected so far form a constellation. Tapping a picture or a word reads the word aloud, in a parent's own voice. Words
 start easy and get harder per child, and the ones a child gets wrong come back, as with flashcards.
 
-Everything runs on the device: no account, no server, no tracking. Progress stays in the
-browser's local storage.
+Everything runs on the device: no account, no tracking. Progress lives in the browser's local
+storage. Optionally, a family's devices (say an iPad and a phone) share it through a small server,
+so a child can carry on from any of them; see "Syncing between devices".
 
 ## Running it
 
@@ -21,6 +22,11 @@ npm run check      # type check and unit tests
 npm run build      # static site in dist/, with a service worker for offline use
 npm run preview    # serves dist/ on http://localhost:5181/leserina/
 ```
+
+While `npm run dev` runs, the app syncs with a local worker at port 8787 of the same host, so
+testing never touches the families' real data: `cd worker && npm install && npm run dev`.
+Two origins make two devices on one machine, e.g. `http://localhost:5180/leserina/` and the LAN
+address Vite prints. `VITE_SYNC_URL` overrides the worker's address.
 
 ## Publishing and updating
 
@@ -43,10 +49,67 @@ installed for the path `/leserina/`. Under a new address it would start empty. H
 - iPad (Safari): open https://sadilek.github.io/leserina/, then "Teilen → Zum Home-Bildschirm".
 - Android (Chrome): open the address, then the menu (⋮) → "App installieren".
 
+Chrome on Android installs the app as part of Chrome: the app and a Chrome tab at the address
+share their data. Clearing Chrome's data or browsing history for `sadilek.github.io` therefore
+also wipes the app's progress. On a device connected to the family (see below), entering the
+family code again brings everything back.
+
 The installed app starts full-screen and works offline: every picture and clip is cached on
 install. On the iPad this also protects the data: iOS may wipe a website's storage after 7 days
 without use, but not that of a home-screen app. The game works in both orientations, on a phone
 too; on Android the back gesture during a round only returns to the start screen.
+
+## Syncing between devices
+
+In the parents' corner, "Geräte verbinden" connects a family's devices. The first device creates
+a family code: five words from a German word list (`src/family-words.txt`, 2048 words, CC0, from
+[wordlists-de](https://codeberg.org/fossarchive/wordlists-de)), about 55 bits, so nobody guesses
+it. Every other device has the code typed in; the first four letters of each word are enough.
+The code is the only key to the family's data, so there is no link: on the iPad a link would open
+Safari anyway, whose storage is separate from the home-screen app. "Trennen" stops syncing on a
+device and keeps what it shows.
+
+What is stored online, under the family code and nothing else: the children's names and animals,
+their settings, their learning state and star counts, per device. No accounts, no other data.
+
+How it works (`src/merge.ts`, with tests that play on two devices offline and then sync):
+
+- localStorage stays the working copy; the app works fully offline. Each device keeps its own
+  document (what happened on it) and the other devices' documents as last fetched; merging them
+  gives what the app shows. Data from before syncing became the device's own document.
+- A sync fetches all documents of the family, merges and uploads the device's own: at app start,
+  when the app comes back to the foreground, when the device goes online and after each finished
+  round. Requests time out after 6 seconds; failures stay silent, and the parents' corner shows
+  when the device last synced.
+- Each device only ever writes its own document, so nothing conflicts. Name, animal and settings:
+  the latest change wins. Stars and rounds: each device counts its own, the total is the sum.
+  Word states: the latest wins per word; a word may come up a round early after devices played
+  apart, but none is lost. A reset starts a new count on every device; a deleted profile stays
+  deleted. The unfinished round stays on its device.
+- Two devices that each had a profile for the same child before connecting show both; the
+  parents' corner points this out, and the unwanted one is deleted there.
+
+The server is a Cloudflare Worker in `worker/` with one Durable Object per family, stored in the
+EU, one row per device. It checks the code's format, the device id, that the body is a JSON
+object below 256 KB, and that a family has at most 10 devices (a wiped device comes back under a
+new id; its old document keeps counting). It answers only the published app and local dev
+servers (CORS). Its address is in `src/sync.ts`. Cloudflare's free plan allows 100,000 requests
+a day and 5 GB; past a limit, requests fail until the daily reset, nothing is billed, and the
+app syncs later.
+
+Setting it up (once): create a free Cloudflare account, choose its `workers.dev` subdomain in
+the dashboard (Workers & Pages), then:
+
+```bash
+cd worker
+npm install
+npx wrangler login     # opens the browser, once per Mac
+npm run check          # type check and tests, in the Workers runtime
+npx wrangler deploy    # prints https://leserina-sync.<subdomain>.workers.dev
+```
+
+Changes to the worker are deployed the same way, by hand. A new address goes into `src/sync.ts`;
+installed apps pick it up with the next update.
 
 ## The voice
 
@@ -81,7 +144,8 @@ reads the word.
 - `src/star.ts`: the round's star (one arm per pair) and the jar. Each star in the jar has a fixed
   place (`jarSpots`), so a new star never moves the old ones; the jar shows up to 50, its badge
   counts them all.
-- Profiles, stars, learning state and an unfinished round live in `localStorage`.
+- `src/store.ts`: profiles, stars, learning state and the unfinished rounds in `localStorage`;
+  `src/merge.ts`, `src/sync.ts`, `src/familycode.ts` and `worker/`: syncing between devices.
 - `mockups/`: static design drafts for themes (space, under the sea, dinosaurs, flower garden,
   building site), not part of the app and not in the published site. With `npm run dev`
   running, open http://localhost:5180/leserina/mockups/.

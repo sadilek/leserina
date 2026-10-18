@@ -3,9 +3,10 @@ import wordList from '../words.json'
 import { pictureFace } from './assets'
 import { fullStar, Jar, openJar, Star } from './star'
 import { place } from './layout'
-import { applyResult, composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
+import { composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
-import { save, type Profile, type SavedRound } from './store'
+import { recordRound, save, type Profile, type SavedRound } from './store'
+import { sync } from './sync'
 
 const words = wordList as Word[]
 const wordById = new Map(words.map((w) => [w.id, w]))
@@ -297,10 +298,8 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     finishing = true
     const result: RoundResult = {}
     for (const id of round.ids) result[id] = outcome(round, id)
-    profile.learning = applyResult(profile.learning, result)
-    profile.coins += 1
-    profile.current = null
-    commit()
+    recordRound(profile, result)
+    void sync()
   }
 
   async function celebrate() {

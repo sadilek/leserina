@@ -1,0 +1,16 @@
+// Deploy with `npx wrangler deploy` from this directory (README, "Syncing between devices").
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "leserina-sync",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  "durable_objects": {
+    "bindings": [{ "name": "FAMILY", "class_name": "Family" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Family"] }],
+  // Every family's data lives in the EU. Local runs override this in .dev.vars.
+  "vars": { "JURISDICTION": "eu" },
+  "observability": { "enabled": false }
+}

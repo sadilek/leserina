@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -11,6 +12,8 @@ export default defineConfig({
   preview: { port: 5181, strictPort: true },
   // Clips and pictures stay separate files (precached by the service worker), not inlined.
   build: { assetsInlineLimit: 0 },
+  // worker/ has its own tests, run in the Workers runtime (npm run check there).
+  test: { include: ['src/**/*.test.ts'] },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',

@@ -838,3 +838,49 @@ input:focus-visible {
     animation: none;
   }
 }
+
+.panel.devices {
+  max-width: 980px;
+  margin: 18px auto 0;
+}
+
+.panel.devices p {
+  margin: 6px 0;
+}
+
+.hint.warn {
+  color: #b0412e;
+}
+
+.hint.warn:empty {
+  display: none;
+}
+
+.family-code {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 12px 0;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--felt-dark);
+}
+
+.code-entry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.code-input {
+  flex: 1;
+  min-width: 260px;
+  font: inherit;
+  font-size: 24px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1.5px solid #d8d1c2;
+  background: #fffdf8;
+  color: var(--ink);
+}

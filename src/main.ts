@@ -6,13 +6,28 @@ import { startGame } from './game'
 import { parentsCorner } from './parents'
 import { startScreen } from './start'
 import { unlock } from './sound'
-import { persist } from './store'
+import { onSync, persist } from './store'
+import { startAutoSync } from './sync'
 
 const root = document.getElementById('app')!
 
+let onStart = false
+
 function home() {
-  startScreen(root, (p) => startGame(root, p, home), () => parentsCorner(root, home))
+  onStart = true
+  startScreen(root, (p) => {
+    onStart = false
+    startGame(root, p, home)
+  }, () => {
+    onStart = false
+    parentsCorner(root, home)
+  })
 }
+
+// Profiles a sync brought along show up on the start screen right away.
+onSync(() => {
+  if (onStart) home()
+})
 
 // No pinch zoom, no page bounce, no long-press menu: the whole screen is the game.
 document.addEventListener('gesturestart', (e) => e.preventDefault())
@@ -29,3 +44,4 @@ for (const type of ['pointerdown', 'pointerup', 'touchend', 'click']) {
 persist()
 registerSW({ immediate: true })
 home()
+startAutoSync()

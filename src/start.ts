@@ -2,7 +2,7 @@
 import { avatarFace } from './assets'
 import { slug } from './slug'
 import * as sound from './sound'
-import { data, type Profile } from './store'
+import { profiles, type Profile } from './store'
 
 const HOLD_MS = 1500
 
@@ -15,7 +15,7 @@ export function startScreen(root: HTMLElement, onPick: (p: Profile) => void, onP
   const kids = document.createElement('div')
   kids.className = 'kids'
 
-  for (const p of data.profiles) {
+  for (const p of profiles) {
     const b = document.createElement('button')
     b.className = 'kid'
     const name = document.createElement('span')
@@ -34,7 +34,7 @@ export function startScreen(root: HTMLElement, onPick: (p: Profile) => void, onP
     kids.append(b)
   }
 
-  if (!data.profiles.length) {
+  if (!profiles.length) {
     const empty = document.createElement('div')
     empty.className = 'empty'
     const text = document.createElement('p')
