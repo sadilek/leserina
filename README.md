@@ -79,6 +79,9 @@ reads the word.
   `src/start.ts`: picking a child; `src/parents.ts`: the parents' corner (hold the lock at the
   bottom right of the start screen).
 - Profiles, coins, learning state and an unfinished round live in `localStorage`.
+- `mockups/`: static design drafts for themes (space, under the sea, dinosaurs, flower garden,
+  building site), not part of the app. With `npm run dev` running, open
+  http://localhost:5180/mockups/.
 
 ## The learning logic
 

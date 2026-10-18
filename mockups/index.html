@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leserina: Entwürfe</title>
+<style>
+  @font-face { font-family: 'Andika'; src: url('fonts/andika-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+  body { margin: 0; padding: 28px 16px 48px; background: #22252b; color: #e8e9ec; font: 16px/1.4 'Avenir Next', system-ui, sans-serif; }
+  h1 { font: 700 34px 'Andika', sans-serif; margin: 0 auto 4px; max-width: 1180px; }
+  p.lead { margin: 0 auto 24px; max-width: 1180px; color: #a9adb6; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; max-width: 1180px; margin: 0 auto; }
+  a.tile { display: block; color: inherit; text-decoration: none; background: #2c3038; border-radius: 16px; overflow: hidden; }
+  a.tile:hover { background: #343944; }
+  .thumb { position: relative; aspect-ratio: 1180 / 820; overflow: hidden; }
+  .thumb iframe { position: absolute; left: 0; top: 0; width: 1180px; height: 820px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .label { padding: 10px 14px 14px; }
+  .label b { font-size: 19px; }
+  .label span { display: block; color: #a9adb6; font-size: 14px; }
+</style>
+</head>
+<body>
+<h1>Leserina: fünf Entwürfe</h1>
+<p class="lead">Statische Entwürfe ohne Funktion, je mit Spiel, Startseite und Belohnung. Antippen öffnet den Entwurf.</p>
+<div class="grid">
+  <a class="tile" href="weltraum.html"><div class="thumb"><iframe src="weltraum.html" loading="lazy" tabindex="-1"></iframe></div>
+    <div class="label"><b>Weltraum</b><span>Sterne, Bullaugen, Andockstation</span></div></a>
+  <a class="tile" href="meer.html"><div class="thumb"><iframe src="meer.html" loading="lazy" tabindex="-1"></iframe></div>
+    <div class="label"><b>Unter Wasser</b><span>Luftblasen, Perlen, Meeresgrund</span></div></a>
+  <a class="tile" href="dino.html"><div class="thumb"><iframe src="dino.html" loading="lazy" tabindex="-1"></iframe></div>
+    <div class="label"><b>Dino-Tal</b><span>Steintafeln, Dino-Ei, Nest</span></div></a>
+  <a class="tile" href="garten.html"><div class="thumb"><iframe src="garten.html" loading="lazy" tabindex="-1"></iframe></div>
+    <div class="label"><b>Zaubergarten</b><span>Blüten, Gartenschilder, Blumenbeet</span></div></a>
+  <a class="tile" href="baustelle.html"><div class="thumb"><iframe src="baustelle.html" loading="lazy" tabindex="-1"></iframe></div>
+    <div class="label"><b>Baustelle</b><span>Kisten, Ziegelmauer, Förderband</span></div></a>
+</div>
+<script>
+  // Each thumbnail shows only a draft's game screen: scroll the framed page to it and scale it down.
+  for (const f of document.querySelectorAll('.thumb iframe')) {
+    const place = () => {
+      f.style.transform = `scale(${f.parentElement.clientWidth / 1180})`
+      const d = f.contentDocument
+      if (!d) return
+      d.documentElement.style.setProperty('--s', 1)
+      d.body.style.overflow = 'hidden'
+      d.getElementById('spiel')?.scrollIntoView()
+    }
+    f.addEventListener('load', place)
+    addEventListener('resize', place)
+  }
+</script>
+</body>
+</html>

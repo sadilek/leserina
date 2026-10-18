@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leserina – Baustelle</title>
+<style>
+  @font-face { font-family: 'Andika'; src: url('fonts/andika-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Andika'; src: url('fonts/andika-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+
+  :root {
+    --sky-top: #5cc0ee;
+    --sky-low: #c6ecfc;
+    --sand: #efd5a0;
+    --sand-deep: #e2bd7c;
+    --crane: #ffc21a;
+    --crane-edge: #d49a00;
+    --ink: #2e2b28;
+    --brick: #d9583a;
+    --steel: #4b525e;
+    --pine: #f8e4bb;
+    --word: #1f2430;
+    --sign-font: 'Futura', 'Avenir Next', 'Trebuchet MS', sans-serif;
+    --emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #22252b; }
+  body { padding: 26px 16px 60px; color: #e9e6df; font-family: var(--sign-font); }
+
+  .stack { zoom: var(--s, 1); width: 1180px; margin: 0 auto; }
+
+  /* ---------- page heading: a site sign ---------- */
+  .page-head { display: flex; align-items: center; gap: 26px; margin: 0 0 30px; }
+  .page-head h1 {
+    margin: 0; position: relative;
+    font: 700 46px/1 var(--sign-font); letter-spacing: .5px; color: var(--ink);
+    background: var(--crane); padding: 14px 64px 16px;
+    border-radius: 8px; box-shadow: 0 0 0 4px var(--ink), 0 8px 0 4px #0d0f12;
+  }
+  .page-head h1::before, .page-head h1::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 38px;
+    background: repeating-linear-gradient(-45deg, var(--ink) 0 9px, var(--crane) 9px 18px);
+  }
+  .page-head h1::before { left: 0; border-radius: 8px 0 0 8px; }
+  .page-head h1::after { right: 0; border-radius: 0 8px 8px 0; }
+  .page-head p { margin: 0; max-width: 640px; font: 400 19px/1.45 'Avenir Next', 'Futura', sans-serif; color: #c9ccd2; }
+
+  .caption { font: 600 22px/1 var(--sign-font); color: #f2d46a; margin: 0 0 12px 4px; display: flex; align-items: center; gap: 10px; }
+  .caption::before { content: ''; width: 26px; height: 12px; border-radius: 2px; background: repeating-linear-gradient(-45deg, var(--ink) 0 5px, var(--crane) 5px 10px); box-shadow: 0 0 0 2px var(--crane); }
+
+  .frame {
+    width: 1180px; height: 820px; overflow: hidden; position: relative; border-radius: 18px;
+    margin-bottom: 28px; background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-low) 26%, var(--sky-low) 100%);
+  }
+  .layer { position: absolute; inset: 0; width: 1180px; height: 820px; pointer-events: none; }
+
+  /* clouds */
+  .cloud { position: absolute; height: 34px; border-radius: 40px; background: #fff; opacity: .92; animation: drift 38s ease-in-out infinite alternate; }
+  .cloud::before, .cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
+  .cloud::before { width: 54%; height: 150%; left: 14%; bottom: 30%; }
+  .cloud::after { width: 36%; height: 120%; left: 50%; bottom: 36%; }
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(40px); } }
+
+  /* sand ground */
+  .ground {
+    position: absolute; left: 0; right: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(160,110,50,.16) 0 1.4px, transparent 2px) 0 0 / 23px 19px,
+      radial-gradient(circle at 70% 60%, rgba(255,255,255,.35) 0 1.2px, transparent 1.8px) 0 0 / 31px 27px,
+      linear-gradient(180deg, #f5dfb0 0%, var(--sand) 18%, var(--sand-deep) 100%);
+  }
+  .ground::before { /* soft horizon lip */
+    content: ''; position: absolute; left: 0; right: 0; top: -6px; height: 12px;
+    background: linear-gradient(180deg, transparent, rgba(245,223,176,.9) 50%, transparent);
+  }
+
+  /* ---------- buttons ---------- */
+  .home {
+    position: absolute; left: 24px; top: 22px; width: 72px; height: 72px; border-radius: 50%;
+    background: #fff; display: grid; place-items: center; z-index: 5;
+    box-shadow: 0 0 0 5px var(--crane), 0 0 0 7px var(--ink), 0 8px 14px rgba(20,60,90,.28);
+  }
+
+  /* ---------- picture crates ---------- */
+  .crate {
+    position: absolute; width: 166px; height: 166px; border-radius: 8px; z-index: 3;
+    display: grid; place-items: center;
+    background:
+      linear-gradient(180deg, transparent 0 52px, rgba(150,96,40,.42) 52px 55px, transparent 55px 107px, rgba(150,96,40,.42) 107px 110px, transparent 110px),
+      repeating-linear-gradient(90deg, rgba(190,130,60,.05) 0 2px, transparent 2px 23px),
+      linear-gradient(180deg, #fcecc9, var(--pine));
+    border: 3px solid #a66d32;
+    box-shadow: 0 7px 0 #b88447, 0 7px 0 3px #8c5a28, 0 18px 24px rgba(90,60,20,.32);
+  }
+  .crate::after { /* steel corner brackets with bolts */
+    content: ''; position: absolute; inset: -3px; border-radius: 8px; pointer-events: none;
+    --b: #59606c;
+    background:
+      radial-gradient(circle, #c6ccd5 0 2.6px, transparent 3.2px) 9px 9px / 9px 9px no-repeat,
+      radial-gradient(circle, #c6ccd5 0 2.6px, transparent 3.2px) calc(100% - 9px) 9px / 9px 9px no-repeat,
+      radial-gradient(circle, #c6ccd5 0 2.6px, transparent 3.2px) 9px calc(100% - 9px) / 9px 9px no-repeat,
+      radial-gradient(circle, #c6ccd5 0 2.6px, transparent 3.2px) calc(100% - 9px) calc(100% - 9px) / 9px 9px no-repeat,
+      linear-gradient(var(--b), var(--b)) 0 0 / 30px 8px no-repeat,
+      linear-gradient(var(--b), var(--b)) 0 0 / 8px 30px no-repeat,
+      linear-gradient(var(--b), var(--b)) 100% 0 / 30px 8px no-repeat,
+      linear-gradient(var(--b), var(--b)) 100% 0 / 8px 30px no-repeat,
+      linear-gradient(var(--b), var(--b)) 0 100% / 30px 8px no-repeat,
+      linear-gradient(var(--b), var(--b)) 0 100% / 8px 30px no-repeat,
+      linear-gradient(var(--b), var(--b)) 100% 100% / 30px 8px no-repeat,
+      linear-gradient(var(--b), var(--b)) 100% 100% / 8px 30px no-repeat;
+  }
+  .emoji { font-family: var(--emoji); line-height: 1; filter: drop-shadow(0 3px 2px rgba(80,50,10,.25)); }
+  .crate .emoji { font-size: 90px; position: relative; z-index: 1; }
+
+  /* ---------- word signs ---------- */
+  .sign {
+    position: absolute; z-index: 3;
+    font: 400 48px/1 'Andika', sans-serif; color: var(--word);
+    background: #fffdf6; padding: 14px 30px 18px;
+    border: 10px solid var(--crane); border-radius: 12px;
+    box-shadow: 0 0 0 3px var(--ink), 0 7px 0 3px #b9860a, 0 7px 0 6px var(--ink), 0 16px 22px rgba(90,60,20,.30);
+  }
+  .sign::before { /* bolts in the frame */
+    content: ''; position: absolute; inset: -10px; border-radius: 12px; pointer-events: none;
+    background:
+      radial-gradient(circle, #8a6400 0 2.4px, transparent 3px) 2px 2px / 8px 8px no-repeat,
+      radial-gradient(circle, #8a6400 0 2.4px, transparent 3px) calc(100% - 2px) 2px / 8px 8px no-repeat,
+      radial-gradient(circle, #8a6400 0 2.4px, transparent 3px) 2px calc(100% - 2px) / 8px 8px no-repeat,
+      radial-gradient(circle, #8a6400 0 2.4px, transparent 3px) calc(100% - 2px) calc(100% - 2px) / 8px 8px no-repeat;
+  }
+  .sign.lifted {
+    z-index: 6;
+    box-shadow: 0 0 0 3px var(--ink), 0 7px 0 3px #b9860a, 0 7px 0 6px var(--ink), 0 34px 34px rgba(80,50,10,.34), 0 12px 10px rgba(80,50,10,.18);
+  }
+  .touch { position: absolute; width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,.45); box-shadow: 0 0 0 3px rgba(255,255,255,.7); z-index: 7; }
+
+  /* ---------- conveyor belt ---------- */
+  .belt { position: absolute; left: 0; right: 0; bottom: 0; height: 138px; z-index: 4; }
+  .belt .edge { position: absolute; left: 0; right: 0; top: 0; height: 14px; background: repeating-linear-gradient(-45deg, var(--ink) 0 14px, var(--crane) 14px 28px); box-shadow: 0 -3px 0 #f6c94a inset; }
+  .belt .surface {
+    position: absolute; left: 0; right: 0; top: 14px; height: 94px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.12), transparent 18%, transparent 82%, rgba(0,0,0,.18)),
+      repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 3px, transparent 3px 34px),
+      #4f5662;
+    animation: belt 6s linear infinite;
+  }
+  @keyframes belt { from { background-position: 0 0, 0 0, 0 0; } to { background-position: 0 0, 34px 0, 0 0; } }
+  .belt .rollers {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 30px;
+    background:
+      radial-gradient(circle at 50% 50%, #e3e7ec 0 4px, #9aa3af 4.5px 11px, #6c7480 11.5px 12.5px, transparent 13px) 0 0 / 46px 30px,
+      linear-gradient(180deg, #7d8692, #646c78);
+  }
+  .pair { position: absolute; top: 24px; display: flex; align-items: center; gap: 12px; }
+  .mini-crate {
+    width: 76px; height: 76px; border-radius: 6px; display: grid; place-items: center; position: relative;
+    background: linear-gradient(180deg, transparent 0 24px, rgba(150,96,40,.4) 24px 26px, transparent 26px 49px, rgba(150,96,40,.4) 49px 51px, transparent 51px), linear-gradient(180deg, #fcecc9, var(--pine));
+    border: 2px solid #a66d32; box-shadow: 0 4px 0 #8c5a28;
+  }
+  .mini-crate .emoji { font-size: 48px; }
+  .mini-sign {
+    font: 400 34px/1 'Andika', sans-serif; color: var(--word); background: #fffdf6;
+    padding: 9px 18px 12px; border: 7px solid var(--crane); border-radius: 9px;
+    box-shadow: 0 0 0 2px var(--ink), 0 4px 0 2px var(--ink);
+  }
+
+  /* ---------- top bar: collection truck ---------- */
+  .badge {
+    position: absolute; display: grid; place-items: center; border-radius: 50%;
+    font: 700 28px/1 'Andika', sans-serif; color: var(--ink);
+    background: #fff; box-shadow: 0 0 0 4px var(--ink), 0 5px 8px rgba(0,0,0,.25);
+  }
+
+  /* ---------- start screen ---------- */
+  .title-sign {
+    position: absolute; left: 400px; top: 196px; width: 380px; height: 106px; z-index: 3;
+    display: grid; place-items: center; border-radius: 12px;
+    background: var(--crane); box-shadow: 0 0 0 5px var(--ink), 0 14px 18px rgba(20,60,90,.25);
+    font: 700 66px/1 var(--sign-font); color: var(--ink); letter-spacing: .5px;
+    transform-origin: 50% -60px; animation: sway 6s ease-in-out infinite;
+  }
+  .title-sign::before { content: ''; position: absolute; inset: 9px; border: 3px solid rgba(46,43,40,.35); border-radius: 6px; }
+  @keyframes sway { 0%,100% { transform: rotate(-1.2deg); } 50% { transform: rotate(1.2deg); } }
+  .kid { position: absolute; width: 200px; text-align: center; z-index: 3; }
+  .kid .face {
+    width: 178px; height: 178px; margin: 0 auto; border-radius: 50%; background: #fffdf6; position: relative;
+    display: grid; place-items: center; padding-top: 26px;
+    box-shadow: 0 0 0 6px #fff, 0 0 0 9px rgba(46,43,40,.18), 0 16px 22px rgba(30,70,100,.28);
+  }
+  .kid .face .emoji { font-size: 98px; }
+  .kid .hat { position: absolute; left: 50%; top: -48px; width: 168px; margin-left: -84px; filter: drop-shadow(0 5px 3px rgba(40,30,10,.25)); }
+  .kid .name { margin-top: 26px; font: 400 42px/1 'Andika', sans-serif; color: var(--word); }
+  .kid .count {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; padding: 5px 14px 6px 10px;
+    border-radius: 20px; background: rgba(255,253,246,.85); box-shadow: 0 0 0 2px rgba(46,43,40,.25);
+    font: 700 22px/1 'Andika', sans-serif; color: var(--ink);
+  }
+  .lock { position: absolute; right: 18px; bottom: 16px; width: 64px; height: 64px; display: grid; place-items: center; z-index: 5; opacity: .55; }
+
+  /* ---------- reward ---------- */
+  .go {
+    position: absolute; left: 1036px; top: 380px; width: 124px; height: 350px; z-index: 4;
+    border-radius: 22px; background: #3c424d; box-shadow: 0 0 0 5px var(--ink), 0 16px 24px rgba(40,30,10,.3);
+  }
+  .go .lamp { position: absolute; left: 14px; width: 96px; height: 96px; border-radius: 50%; box-shadow: inset 0 6px 10px rgba(0,0,0,.45); }
+  .go .lamp.red { top: 16px; background: #6e3a36; }
+  .go .lamp.amber { top: 126px; background: #75602c; }
+  .go .lamp.green {
+    top: 236px; background: radial-gradient(circle at 40% 35%, #8af0a8, #2fbf63 60%, #1f9a4c);
+    box-shadow: 0 0 0 4px #1f2a24, 0 0 26px 8px rgba(80,230,130,.55);
+    display: grid; place-items: center; animation: glow 2.4s ease-in-out infinite;
+  }
+  @keyframes glow { 0%,100% { box-shadow: 0 0 0 4px #1f2a24, 0 0 18px 4px rgba(80,230,130,.45); } 50% { box-shadow: 0 0 0 4px #1f2a24, 0 0 34px 14px rgba(80,230,130,.65); } }
+  .go .visor { position: absolute; left: 10px; width: 104px; height: 22px; border-radius: 50px 50px 0 0; background: #2f343d; }
+  .twinkle { animation: tw 2.6s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .twinkle.d2 { animation-delay: .8s; } .twinkle.d3 { animation-delay: 1.6s; }
+  @keyframes tw { 0%,100% { opacity: .35; transform: scale(.75); } 50% { opacity: 1; transform: scale(1.1); } }
+  .bob { animation: bob 4s ease-in-out infinite; transform-box: fill-box; }
+  @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- shared drawings -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="latH" width="28" height="24" patternUnits="userSpaceOnUse">
+      <path d="M0 24 L14 0 L28 24" fill="none" stroke="#e2a600" stroke-width="3.2"/>
+    </pattern>
+    <pattern id="latV" width="26" height="28" patternUnits="userSpaceOnUse">
+      <path d="M0 0 L26 14 L0 28" fill="none" stroke="#e2a600" stroke-width="3.2"/>
+    </pattern>
+    <linearGradient id="gBrick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e86a45"/><stop offset="1" stop-color="#c84a2f"/>
+    </linearGradient>
+    <radialGradient id="gGlow"><stop offset="0" stop-color="#fff7c2"/><stop offset=".55" stop-color="#fff7c2" stop-opacity=".75"/><stop offset="1" stop-color="#fff7c2" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gHat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- one brick, 40 x 22 -->
+    <symbol id="brick" viewBox="0 0 40 22">
+      <rect x="0" y="0" width="40" height="22" rx="3" fill="url(#gBrick)"/>
+      <rect x="3" y="2.5" width="34" height="3" rx="1.5" fill="#fff" opacity=".28"/>
+      <circle cx="10" cy="13" r="1.2" fill="#9e3820" opacity=".5"/><circle cx="27" cy="15" r="1.1" fill="#9e3820" opacity=".5"/><circle cx="33" cy="10" r=".9" fill="#9e3820" opacity=".5"/>
+    </symbol>
+
+    <!-- a finished wall of five bricks on its pallet, 128 x 74 -->
+    <symbol id="wall5" viewBox="0 0 128 74">
+      <use href="#brick" x="22" y="14" width="40" height="22"/>
+      <use href="#brick" x="66" y="14" width="40" height="22"/>
+      <use href="#brick" x="0" y="40" width="40" height="22"/>
+      <use href="#brick" x="44" y="40" width="40" height="22"/>
+      <use href="#brick" x="88" y="40" width="40" height="22"/>
+      <rect x="-2" y="64" width="132" height="5" rx="1.5" fill="#d9a660"/>
+      <rect x="4" y="69" width="12" height="5" fill="#b7843f"/><rect x="58" y="69" width="12" height="5" fill="#b7843f"/><rect x="112" y="69" width="12" height="5" fill="#b7843f"/>
+    </symbol>
+
+    <!-- traffic cone -->
+    <symbol id="cone" viewBox="0 0 60 74">
+      <ellipse cx="30" cy="70" rx="29" ry="4" fill="#7a5420" opacity=".22"/>
+      <rect x="2" y="60" width="56" height="9" rx="2.5" fill="#d9601d"/>
+      <path d="M25 4 Q30 1 35 4 L50 61 H10 Z" fill="#f7832c"/>
+      <path d="M20.9 22 H39.1 L42 32 H18 Z" fill="#fffdf6"/>
+      <path d="M15.1 42 H44.9 L47.1 50 H12.9 Z" fill="#fffdf6"/>
+      <path d="M25 4 Q27 3 28 4 L18 61 H12 Z" fill="#fff" opacity=".18"/>
+    </symbol>
+
+    <!-- cheerful digger facing right -->
+    <symbol id="digger" viewBox="0 0 236 172">
+      <ellipse cx="104" cy="164" rx="100" ry="7" fill="#7a5420" opacity=".2"/>
+      <path d="M201 128 Q222 150 236 156 L170 160 Z" fill="#d9b06a"/>
+      <line x1="66" y1="22" x2="66" y2="2" stroke="#4b525e" stroke-width="2.5"/>
+      <path d="M66 3 L84 8 L66 13 Z" fill="#f2552c"/>
+      <rect x="18" y="126" width="152" height="34" rx="17" fill="#3b404b"/>
+      <rect x="25" y="132" width="138" height="22" rx="11" fill="#5d6471"/>
+      <g fill="#b9c1cc" stroke="#3b404b" stroke-width="2"><circle cx="40" cy="143" r="8"/><circle cx="70" cy="143" r="8"/><circle cx="100" cy="143" r="8"/><circle cx="130" cy="143" r="8"/><circle cx="152" cy="143" r="7"/></g>
+      <rect x="6" y="90" width="26" height="36" rx="7" fill="#e8921a"/>
+      <path d="M16 126 V92 Q16 84 24 84 H158 Q166 84 166 92 V126 Z" fill="#ffb51f"/>
+      <rect x="16" y="112" width="150" height="6" fill="#e8921a"/>
+      <path d="M46 84 V34 Q46 24 56 24 H104 Q114 24 118 34 L132 84 Z" fill="#ffb51f"/>
+      <rect x="44" y="20" width="66" height="9" rx="4.5" fill="#e8921a"/>
+      <path d="M56 78 V42 Q56 36 62 36 H100 Q106 36 108 42 L120 78 Z" fill="#c4e9fb"/>
+      <path d="M66 78 L86 36 H96 L76 78 Z" fill="#fff" opacity=".5"/>
+      <circle cx="160" cy="97" r="5" fill="#fff7cf" stroke="#c98700" stroke-width="2"/>
+      <line x1="140" y1="88" x2="172" y2="52" stroke="#9aa3b0" stroke-width="6" stroke-linecap="round"/>
+      <line x1="146" y1="98" x2="186" y2="34" stroke="#ffb51f" stroke-width="18" stroke-linecap="round"/>
+      <line x1="186" y1="34" x2="206" y2="104" stroke="#f2a20f" stroke-width="13" stroke-linecap="round"/>
+      <path d="M194 98 L220 96 Q228 122 208 132 L186 128 Q198 116 194 98 Z" fill="#5d6471"/>
+      <path d="M186 128 l4 6 l5 -5 l5 6 l5 -5 l4 5 l3 -4" fill="none" stroke="#5d6471" stroke-width="3" stroke-linejoin="round"/>
+      <circle cx="186" cy="34" r="6" fill="#4b525e"/><circle cx="146" cy="98" r="6" fill="#4b525e"/>
+    </symbol>
+
+    <!-- dump truck facing right, small (collection button) -->
+    <symbol id="truck" viewBox="0 0 160 92">
+      <ellipse cx="80" cy="88" rx="74" ry="4" fill="#1d4f6e" opacity=".18"/>
+      <use href="#brick" x="14" y="6" width="26" height="14"/>
+      <use href="#brick" x="42" y="6" width="26" height="14"/>
+      <use href="#brick" x="70" y="6" width="26" height="14"/>
+      <use href="#brick" x="28" y="-8" width="26" height="14"/>
+      <use href="#brick" x="56" y="-8" width="26" height="14"/>
+      <path d="M4 20 H106 L102 64 H14 Q8 64 7 58 Z" fill="#f07f2a"/>
+      <path d="M4 20 H106 V26 H5 Z" fill="#d8661a"/>
+      <g stroke="#d8661a" stroke-width="3"><line x1="30" y1="28" x2="30" y2="62"/><line x1="55" y1="28" x2="55" y2="62"/><line x1="80" y1="28" x2="80" y2="62"/></g>
+      <path d="M108 30 H134 Q142 30 146 38 L156 56 V70 H108 Z" fill="#ffc21a"/>
+      <path d="M114 36 H132 Q137 36 139 41 L145 53 H114 Z" fill="#c4e9fb"/>
+      <rect x="150" y="60" width="8" height="6" rx="2" fill="#fff4c2"/>
+      <rect x="6" y="64" width="150" height="8" rx="2" fill="#4b525e"/>
+      <g><circle cx="32" cy="74" r="14" fill="#2f343e"/><circle cx="32" cy="74" r="5.5" fill="#c9d0da"/>
+         <circle cx="78" cy="74" r="14" fill="#2f343e"/><circle cx="78" cy="74" r="5.5" fill="#c9d0da"/>
+         <circle cx="132" cy="74" r="14" fill="#2f343e"/><circle cx="132" cy="74" r="5.5" fill="#c9d0da"/></g>
+    </symbol>
+
+    <!-- hard hat -->
+    <symbol id="hat" viewBox="0 0 168 84">
+      <path d="M22 70 Q20 10 84 8 Q148 10 146 70 Z" fill="currentColor"/>
+      <path d="M22 70 Q20 10 84 8 Q148 10 146 70 Z" fill="url(#gHat)"/>
+      <path d="M72 9 Q84 6 96 9 V70 H72 Z" fill="#000" opacity=".1"/>
+      <rect x="4" y="64" width="160" height="16" rx="8" fill="currentColor"/>
+      <rect x="4" y="72" width="160" height="8" rx="4" fill="#000" opacity=".13"/>
+    </symbol>
+
+    <!-- sparkle -->
+    <symbol id="spark" viewBox="0 0 20 20"><path d="M10 0 Q11.5 8.5 20 10 Q11.5 11.5 10 20 Q8.5 11.5 0 10 Q8.5 8.5 10 0 Z" fill="#ffd23f" stroke="#fff" stroke-width="1.2"/></symbol>
+
+    <!-- far skyline -->
+    <symbol id="skyline" viewBox="0 0 1180 70" preserveAspectRatio="none">
+      <path d="M0 70 V48 H40 V30 H86 V44 H120 V18 H170 V50 H230 V36 H262 V56 H330 V40 H380 V26 H420 V50 H500 V60 H560 V34 H610 V22 H648 V46 H720 V52 H780 V30 H840 V44 H900 V24 H940 V52 H1010 V38 H1060 V54 H1120 V34 H1180 V70 Z" fill="#a7d6ee"/>
+      <g fill="#bfe3f4"><rect x="128" y="24" width="8" height="8"/><rect x="146" y="24" width="8" height="8"/><rect x="128" y="38" width="8" height="8"/><rect x="908" y="30" width="7" height="7"/><rect x="922" y="30" width="7" height="7"/><rect x="616" y="28" width="7" height="7"/><rect x="630" y="28" width="7" height="7"/></g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="stack">
+
+  <header class="page-head">
+    <h1>Baustelle</h1>
+    <p>A sunny building site: each matched pair lays a brick, five bricks make a wall, and finished walls ride away in the dump truck.</p>
+  </header>
+
+  <!-- ==================================================== SPIEL -->
+  <div class="caption">Spiel</div>
+  <section class="frame" id="spiel">
+    <div class="cloud" style="left:470px; top:58px; width:120px;"></div>
+    <div class="cloud" style="left:720px; top:72px; width:86px; animation-duration:46s;"></div>
+
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:0">
+      <use href="#skyline" x="0" y="112" width="1180" height="58" opacity=".9"/>
+      <!-- distant crane -->
+      <g opacity=".55" stroke="#8fc8e4" stroke-width="4" fill="none"><line x1="560" y1="170" x2="560" y2="96"/><line x1="520" y1="100" x2="660" y2="100"/><line x1="636" y1="100" x2="636" y2="124"/></g>
+    </svg>
+    <div class="ground" style="top:160px; bottom:0;"></div>
+
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:1">
+      <!-- tyre tracks -->
+      <g opacity=".14" fill="none" stroke="#7a4e1c" stroke-width="10" stroke-dasharray="6 9">
+        <path d="M-10 620 C 260 560, 520 650, 820 600 S 1100 560, 1190 590"/>
+        <path d="M-10 642 C 260 582, 520 672, 820 622 S 1100 582, 1190 612"/>
+      </g>
+      <!-- tower crane: jib along the top, mast at the right edge -->
+      <g transform="translate(1150 30)">
+        <rect x="0" y="0" width="26" height="660" fill="url(#latV)"/>
+        <rect x="-2" y="0" width="5" height="660" fill="#ffc21a" stroke="#d49a00" stroke-width="1"/>
+        <rect x="23" y="0" width="5" height="660" fill="#ffc21a" stroke="#d49a00" stroke-width="1"/>
+      </g>
+      <g transform="translate(292 4)">
+        <rect x="0" y="0" width="900" height="24" fill="url(#latH)"/>
+        <rect x="0" y="-1" width="900" height="5" fill="#ffc21a" stroke="#d49a00" stroke-width="1"/>
+        <rect x="0" y="21" width="900" height="5" fill="#ffc21a" stroke="#d49a00" stroke-width="1"/>
+        <rect x="-4" y="-1" width="8" height="27" rx="2" fill="#ffc21a" stroke="#d49a00"/>
+      </g>
+      <path d="M1136 30 H1180 V78 H1146 Q1136 78 1136 68 Z" fill="#ffc21a" stroke="#d49a00" stroke-width="1.5"/>
+      <path d="M1144 38 H1180 V64 H1150 Q1144 64 1144 58 Z" fill="#c4e9fb"/>
+      <!-- trolley and hook, waiting next to the wall -->
+      <rect x="306" y="28" width="30" height="9" rx="2" fill="#4b525e"/>
+      <g class="bob">
+        <line x1="317" y1="37" x2="317" y2="58" stroke="#4b525e" stroke-width="2.2"/>
+        <line x1="325" y1="37" x2="325" y2="58" stroke="#4b525e" stroke-width="2.2"/>
+        <rect x="309" y="56" width="24" height="15" rx="3" fill="#ffc21a" stroke="#c98e00" stroke-width="1.5"/>
+        <path d="M321 71 V79 A8 8 0 1 1 313 87" fill="none" stroke="#4b525e" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <!-- cones and digger at the edges -->
+      <use href="#cone" x="1072" y="574" width="50" height="62"/>
+      <use href="#cone" x="1030" y="610" width="40" height="50"/>
+      <use href="#cone" x="196" y="616" width="40" height="50"/>
+      <use href="#digger" x="-34" y="516" width="216" height="158"/>
+    </svg>
+
+    <!-- top bar -->
+    <div class="home" aria-label="Zurück">
+      <svg width="40" height="40" viewBox="0 0 40 40"><path d="M6 19 L20 7 L34 19" fill="none" stroke="#2e2b28" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 17 V33 H29 V17" fill="none" stroke="#2e2b28" stroke-width="4.5" stroke-linejoin="round"/><rect x="17" y="23" width="7" height="10" rx="1.5" fill="#2e2b28"/></svg>
+    </div>
+
+    <!-- progress: wall of five bricks, two laid -->
+    <svg style="position:absolute; left:118px; top:16px; z-index:5" width="168" height="98" viewBox="-4 6 136 78" aria-label="2 von 5">
+      <rect x="22" y="14" width="40" height="22" rx="3" fill="#fff" fill-opacity=".55" stroke="#8a6a48" stroke-width="2.4" stroke-dasharray="5 4"/>
+      <rect x="66" y="14" width="40" height="22" rx="3" fill="#fff" fill-opacity=".55" stroke="#8a6a48" stroke-width="2.4" stroke-dasharray="5 4"/>
+      <use href="#brick" x="0" y="40" width="40" height="22"/>
+      <use href="#brick" x="44" y="40" width="40" height="22"/>
+      <rect x="88" y="40" width="40" height="22" rx="3" fill="#fff" fill-opacity=".55" stroke="#8a6a48" stroke-width="2.4" stroke-dasharray="5 4"/>
+      <rect x="-2" y="64" width="132" height="6" rx="2" fill="#d9a660" stroke="#a87a3a" stroke-width="1"/>
+      <rect x="4" y="70" width="12" height="6" fill="#b7843f"/><rect x="58" y="70" width="12" height="6" fill="#b7843f"/><rect x="112" y="70" width="12" height="6" fill="#b7843f"/>
+    </svg>
+
+    <!-- collection: dump truck with count -->
+    <svg style="position:absolute; left:956px; top:26px; z-index:5" width="150" height="86" viewBox="0 -10 160 102" aria-label="Sammlung"><use href="#truck" x="0" y="0" width="160" height="92"/></svg>
+    <div class="badge" style="left:1080px; top:22px; width:50px; height:50px; z-index:6;">7</div>
+
+    <!-- play area -->
+    <div class="crate" style="left:228px; top:188px; transform:rotate(-3deg);"><span class="emoji">🏠</span></div>
+    <div class="crate" style="left:880px; top:196px; transform:rotate(2.5deg);"><span class="emoji">🚗</span></div>
+    <div class="crate" style="left:650px; top:330px; transform:rotate(-1.5deg);"><span class="emoji">🚌</span></div>
+
+    <div class="sign" style="left:316px; top:478px; transform:rotate(2deg);">Auto</div>
+    <div class="sign" style="left:848px; top:494px; transform:rotate(-2.5deg);">Haus</div>
+    <div class="sign lifted" style="left:448px; top:332px; transform:rotate(-4deg) scale(1.07);">Bus</div>
+    <div class="touch" style="left:592px; top:392px;"></div>
+
+    <!-- bottom strip: conveyor belt -->
+    <div class="belt">
+      <div class="edge"></div>
+      <div class="surface"></div>
+      <div class="rollers"></div>
+      <div class="pair" style="left:250px;"><div class="mini-crate"><span class="emoji">🚂</span></div><div class="mini-sign">Zug</div></div>
+      <div class="pair" style="left:540px;"><div class="mini-crate"><span class="emoji">⏰</span></div><div class="mini-sign">Uhr</div></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== START -->
+  <div class="caption">Start</div>
+  <section class="frame" id="start">
+    <div class="cloud" style="left:840px; top:150px; width:130px;"></div>
+    <div class="cloud" style="left:250px; top:250px; width:96px; animation-duration:50s;"></div>
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:0">
+      <circle cx="1080" cy="96" r="44" fill="#fff3a6"/><circle cx="1080" cy="96" r="62" fill="#fff3a6" opacity=".35"/>
+      <use href="#skyline" x="0" y="470" width="1180" height="66"/>
+    </svg>
+    <div class="ground" style="top:528px; bottom:0;"></div>
+
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:1">
+      <!-- tower crane: mast on the left, jib across, title sign on the hook -->
+      <rect x="66" y="612" width="104" height="26" rx="4" fill="#b8bfc9"/>
+      <rect x="66" y="630" width="104" height="8" fill="#949ca8"/>
+      <g transform="translate(104 112)">
+        <rect x="0" y="0" width="26" height="502" fill="url(#latV)"/>
+        <rect x="-2" y="0" width="5" height="502" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="23" y="0" width="5" height="502" fill="#ffc21a" stroke="#d49a00"/>
+      </g>
+      <!-- tie bars from the top of the mast -->
+      <path d="M117 40 L104 88 M117 40 L130 88" stroke="#ffc21a" stroke-width="6" stroke-linecap="round"/>
+      <path d="M117 40 L900 88 M117 40 L22 88" stroke="#4b525e" stroke-width="2.2"/>
+      <g transform="translate(0 88)">
+        <rect x="0" y="0" width="920" height="24" fill="url(#latH)"/>
+        <rect x="0" y="-1" width="920" height="5" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="0" y="21" width="920" height="5" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="914" y="-2" width="9" height="28" rx="2" fill="#ffc21a" stroke="#d49a00"/>
+      </g>
+      <!-- counterweight with a strip of hazard stripes -->
+      <rect x="10" y="114" width="68" height="44" rx="4" fill="#9aa3af"/>
+      <clipPath id="cwClip"><rect x="10" y="146" width="68" height="12" rx="2"/></clipPath>
+      <g clip-path="url(#cwClip)"><rect x="10" y="146" width="68" height="12" fill="#ffc21a"/><path d="M6 162 L18 146 M20 162 L32 146 M34 162 L46 146 M48 162 L60 146 M62 162 L74 146 M76 162 L88 146" stroke="#2e2b28" stroke-width="6"/></g>
+      <!-- cab -->
+      <path d="M132 114 H184 V150 Q184 160 174 160 H132 Z" fill="#ffc21a" stroke="#d49a00" stroke-width="1.5"/>
+      <path d="M140 120 H176 V146 Q176 152 170 152 H140 Z" fill="#c4e9fb"/>
+      <!-- trolley, cables, hook, slings -->
+      <rect x="574" y="112" width="34" height="10" rx="2" fill="#4b525e"/>
+      <line x1="584" y1="122" x2="584" y2="150" stroke="#4b525e" stroke-width="2.4"/>
+      <line x1="598" y1="122" x2="598" y2="150" stroke="#4b525e" stroke-width="2.4"/>
+      <rect x="578" y="148" width="26" height="16" rx="3" fill="#ffc21a" stroke="#c98e00" stroke-width="1.5"/>
+      <path d="M591 164 V170 A7 7 0 1 1 584 177" fill="none" stroke="#4b525e" stroke-width="4" stroke-linecap="round"/>
+      <path d="M590 178 L430 200 M590 178 L750 200" stroke="#4b525e" stroke-width="2.6"/>
+      <!-- ground details -->
+      <use href="#cone" x="196" y="700" width="48" height="60"/>
+      <use href="#cone" x="252" y="720" width="40" height="50"/>
+      <g transform="translate(40 700)"><use href="#brick" x="0" y="34" width="40" height="22"/><use href="#brick" x="44" y="34" width="40" height="22"/><use href="#brick" x="22" y="10" width="40" height="22"/><rect x="-4" y="58" width="94" height="6" rx="2" fill="#d9a660"/></g>
+      <use href="#digger" x="850" y="604" width="216" height="158"/>
+    </svg>
+
+    <div class="title-sign">Leserina</div>
+
+    <div class="kid" style="left:278px; top:356px;">
+      <div class="face"><svg class="hat" viewBox="0 0 168 84" style="color:#ffc21a"><use href="#hat"/></svg><span class="emoji">🦊</span></div>
+      <div class="name">Lena</div>
+      <div class="count"><svg width="34" height="20" viewBox="0 0 128 74"><use href="#wall5"/></svg>7</div>
+    </div>
+    <div class="kid" style="left:490px; top:356px;">
+      <div class="face"><svg class="hat" viewBox="0 0 168 84" style="color:#f58a2c"><use href="#hat"/></svg><span class="emoji">🐼</span></div>
+      <div class="name">Max</div>
+      <div class="count"><svg width="34" height="20" viewBox="0 0 128 74"><use href="#wall5"/></svg>3</div>
+    </div>
+    <div class="kid" style="left:702px; top:356px;">
+      <div class="face"><svg class="hat" viewBox="0 0 168 84" style="color:#5fb7ea"><use href="#hat"/></svg><span class="emoji">🦄</span></div>
+      <div class="name">Mia</div>
+      <div class="count"><svg width="34" height="20" viewBox="0 0 128 74"><use href="#wall5"/></svg>12</div>
+    </div>
+
+    <div class="lock" aria-label="Elternbereich">
+      <svg width="30" height="34" viewBox="0 0 30 34"><path d="M8 15 V10 A7 7 0 0 1 22 10 V15" fill="none" stroke="#5a4a32" stroke-width="3.5"/><rect x="3" y="14" width="24" height="18" rx="4" fill="#5a4a32"/></svg>
+    </div>
+  </section>
+
+  <!-- ==================================================== BELOHNUNG -->
+  <div class="caption">Belohnung</div>
+  <section class="frame" id="belohnung">
+    <div class="cloud" style="left:620px; top:70px; width:130px;"></div>
+    <div class="cloud" style="left:880px; top:150px; width:90px; animation-duration:52s;"></div>
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:0">
+      <circle cx="1090" cy="86" r="44" fill="#fff3a6"/><circle cx="1090" cy="86" r="62" fill="#fff3a6" opacity=".35"/>
+      <use href="#skyline" x="0" y="480" width="1180" height="62"/>
+    </svg>
+    <div class="ground" style="top:536px; bottom:0;"></div>
+
+    <svg class="layer" viewBox="0 0 1180 820" style="z-index:1">
+      <!-- crane on the left -->
+      <g transform="translate(30 70)">
+        <rect x="0" y="0" width="26" height="600" fill="url(#latV)"/>
+        <rect x="-2" y="0" width="5" height="600" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="23" y="0" width="5" height="600" fill="#ffc21a" stroke="#d49a00"/>
+      </g>
+      <g transform="translate(0 46)">
+        <rect x="0" y="0" width="560" height="24" fill="url(#latH)"/>
+        <rect x="0" y="-1" width="560" height="5" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="0" y="21" width="560" height="5" fill="#ffc21a" stroke="#d49a00"/>
+        <rect x="554" y="-2" width="9" height="28" rx="2" fill="#ffc21a" stroke="#d49a00"/>
+      </g>
+      <rect x="10" y="664" width="70" height="22" rx="4" fill="#b8bfc9"/><rect x="10" y="680" width="70" height="6" fill="#949ca8"/>
+      <path d="M58 72 H106 V104 Q106 112 98 112 H58 Z" fill="#ffc21a" stroke="#d49a00" stroke-width="1.5"/>
+      <path d="M64 78 H100 V100 Q100 106 94 106 H64 Z" fill="#c4e9fb"/>
+      <!-- hook lifting the finished wall -->
+      <rect x="296" y="70" width="34" height="10" rx="2" fill="#4b525e"/>
+      <line x1="306" y1="80" x2="306" y2="176" stroke="#4b525e" stroke-width="2.4"/>
+      <line x1="320" y1="80" x2="320" y2="176" stroke="#4b525e" stroke-width="2.4"/>
+      <rect x="300" y="174" width="26" height="18" rx="3" fill="#ffc21a" stroke="#c98e00" stroke-width="1.5"/>
+      <path d="M313 192 V198 A7 7 0 1 1 306 205" fill="none" stroke="#4b525e" stroke-width="4" stroke-linecap="round"/>
+      <path d="M312 206 L138 446 M312 206 L486 446" stroke="#4b525e" stroke-width="3"/>
+      <!-- the completed wall, big -->
+      <use href="#wall5" x="124" y="240" width="378" height="218"/>
+      <!-- sparkles around it -->
+      <use class="twinkle" href="#spark" x="96" y="248" width="34" height="34"/>
+      <use class="twinkle d2" href="#spark" x="494" y="268" width="28" height="28"/>
+      <use class="twinkle d3" href="#spark" x="300" y="470" width="24" height="24"/>
+      <use class="twinkle d2" href="#spark" x="104" y="410" width="22" height="22"/>
+      <use class="twinkle" href="#spark" x="514" y="420" width="30" height="30"/>
+      <!-- dotted path from the wall into the truck -->
+      <path d="M486 232 C 590 120, 790 150, 842 384" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="0.1 20" opacity=".9"/>
+      <path d="M828 376 L843 404 L858 374" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>
+
+      <!-- dump truck, side panel folded down to show the eight walls -->
+      <g transform="translate(560 432)">
+        <ellipse cx="226" cy="236" rx="236" ry="12" fill="#7a5420" opacity=".22"/>
+        <!-- load: two rows of four walls -->
+        <g>
+          <use href="#wall5" x="12" y="0" width="72" height="42"/>
+          <use href="#wall5" x="90" y="0" width="72" height="42"/>
+          <use href="#wall5" x="168" y="0" width="72" height="42"/>
+          <ellipse cx="282" cy="22" rx="52" ry="40" fill="url(#gGlow)"/>
+          <use href="#wall5" x="246" y="0" width="72" height="42"/>
+          <use href="#wall5" x="12" y="48" width="72" height="42"/>
+          <use href="#wall5" x="90" y="48" width="72" height="42"/>
+          <use href="#wall5" x="168" y="48" width="72" height="42"/>
+          <use href="#wall5" x="246" y="48" width="72" height="42"/>
+        </g>
+        <!-- bed floor and back wall -->
+        <path d="M0 -6 H8 V96 H322 V-6 H330 V104 H0 Z" fill="#d8661a"/>
+        <!-- folded-down side panel -->
+        <path d="M2 106 H328 L322 162 H8 Z" fill="#f07f2a"/>
+        <g stroke="#d8661a" stroke-width="4"><line x1="84" y1="112" x2="82" y2="158"/><line x1="166" y1="112" x2="166" y2="158"/><line x1="248" y1="112" x2="250" y2="158"/></g>
+        <g fill="#8c5a20"><circle cx="40" cy="108" r="4"/><circle cx="290" cy="108" r="4"/></g>
+        <!-- cab -->
+        <path d="M338 30 H392 Q406 30 414 44 L440 96 V176 H338 Z" fill="#ffc21a" stroke="#d49a00" stroke-width="2"/>
+        <path d="M350 42 H388 Q396 42 400 50 L420 92 H350 Z" fill="#c4e9fb"/>
+        <path d="M362 92 L384 42 H394 L372 92 Z" fill="#fff" opacity=".45"/>
+        <rect x="350" y="106" width="70" height="56" rx="6" fill="none" stroke="#d49a00" stroke-width="2.5"/>
+        <rect x="426" y="148" width="16" height="12" rx="3" fill="#fff4c2"/>
+        <!-- chassis and wheels -->
+        <rect x="0" y="162" width="446" height="16" rx="4" fill="#4b525e"/>
+        <g><circle cx="74" cy="196" r="38" fill="#2f343e"/><circle cx="74" cy="196" r="15" fill="#c9d0da"/>
+           <circle cx="176" cy="196" r="38" fill="#2f343e"/><circle cx="176" cy="196" r="15" fill="#c9d0da"/>
+           <circle cx="370" cy="196" r="38" fill="#2f343e"/><circle cx="370" cy="196" r="15" fill="#c9d0da"/></g>
+      </g>
+      <use class="twinkle d3" href="#spark" x="884" y="404" width="26" height="26"/>
+      <use href="#cone" x="460" y="664" width="56" height="70"/>
+      <use href="#cone" x="526" y="694" width="42" height="52"/>
+    </svg>
+
+    <!-- count, big -->
+    <div class="badge" style="left:914px; top:338px; width:96px; height:96px; font-size:60px; z-index:3; box-shadow: 0 0 0 7px #2e2b28, 0 0 0 14px #ffc21a, 0 0 0 17px #2e2b28, 0 10px 18px rgba(0,0,0,.28);">8</div>
+
+    <!-- next: the green lamp of a site traffic light -->
+    <div class="go" aria-label="Weiter">
+      <div class="lamp red"></div><div class="lamp amber"></div>
+      <div class="lamp green"><svg width="46" height="52" viewBox="0 0 46 52"><path d="M8 4 L42 26 L8 48 Z" fill="#fff" stroke="#fff" stroke-width="6" stroke-linejoin="round"/></svg></div>
+    </div>
+    <div style="position:absolute; left:1088px; top:730px; width:20px; height:90px; background:linear-gradient(90deg,#6c7480,#9aa3af,#6c7480); z-index:3;"></div>
+  </section>
+
+</div>
+
+<script>
+  const fit = () => document.documentElement.style.setProperty('--s', Math.min(1, (innerWidth - 32) / 1180))
+  addEventListener('resize', fit); fit()
+</script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leserina – Unter Wasser</title>
+<style>
+  @font-face { font-family: 'Andika'; src: url('fonts/andika-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Andika'; src: url('fonts/andika-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+
+  :root {
+    --ink: #15324a;
+    --shell: #fffaf2;
+    --deep: #0d5f7a;
+    --coral: #f47b68;
+    --sand: #f0d7a4;
+    --lilac: #a996e4;
+    --emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+    --title: 'Chalkboard SE', 'Marker Felt', 'Comic Sans MS', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #22252b; }
+  body { padding: 34px 16px 60px; font-family: 'Avenir Next', 'Avenir', 'Helvetica Neue', sans-serif; }
+
+  .stack { zoom: var(--s, 1); width: 1180px; margin: 0 auto; }
+
+  /* page heading */
+  .intro { margin: 0 0 30px; display: flex; align-items: baseline; gap: 22px; flex-wrap: wrap; }
+  .intro h1 {
+    margin: 0; font: 700 46px/1.1 var(--title);
+    background: linear-gradient(180deg, #b9f3ea 0%, #5fd0cb 55%, #2aa5b5 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    position: relative; padding-bottom: 12px;
+  }
+  .intro h1 svg { position: absolute; left: 0; bottom: 0; width: 100%; height: 12px; }
+  .intro p { margin: 0; color: #aeb9c4; font-size: 17px; line-height: 1.45; max-width: 64ch; }
+
+  .caption { color: #8fa0ad; font: 600 15px/1 'Avenir Next', 'Avenir', sans-serif; letter-spacing: .04em; margin: 0 0 10px 4px; }
+  .caption + .frame { margin-bottom: 28px; }
+
+  /* ---------- frame + water ---------- */
+  .frame {
+    width: 1180px; height: 820px; overflow: hidden; position: relative; border-radius: 18px;
+    background: linear-gradient(180deg, #a3ebe1 0%, #64d0cc 14%, #2fb0bd 40%, #1a92a9 66%, #127996 86%, #0e6a86 100%);
+    isolation: isolate;
+  }
+  .layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .rays { mix-blend-mode: soft-light; opacity: .9; animation: sway 9s ease-in-out infinite alternate; transform-origin: 50% 0; }
+  .rays2 { opacity: .35; }
+  @keyframes sway { from { transform: skewX(-2deg); } to { transform: skewX(2.5deg); } }
+
+  /* rising bubbles */
+  .bub {
+    position: absolute; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.75);
+    background: radial-gradient(circle at 32% 30%, rgba(255,255,255,.95) 0 14%, rgba(255,255,255,.18) 34%, rgba(255,255,255,.06) 70%);
+    animation: rise var(--t, 10s) linear infinite; animation-delay: var(--d, 0s);
+  }
+  @keyframes rise {
+    0% { transform: translate(0, 0); opacity: 0; }
+    8% { opacity: 1; }
+    50% { transform: translate(6px, -160px); }
+    85% { opacity: .9; }
+    100% { transform: translate(-4px, -330px); opacity: 0; }
+  }
+
+  .weed { position: absolute; bottom: 0; transform-origin: 50% 100%; animation: weed 6s ease-in-out infinite alternate; }
+  @keyframes weed { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+  .sand { position: absolute; left: 0; bottom: 0; width: 1180px; }
+  .deco { position: absolute; }
+
+  /* ---------- picture bubbles ---------- */
+  .pic {
+    position: absolute; width: 168px; height: 168px; border-radius: 50%;
+    display: grid; place-items: center;
+    font: 90px/1 var(--emoji);
+    background:
+      radial-gradient(circle at 50% 54%, rgba(255,255,255,.97) 0 50%, rgba(238,252,252,.95) 66%, rgba(196,238,243,.93) 88%, rgba(170,226,236,.95) 100%);
+    box-shadow:
+      inset 0 0 0 3px rgba(255,255,255,.9),
+      inset 0 0 0 7px rgba(255,214,236,.22),
+      inset -12px -18px 26px rgba(56,166,188,.24),
+      0 14px 22px rgba(3,52,72,.32);
+  }
+  .pic::before {
+    content: ''; position: absolute; left: 26px; top: 20px; width: 46px; height: 20px; border-radius: 50%;
+    background: linear-gradient(180deg, #fff, rgba(255,255,255,.4)); transform: rotate(-34deg);
+  }
+  .pic::after {
+    content: ''; position: absolute; left: 22px; top: 50px; width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.9);
+  }
+  .pic.sm { width: 90px; height: 90px; font-size: 52px; }
+  .pic.sm::before { left: 14px; top: 11px; width: 24px; height: 11px; }
+  .pic.sm::after { left: 11px; top: 27px; width: 6px; height: 6px; }
+
+  /* ---------- word fish ---------- */
+  .fish {
+    position: absolute; display: flex; align-items: center;
+    height: 84px; padding: 0 30px 3px 64px;
+    font: 400 48px/1 'Andika', sans-serif; color: var(--ink);
+    background: linear-gradient(180deg, #fffefb 0%, #fdf5ea 100%);
+    border-radius: 46px 30px 30px 46px / 42px;
+    box-shadow: inset 0 -6px 0 rgba(212,186,154,.45), inset 0 3px 0 #fff, 0 10px 16px rgba(3,52,72,.32);
+  }
+  .fish .tail { position: absolute; right: -40px; top: 50%; width: 46px; height: 72px; margin-top: -36px; overflow: visible; }
+  .fish .fin  { position: absolute; left: 44%; top: -15px; width: 52px; height: 20px; overflow: visible; }
+  .fish .eye {
+    position: absolute; left: 22px; top: 26px; width: 15px; height: 15px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 32%, #fff 0 22%, #1d3348 26%);
+  }
+  .fish .cheek { position: absolute; left: 18px; top: 47px; width: 18px; height: 9px; border-radius: 50%; background: rgba(255,150,140,.35); }
+  .fish .gill { position: absolute; left: 42px; top: 17px; width: 12px; height: 50px; border-right: 3px solid rgba(208,176,140,.55); border-radius: 0 50% 50% 0; }
+  .fish.drag {
+    transform: rotate(-5deg) scale(1.07); z-index: 5;
+    box-shadow: inset 0 -6px 0 rgba(212,186,154,.45), inset 0 3px 0 #fff, 0 30px 34px rgba(2,38,56,.42);
+  }
+  .fish.sm { height: 60px; padding: 0 20px 2px 46px; font-size: 34px; border-radius: 33px 22px 22px 33px / 30px; }
+  .fish.sm .tail { right: -30px; width: 34px; height: 52px; margin-top: -26px; }
+  .fish.sm .fin { top: -11px; width: 38px; height: 15px; }
+  .fish.sm .eye { left: 15px; top: 18px; width: 11px; height: 11px; }
+  .fish.sm .cheek { left: 12px; top: 33px; width: 13px; height: 7px; }
+  .fish.sm .gill { left: 30px; top: 12px; width: 9px; height: 36px; border-right-width: 2.5px; }
+
+  /* ---------- top bar ---------- */
+  .home {
+    position: absolute; left: 24px; top: 20px; width: 76px; height: 76px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 55%, rgba(255,255,255,.95) 0 52%, rgba(208,244,246,.92) 100%);
+    box-shadow: inset 0 0 0 3px #fff, inset -6px -9px 14px rgba(56,166,188,.25), 0 8px 14px rgba(3,52,72,.25);
+  }
+  .home svg { width: 40px; height: 40px; }
+  .progress { position: absolute; left: 114px; top: 2px; width: 162px; height: 128px; filter: drop-shadow(0 6px 8px rgba(3,52,72,.28)); }
+  .collection { position: absolute; right: 30px; top: 10px; width: 128px; height: 96px; filter: drop-shadow(0 6px 8px rgba(3,52,72,.28)); }
+  .collection svg { width: 100%; height: 100%; }
+  .badge {
+    position: absolute; right: -10px; top: -4px; width: 50px; height: 50px; border-radius: 50%;
+    display: grid; place-items: center; font: 700 29px/1 'Andika', sans-serif; color: var(--ink);
+    background: radial-gradient(circle at 36% 30%, #fff 0 30%, #f5eef0 62%, #e2d6e2 100%);
+    box-shadow: 0 0 0 3px #fff, 0 4px 8px rgba(40,30,90,.3);
+  }
+
+  /* ---------- bottom strip ---------- */
+  .pair { position: absolute; display: flex; align-items: center; gap: 14px; }
+  .pair > .pic, .pair > .fish { position: relative; }
+
+  /* ---------- start ---------- */
+  .title { position: absolute; left: 190px; top: 66px; width: 800px; height: 230px; overflow: visible; }
+  .title text { font: 700 128px var(--title); letter-spacing: 2px; }
+  .kid { position: absolute; top: 300px; width: 240px; display: flex; flex-direction: column; align-items: center; }
+  .avatar {
+    position: relative; width: 208px; height: 208px; border-radius: 50%; display: grid; place-items: center;
+    font: 118px/1 var(--emoji);
+    background: radial-gradient(circle at 50% 54%, rgba(255,255,255,.97) 0 52%, rgba(238,252,252,.95) 68%, rgba(190,236,242,.93) 100%);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.9), inset 0 0 0 9px rgba(255,214,236,.22), inset -14px -20px 30px rgba(56,166,188,.24), 0 16px 26px rgba(3,52,72,.32);
+  }
+  .avatar::before {
+    content: ''; position: absolute; left: 32px; top: 26px; width: 56px; height: 24px; border-radius: 50%;
+    background: linear-gradient(180deg, #fff, rgba(255,255,255,.4)); transform: rotate(-34deg);
+  }
+  .avatar::after { content: ''; position: absolute; left: 27px; top: 64px; width: 12px; height: 12px; border-radius: 50%; background: rgba(255,255,255,.9); }
+  .count {
+    position: absolute; right: -8px; bottom: 4px; display: flex; align-items: center; gap: 4px;
+    height: 46px; padding: 0 14px 0 6px; border-radius: 23px;
+    background: #fffaf2; box-shadow: inset 0 -3px 0 rgba(212,186,154,.45), 0 5px 10px rgba(3,52,72,.3);
+    font: 700 26px/1 'Andika', sans-serif; color: var(--ink);
+  }
+  .count svg { width: 44px; height: 35px; }
+  .name {
+    margin-top: 22px; padding: 6px 28px 10px; border-radius: 26px;
+    font: 400 44px/1.05 'Andika', sans-serif; color: var(--ink);
+    background: linear-gradient(180deg, #fffefb, #fdf5ea);
+    box-shadow: inset 0 -5px 0 rgba(212,186,154,.45), 0 8px 14px rgba(3,52,72,.28);
+  }
+  .lock { position: absolute; right: 18px; bottom: 14px; width: 64px; height: 64px; display: grid; place-items: center; }
+  .lock svg { width: 28px; height: 30px; }
+
+  /* ---------- reward ---------- */
+  .halo { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,250,220,.75) 0, rgba(255,246,210,.35) 35%, rgba(255,240,200,0) 68%); animation: pulse 3.5s ease-in-out infinite alternate; }
+  @keyframes pulse { from { transform: scale(.96); opacity: .85; } to { transform: scale(1.04); opacity: 1; } }
+  .bigshell { position: absolute; left: 96px; top: 176px; width: 420px; height: 332px; filter: drop-shadow(0 18px 22px rgba(3,52,72,.35)); transform: rotate(-4deg); }
+  .twinkle { position: absolute; animation: tw 2.4s ease-in-out infinite alternate; animation-delay: var(--d, 0s); }
+  @keyframes tw { from { transform: scale(.75) rotate(0deg); opacity: .6; } to { transform: scale(1.1) rotate(20deg); opacity: 1; } }
+  .chest { position: absolute; left: 614px; top: 150px; width: 500px; height: 365px; filter: drop-shadow(0 18px 22px rgba(30,20,80,.32)); }
+  .chest > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .chest .item { position: absolute; width: 80px; height: 63px; filter: drop-shadow(0 4px 4px rgba(120,60,90,.28)); }
+  .chest .badge { width: 82px; height: 82px; font-size: 48px; right: -8px; top: 8px; box-shadow: 0 0 0 4px #fff, 0 6px 12px rgba(40,30,90,.32); }
+  .play {
+    position: absolute; left: 520px; top: 600px; width: 140px; height: 140px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: radial-gradient(circle at 40% 34%, #ffc2b2 0, #ff9a83 40%, #ef6f5c 100%);
+    box-shadow: inset 0 0 0 5px rgba(255,255,255,.65), inset -10px -14px 22px rgba(170,50,40,.25), 0 16px 26px rgba(3,52,72,.38);
+  }
+  .play::before { content: ''; position: absolute; left: 30px; top: 22px; width: 40px; height: 17px; border-radius: 50%; background: rgba(255,255,255,.75); transform: rotate(-34deg); }
+  .play svg { width: 64px; height: 64px; margin-left: 10px; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- shared drawings -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gRay" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".9"/>
+      <stop offset=".55" stop-color="#fff" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="fBlur" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur stdDeviation="14"/></filter>
+    <linearGradient id="gSand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7e3b5"/>
+      <stop offset=".35" stop-color="#efd39b"/>
+      <stop offset="1" stop-color="#ddb97c"/>
+    </linearGradient>
+    <pattern id="pGrain" width="22" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="5" r="1.3" fill="#c99f62" opacity=".45"/>
+      <circle cx="15" cy="12" r="1" fill="#fff6dd" opacity=".8"/>
+      <circle cx="11" cy="3" r=".8" fill="#b88f55" opacity=".35"/>
+    </pattern>
+    <!-- scallop -->
+    <linearGradient id="gLidA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe3cf"/><stop offset="1" stop-color="#ffc9ab"/></linearGradient>
+    <linearGradient id="gLidB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2b6"/><stop offset="1" stop-color="#f9b08f"/></linearGradient>
+    <linearGradient id="gSkirt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcfb3"/><stop offset="1" stop-color="#f2a382"/></linearGradient>
+    <radialGradient id="gNacre" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#fffaf7"/><stop offset=".6" stop-color="#fbe0e2"/><stop offset="1" stop-color="#f0c3d2"/></radialGradient>
+    <radialGradient id="gPearl" cx=".36" cy=".32" r=".75"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#fbf7f2"/><stop offset=".8" stop-color="#e9e0e6"/><stop offset="1" stop-color="#cdbfd2"/></radialGradient>
+    <g id="pearl">
+      <ellipse cx="0" cy="11" rx="12" ry="4" fill="#c7889c" opacity=".45"/>
+      <circle r="14.5" fill="url(#gPearl)" stroke="#c9b2c6" stroke-width="1.4"/>
+      <ellipse cx="-4.5" cy="-5" rx="4.5" ry="3" fill="#fff" transform="rotate(-30 -4.5 -5)"/>
+      <circle cx="5" cy="5" r="1.6" fill="#fff" opacity=".8"/>
+    </g>
+    <g id="pocket">
+      <ellipse cx="0" cy="1" rx="13.5" ry="10" fill="#e9b3c3" stroke="#d48aa2" stroke-width="1.6"/>
+      <ellipse cx="0" cy="4" rx="9" ry="5" fill="#fff" opacity=".4"/>
+    </g>
+    <g id="scallop">
+      <g stroke="#e58f6c" stroke-width="2" stroke-linejoin="round">
+        <path fill="url(#gLidA)" d="M100,88 L10.0,71.0 Q2.7,55.3 19.8,47.8 Z"/>
+        <path fill="url(#gLidB)" d="M100,88 L19.8,47.8 Q18.1,31.0 36.9,28.4 Z"/>
+        <path fill="url(#gLidA)" d="M100,88 L36.9,28.4 Q40.9,11.8 59.7,14.3 Z"/>
+        <path fill="url(#gLidB)" d="M100,88 L59.7,14.3 Q69.0,-0.5 86.1,6.9 Z"/>
+        <path fill="url(#gLidA)" d="M100,88 L86.1,6.9 Q100.0,-4.7 113.9,6.9 Z"/>
+        <path fill="url(#gLidB)" d="M100,88 L113.9,6.9 Q131.0,-0.5 140.3,14.3 Z"/>
+        <path fill="url(#gLidA)" d="M100,88 L140.3,14.3 Q159.1,11.8 163.1,28.4 Z"/>
+        <path fill="url(#gLidB)" d="M100,88 L163.1,28.4 Q181.9,31.0 180.2,47.8 Z"/>
+        <path fill="url(#gLidA)" d="M100,88 L180.2,47.8 Q197.3,55.3 190.0,71.0 Z"/>
+      </g>
+      <path d="M10,92 C16,132 66,148 100,148 C134,148 184,132 190,92 Z" fill="url(#gSkirt)" stroke="#e58f6c" stroke-width="2"/>
+      <g stroke="#e8946f" stroke-width="2" fill="none" opacity=".7" stroke-linecap="round">
+        <path d="M100,147 Q60,138 30,114"/><path d="M100,147 Q72,140 54,124"/><path d="M100,147 Q86,142 78,130"/>
+        <path d="M100,147 L100,132"/><path d="M100,147 Q114,142 122,130"/><path d="M100,147 Q128,140 146,124"/><path d="M100,147 Q140,138 170,114"/>
+      </g>
+      <ellipse cx="100" cy="92" rx="90" ry="27" fill="#ffd9c6" stroke="#e58f6c" stroke-width="2"/>
+      <ellipse cx="100" cy="93" rx="84" ry="23" fill="url(#gNacre)"/>
+      <path d="M30,84 Q100,64 170,84" stroke="#fff" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round"/>
+      <use href="#pocket" x="38" y="96"/><use href="#pocket" x="69" y="101"/><use href="#pocket" x="100" y="103"/><use href="#pocket" x="131" y="101"/><use href="#pocket" x="162" y="96"/>
+    </g>
+    <g id="scallopFull">
+      <use href="#scallop"/>
+      <use href="#pearl" x="38" y="94"/><use href="#pearl" x="69" y="99"/><use href="#pearl" x="100" y="101"/><use href="#pearl" x="131" y="99"/><use href="#pearl" x="162" y="94"/>
+    </g>
+    <!-- giant clam -->
+    <linearGradient id="gClamTop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ccf7"/><stop offset="1" stop-color="#a995e6"/></linearGradient>
+    <linearGradient id="gClamBot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b3a1ec"/><stop offset="1" stop-color="#8670d0"/></linearGradient>
+    <linearGradient id="gClamA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ddd1f9"/><stop offset="1" stop-color="#b6a4ee"/></linearGradient>
+    <linearGradient id="gClamB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cbbcf4"/><stop offset="1" stop-color="#9f8be2"/></linearGradient>
+    <radialGradient id="gClamIn" cx=".5" cy=".45" r=".62"><stop offset="0" stop-color="#fffbfa"/><stop offset=".55" stop-color="#f8e6f0"/><stop offset="1" stop-color="#dcc6ee"/></radialGradient>
+    <g id="clamClosed">
+      <path d="M12,78 L34,87 L56,69 L78,87 L100,69 L122,87 L144,69 L166,87 L188,78 L188,86 L166,95 L144,77 L122,95 L100,77 L78,95 L56,77 L34,95 L12,86 Z" fill="#4a347f"/>
+      <circle cx="56" cy="78" r="3" fill="#fff"/><circle cx="100" cy="78" r="3.5" fill="#fff"/><circle cx="144" cy="78" r="3" fill="#fff"/>
+      <path d="M12,86 L34,95 L56,77 L78,95 L100,77 L122,95 L144,77 L166,95 L188,86 C186,122 150,146 100,146 C50,146 14,122 12,86 Z" fill="url(#gClamBot)" stroke="#6c56b4" stroke-width="2.5" stroke-linejoin="round"/>
+      <path d="M12,78 L34,87 L56,69 L78,87 L100,69 L122,87 L144,69 L166,87 L188,78 C190,34 152,6 100,6 C48,6 10,34 12,78 Z" fill="url(#gClamTop)" stroke="#6c56b4" stroke-width="2.5" stroke-linejoin="round"/>
+      <g stroke="#7a63c0" stroke-width="2.5" fill="none" opacity=".45" stroke-linecap="round">
+        <path d="M100,12 Q44,28 34,84"/><path d="M100,12 Q64,30 56,69"/><path d="M100,12 Q84,34 78,84"/><path d="M100,12 L100,69"/><path d="M100,12 Q116,34 122,84"/><path d="M100,12 Q136,30 144,69"/><path d="M100,12 Q156,28 166,84"/>
+        <path d="M100,142 Q60,130 34,98"/><path d="M100,142 Q66,124 56,80"/><path d="M100,142 Q84,126 78,98"/><path d="M100,142 L100,80"/><path d="M100,142 Q116,126 122,98"/><path d="M100,142 Q134,124 144,80"/><path d="M100,142 Q140,130 166,98"/>
+      </g>
+      <path d="M40,30 Q70,14 104,14" stroke="#fff" stroke-width="5" fill="none" opacity=".55" stroke-linecap="round"/>
+    </g>
+    <!-- starfish, pebble, little buddy fish -->
+    <g id="star">
+      <path d="M40.0,6.0 L48.8,27.9 L72.3,29.5 L54.3,44.6 L60.0,67.5 L40.0,55.0 L20.0,67.5 L25.7,44.6 L7.7,29.5 L31.2,27.9 Z" fill="#ff9b78" stroke="#ff9b78" stroke-width="10" stroke-linejoin="round"/>
+      <path d="M40.0,6.0 L48.8,27.9 L72.3,29.5 L54.3,44.6 L60.0,67.5 L40.0,55.0 L20.0,67.5 L25.7,44.6 L7.7,29.5 L31.2,27.9 Z" fill="#ffad8c"/>
+      <g fill="#fff3e2"><circle cx="40" cy="18" r="2.4"/><circle cx="40" cy="28" r="2"/><circle cx="60" cy="33" r="2.2"/><circle cx="20" cy="33" r="2.2"/><circle cx="53" cy="56" r="2.2"/><circle cx="27" cy="56" r="2.2"/></g>
+      <circle cx="35" cy="39" r="2.4" fill="#5a2e2a"/><circle cx="45" cy="39" r="2.4" fill="#5a2e2a"/>
+      <path d="M35.5,45 Q40,49 44.5,45" stroke="#5a2e2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="buddy">
+      <path d="M86,40 L114,20 Q108,40 114,60 Z" fill="currentColor" opacity=".85"/>
+      <ellipse cx="52" cy="40" rx="40" ry="27" fill="currentColor"/>
+      <path d="M44,14 Q56,2 72,16" fill="currentColor" opacity=".85"/>
+      <path d="M58,15 Q66,40 58,65" stroke="#fff" stroke-width="7" fill="none" opacity=".75"/>
+      <circle cx="30" cy="34" r="7" fill="#fff"/><circle cx="28" cy="34" r="4" fill="#1d3348"/><circle cx="27" cy="32.5" r="1.4" fill="#fff"/>
+      <path d="M17,48 Q24,54 31,49" stroke="#1d3348" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="sparkle"><path d="M20,0 Q22,18 40,20 Q22,22 20,40 Q18,22 0,20 Q18,18 20,0 Z" fill="#fff6c8"/></g>
+    <!-- rays and surface -->
+    <g id="rays" filter="url(#fBlur)" fill="url(#gRay)">
+      <polygon points="150,0 250,0 470,820 250,820"/>
+      <polygon points="380,0 450,0 610,820 470,820"/>
+      <polygon points="560,0 690,0 900,820 700,820"/>
+      <polygon points="820,0 880,0 1040,820 940,820"/>
+      <polygon points="990,0 1090,0 1250,820 1100,820"/>
+    </g>
+    <path id="surface" d="M0,18 Q15,28 30,18 T60,18 T90,18 T120,18 T150,18 T180,18 T210,18 T240,18 T270,18 T300,18 T330,18 T360,18 T390,18 T420,18 T450,18 T480,18 T510,18 T540,18 T570,18 T600,18 T630,18 T660,18 T690,18 T720,18 T750,18 T780,18 T810,18 T840,18 T870,18 T900,18 T930,18 T960,18 T990,18 T1020,18 T1050,18 T1080,18 T1110,18 T1140,18 T1170,18 T1200,18 V0 H0 Z"/>
+    <!-- fish parts -->
+    <path id="tail" d="M4,36 C12,26 20,8 44,3 C37,20 37,52 44,69 C20,64 12,46 4,36 Z"/>
+    <path id="fin" d="M2,20 C10,6 26,0 50,4 C40,9 34,14 32,20 Z"/>
+  </defs>
+</svg>
+
+<div class="stack">
+
+  <header class="intro">
+    <h1>Unter Wasser
+      <svg viewBox="0 0 300 12" preserveAspectRatio="none"><path d="M2,6 Q14,0 26,6 T50,6 T74,6 T98,6 T122,6 T146,6 T170,6 T194,6 T218,6 T242,6 T266,6 T290,6" stroke="#5fd0cb" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+    </h1>
+    <p>The game sinks to the sea floor: pictures float in air bubbles, words swim as little fish, and every finished round fills a scallop with pearls for the child's giant clam.</p>
+  </header>
+
+  <!-- ===================== SPIEL ===================== -->
+  <div class="caption">Spiel</div>
+  <section class="frame" id="spiel">
+    <svg class="layer rays" viewBox="0 0 1180 820" preserveAspectRatio="none"><use href="#rays"/></svg>
+    <svg class="layer" viewBox="0 0 1180 820" preserveAspectRatio="none">
+      <use href="#surface" fill="#e9fffb" opacity=".45"/>
+      <path d="M0,640 C90,600 160,622 240,606 C330,588 380,624 470,612 C560,600 620,574 720,592 C810,608 880,584 980,596 C1060,606 1120,586 1180,598 V820 H0 Z" fill="#0f6f8c" opacity=".38"/>
+    </svg>
+
+    <!-- seaweed left, coral right -->
+    <svg class="weed" style="left:-6px; width:110px; height:330px" viewBox="0 0 110 330">
+      <path d="M30,330 C10,280 50,250 28,200 C8,152 46,118 26,70 C18,50 26,30 34,14" stroke="#2f9a73" stroke-width="16" fill="none" stroke-linecap="round"/>
+      <path d="M66,330 C84,290 52,262 70,222 C86,186 58,160 72,124" stroke="#43b384" stroke-width="13" fill="none" stroke-linecap="round"/>
+      <path d="M12,330 C20,300 2,284 10,258" stroke="#2a8566" stroke-width="11" fill="none" stroke-linecap="round"/>
+    </svg>
+    <svg class="weed" style="right:-4px; width:90px; height:250px; animation-delay:-3s" viewBox="0 0 90 250">
+      <path d="M50,250 C70,206 34,180 54,136 C70,100 42,80 56,40" stroke="#2f9a73" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <path d="M78,250 C66,220 86,200 76,170" stroke="#43b384" stroke-width="11" fill="none" stroke-linecap="round"/>
+    </svg>
+
+    <!-- bubbles at the edges -->
+    <span class="bub" style="left:58px; top:560px; width:16px; height:16px; --t:11s; --d:-2s"></span>
+    <span class="bub" style="left:86px; top:470px; width:10px; height:10px; --t:9s; --d:-6s"></span>
+    <span class="bub" style="left:40px; top:360px; width:22px; height:22px; --t:13s; --d:-4s"></span>
+    <span class="bub" style="left:1110px; top:520px; width:14px; height:14px; --t:10s; --d:-1s"></span>
+    <span class="bub" style="left:1134px; top:390px; width:24px; height:24px; --t:14s; --d:-8s"></span>
+    <span class="bub" style="left:1090px; top:300px; width:9px; height:9px; --t:8s; --d:-3s"></span>
+    <span class="bub" style="left:640px; top:640px; width:11px; height:11px; --t:12s; --d:-7s"></span>
+
+    <!-- top bar -->
+    <div class="home" aria-label="Nach Hause">
+      <svg viewBox="0 0 40 40"><path d="M6,19 L20,7 L34,19 M10,16 V33 H30 V16" stroke="#0f5f78" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M17,33 V25 Q20,22 23,25 V33" fill="#0f5f78"/></svg>
+    </div>
+    <svg class="progress" viewBox="0 -8 200 158" aria-label="2 von 5 Perlen">
+      <use href="#scallop"/>
+      <use href="#pearl" x="38" y="94"/><use href="#pearl" x="69" y="99"/>
+    </svg>
+    <div class="collection" aria-label="Sammlung: 7">
+      <svg viewBox="0 0 200 150"><use href="#clamClosed"/></svg>
+      <div class="badge">7</div>
+    </div>
+
+    <!-- play area: pictures -->
+    <div class="pic" style="left:150px; top:150px">🐳</div>
+    <div class="pic" style="left:856px; top:140px">🐧</div>
+    <div class="pic" style="left:330px; top:456px">🐟</div>
+
+    <!-- play area: words -->
+    <div class="fish" style="left:456px; top:212px; --fin:#cbc1f3; transform: rotate(2deg)">
+      <span class="eye"></span><span class="cheek"></span><span class="gill"></span>Pinguin
+      <svg class="fin" viewBox="0 0 52 20"><use href="#fin" fill="#cbc1f3" stroke="#a796dc" stroke-width="2"/></svg>
+      <svg class="tail" viewBox="0 0 46 72"><use href="#tail" fill="#cbc1f3" stroke="#a796dc" stroke-width="2"/></svg>
+    </div>
+    <div class="fish" style="left:776px; top:548px; transform: rotate(-2deg)">
+      <span class="eye"></span><span class="cheek"></span><span class="gill"></span>Wal
+      <svg class="fin" viewBox="0 0 52 20"><use href="#fin" fill="#ffc9a8" stroke="#eba07a" stroke-width="2"/></svg>
+      <svg class="tail" viewBox="0 0 46 72"><use href="#tail" fill="#ffc9a8" stroke="#eba07a" stroke-width="2"/></svg>
+    </div>
+    <!-- dragged word, with a little bubble trail behind it -->
+    <span class="bub" style="left:842px; top:404px; width:18px; height:18px; animation:none"></span>
+    <span class="bub" style="left:874px; top:384px; width:12px; height:12px; animation:none"></span>
+    <span class="bub" style="left:896px; top:396px; width:8px; height:8px; animation:none"></span>
+    <div class="fish drag" style="left:566px; top:402px">
+      <span class="eye"></span><span class="cheek"></span><span class="gill"></span>Fisch
+      <svg class="fin" viewBox="0 0 52 20"><use href="#fin" fill="#ffe08a" stroke="#e5bb4e" stroke-width="2"/></svg>
+      <svg class="tail" viewBox="0 0 46 72"><use href="#tail" fill="#ffe08a" stroke="#e5bb4e" stroke-width="2"/></svg>
+    </div>
+
+    <!-- bottom strip: sea floor -->
+    <svg class="sand" style="height:160px" viewBox="0 0 1180 160" preserveAspectRatio="none">
+      <path d="M0,26 C120,8 250,22 380,18 C520,12 640,34 800,24 C940,16 1060,6 1180,20 V160 H0 Z" fill="url(#gSand)"/>
+      <path d="M0,26 C120,8 250,22 380,18 C520,12 640,34 800,24 C940,16 1060,6 1180,20 V160 H0 Z" fill="url(#pGrain)"/>
+      <path d="M0,26 C120,8 250,22 380,18 C520,12 640,34 800,24 C940,16 1060,6 1180,20" stroke="#fff4d6" stroke-width="3" fill="none"/>
+      <g stroke="#d7b277" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".7">
+        <path d="M40,132 Q80,124 120,132"/><path d="M380,140 Q430,130 480,140"/><path d="M700,128 Q740,120 780,128"/><path d="M1000,146 Q1050,136 1100,146"/>
+      </g>
+    </svg>
+    <svg class="deco" style="left:34px; top:772px; width:46px; height:26px" viewBox="0 0 46 26"><ellipse cx="23" cy="15" rx="21" ry="10" fill="#9fb3b8"/><ellipse cx="18" cy="11" rx="9" ry="4" fill="#c7d6d8"/></svg>
+    <svg class="deco" style="left:72px; top:788px; width:26px; height:18px" viewBox="0 0 26 18"><ellipse cx="13" cy="10" rx="12" ry="7" fill="#c9a37a"/></svg>
+    <svg class="deco" style="left:446px; top:780px; width:38px; height:22px" viewBox="0 0 38 22"><ellipse cx="19" cy="12" rx="17" ry="9" fill="#b9a7c9"/><ellipse cx="14" cy="9" rx="7" ry="3" fill="#ddd2e8"/></svg>
+    <svg class="deco" style="right:40px; top:610px; width:120px; height:150px" viewBox="0 0 120 150">
+      <g stroke="#ff8f7e" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M60,150 L60,92 L40,62 L36,30"/><path d="M40,62 L18,46"/><path d="M60,92 L82,56 L80,22"/><path d="M82,56 L104,42"/>
+      </g>
+      <g fill="#ffb3a4"><circle cx="36" cy="30" r="5"/><circle cx="18" cy="46" r="5"/><circle cx="80" cy="22" r="5"/><circle cx="104" cy="42" r="5"/></g>
+    </svg>
+    <svg class="deco" style="left:850px; top:712px; width:80px; height:80px; transform: rotate(14deg)" viewBox="0 0 80 80"><use href="#star"/></svg>
+    <svg class="deco" style="left:972px; top:760px; width:52px; height:40px; transform: rotate(-10deg)" viewBox="0 -8 200 158"><use href="#scallop"/></svg>
+
+    <div class="pair" style="left:124px; top:712px">
+      <div class="pic sm">🚢</div>
+      <div class="fish sm">
+        <span class="eye"></span><span class="cheek"></span><span class="gill"></span>Schiff
+        <svg class="fin" viewBox="0 0 52 20"><use href="#fin" fill="#a9e4d7" stroke="#6fc3b1" stroke-width="2"/></svg>
+        <svg class="tail" viewBox="0 0 46 72"><use href="#tail" fill="#a9e4d7" stroke="#6fc3b1" stroke-width="2"/></svg>
+      </div>
+    </div>
+    <div class="pair" style="left:520px; top:712px">
+      <div class="pic sm">🦆</div>
+      <div class="fish sm">
+        <span class="eye"></span><span class="cheek"></span><span class="gill"></span>Ente
+        <svg class="fin" viewBox="0 0 52 20"><use href="#fin" fill="#ffe08a" stroke="#e5bb4e" stroke-width="2"/></svg>
+        <svg class="tail" viewBox="0 0 46 72"><use href="#tail" fill="#ffe08a" stroke="#e5bb4e" stroke-width="2"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== START ===================== -->
+  <div class="caption">Start</div>
+  <section class="frame" id="start">
+    <svg class="layer rays" viewBox="0 0 1180 820" preserveAspectRatio="none"><use href="#rays"/></svg>
+    <svg class="layer" viewBox="0 0 1180 820" preserveAspectRatio="none">
+      <use href="#surface" fill="#e9fffb" opacity=".45"/>
+      <path d="M0,660 C90,620 160,640 240,626 C330,608 380,644 470,632 C560,620 620,594 720,612 C810,628 880,604 980,616 C1060,626 1120,606 1180,618 V820 H0 Z" fill="#0f6f8c" opacity=".38"/>
+    </svg>
+    <!-- a far-away school of fish -->
+    <svg class="deco" style="left:930px; top:120px; width:170px; height:90px; opacity:.32" viewBox="0 0 170 90">
+      <use href="#buddy" transform="translate(0,0) scale(.42)" color="#0d5f7a"/>
+      <use href="#buddy" transform="translate(54,26) scale(.36)" color="#0d5f7a"/>
+      <use href="#buddy" transform="translate(100,6) scale(.32)" color="#0d5f7a"/>
+      <use href="#buddy" transform="translate(30,56) scale(.3)" color="#0d5f7a"/>
+    </svg>
+    <svg class="deco" style="left:70px; top:200px; width:120px; height:80px; transform: scaleX(-1)" viewBox="0 0 120 80"><use href="#buddy" color="#ffb26b"/></svg>
+
+    <svg class="title" viewBox="0 0 800 230" aria-label="Leserina">
+      <defs><path id="titleWave" d="M30,160 C150,80 260,80 400,140 S650,200 770,110"/></defs>
+      <text text-anchor="middle" fill="#0d5f7a" opacity=".35" transform="translate(4,8)"><textPath href="#titleWave" startOffset="50%">Leserina</textPath></text>
+      <text text-anchor="middle" fill="#fffaf2" stroke="#0f6f8c" stroke-width="8" paint-order="stroke" stroke-linejoin="round"><textPath href="#titleWave" startOffset="50%">Leserina</textPath></text>
+    </svg>
+
+    <span class="bub" style="left:120px; top:520px; width:18px; height:18px; --t:11s; --d:-3s"></span>
+    <span class="bub" style="left:1060px; top:560px; width:22px; height:22px; --t:12s; --d:-5s"></span>
+    <span class="bub" style="left:1090px; top:430px; width:11px; height:11px; --t:9s; --d:-1s"></span>
+    <span class="bub" style="left:84px; top:420px; width:12px; height:12px; --t:10s; --d:-7s"></span>
+    <span class="bub" style="left:600px; top:280px; width:10px; height:10px; --t:13s; --d:-9s"></span>
+
+    <div class="kid" style="left:210px">
+      <div class="avatar">🦊<div class="count"><svg viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>7</div></div>
+      <div class="name">Lena</div>
+    </div>
+    <div class="kid" style="left:470px">
+      <div class="avatar">🐼<div class="count"><svg viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>3</div></div>
+      <div class="name">Max</div>
+    </div>
+    <div class="kid" style="left:730px">
+      <div class="avatar">🦄<div class="count"><svg viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>12</div></div>
+      <div class="name">Mia</div>
+    </div>
+
+    <svg class="weed" style="left:-6px; width:110px; height:300px" viewBox="0 0 110 300">
+      <path d="M30,300 C10,250 50,220 28,170 C8,122 46,88 30,40" stroke="#2f9a73" stroke-width="16" fill="none" stroke-linecap="round"/>
+      <path d="M68,300 C84,262 54,236 72,196" stroke="#43b384" stroke-width="13" fill="none" stroke-linecap="round"/>
+    </svg>
+    <svg class="weed" style="right:-4px; width:100px; height:260px; animation-delay:-2s" viewBox="0 0 100 260">
+      <path d="M56,260 C76,214 40,190 60,144 C76,106 48,86 62,46" stroke="#2f9a73" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <path d="M24,260 C36,230 14,206 26,176" stroke="#43b384" stroke-width="11" fill="none" stroke-linecap="round"/>
+    </svg>
+
+    <svg class="sand" style="height:140px" viewBox="0 0 1180 140" preserveAspectRatio="none">
+      <path d="M0,40 C150,18 300,36 460,30 C640,22 760,44 920,32 C1040,24 1110,20 1180,30 V140 H0 Z" fill="url(#gSand)"/>
+      <path d="M0,40 C150,18 300,36 460,30 C640,22 760,44 920,32 C1040,24 1110,20 1180,30 V140 H0 Z" fill="url(#pGrain)"/>
+      <path d="M0,40 C150,18 300,36 460,30 C640,22 760,44 920,32 C1040,24 1110,20 1180,30" stroke="#fff4d6" stroke-width="3" fill="none"/>
+    </svg>
+    <svg class="deco" style="left:150px; bottom:40px; width:110px; height:120px" viewBox="0 0 120 150">
+      <g stroke="#f6a4c0" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M60,150 L60,92 L40,62 L36,30"/><path d="M40,62 L18,46"/><path d="M60,92 L82,56 L80,22"/><path d="M82,56 L104,42"/>
+      </g>
+    </svg>
+    <svg class="deco" style="left:880px; top:722px; width:72px; height:72px; transform: rotate(-12deg)" viewBox="0 0 80 80"><use href="#star"/></svg>
+    <svg class="deco" style="left:560px; top:756px; width:46px; height:26px" viewBox="0 0 46 26"><ellipse cx="23" cy="15" rx="21" ry="10" fill="#9fb3b8"/><ellipse cx="18" cy="11" rx="9" ry="4" fill="#c7d6d8"/></svg>
+    <svg class="deco" style="left:600px; top:770px; width:28px; height:18px" viewBox="0 0 26 18"><ellipse cx="13" cy="10" rx="12" ry="7" fill="#c9a37a"/></svg>
+
+    <div class="lock" aria-label="Eltern">
+      <svg viewBox="0 0 28 30"><path d="M7,13 V9 a7,7 0 0 1 14,0 V13" stroke="#a5824f" stroke-width="3.4" fill="none" stroke-linecap="round"/><rect x="3" y="13" width="22" height="16" rx="4" fill="#a5824f"/></svg>
+    </div>
+  </section>
+
+  <!-- ===================== BELOHNUNG ===================== -->
+  <div class="caption">Belohnung</div>
+  <section class="frame" id="belohnung">
+    <svg class="layer rays" viewBox="0 0 1180 820" preserveAspectRatio="none"><use href="#rays"/></svg>
+    <svg class="layer" viewBox="0 0 1180 820" preserveAspectRatio="none">
+      <use href="#surface" fill="#e9fffb" opacity=".45"/>
+      <path d="M0,640 C90,600 160,622 240,606 C330,588 380,624 470,612 C560,600 620,574 720,592 C810,608 880,584 980,596 C1060,606 1120,586 1180,598 V820 H0 Z" fill="#0f6f8c" opacity=".38"/>
+    </svg>
+
+    <svg class="deco" style="left:40px; top:70px; width:110px; height:74px" viewBox="0 0 120 80"><use href="#buddy" color="#ffb26b"/></svg>
+    <svg class="deco" style="left:1040px; top:56px; width:96px; height:64px; transform: scaleX(-1)" viewBox="0 0 120 80"><use href="#buddy" color="#ffd75e"/></svg>
+
+    <div class="halo" style="left:16px; top:84px; width:580px; height:520px"></div>
+    <svg class="bigshell" viewBox="0 -8 200 158" aria-label="5 von 5 Perlen"><use href="#scallopFull"/></svg>
+    <svg class="twinkle" style="left:96px; top:180px; width:40px; height:40px; --d:-.4s" viewBox="0 0 40 40"><use href="#sparkle"/></svg>
+    <svg class="twinkle" style="left:470px; top:206px; width:30px; height:30px; --d:-1.2s" viewBox="0 0 40 40"><use href="#sparkle"/></svg>
+    <svg class="twinkle" style="left:250px; top:132px; width:26px; height:26px; --d:-2s" viewBox="0 0 40 40"><use href="#sparkle"/></svg>
+    <svg class="twinkle" style="left:494px; top:446px; width:34px; height:34px; --d:-.8s" viewBox="0 0 40 40"><use href="#sparkle"/></svg>
+    <svg class="twinkle" style="left:80px; top:440px; width:24px; height:24px; --d:-1.6s" viewBox="0 0 40 40"><use href="#sparkle"/></svg>
+
+    <!-- bubble trail from the shell into the clam -->
+    <span class="bub" style="left:520px; top:300px; width:14px; height:14px; animation:none"></span>
+    <span class="bub" style="left:548px; top:270px; width:18px; height:18px; animation:none"></span>
+    <span class="bub" style="left:582px; top:252px; width:22px; height:22px; animation:none"></span>
+    <span class="bub" style="left:620px; top:250px; width:16px; height:16px; animation:none"></span>
+
+    <div class="chest" aria-label="Sammlung: 8">
+      <svg viewBox="0 -14 500 365">
+        <g stroke="#6c56b4" stroke-width="3" stroke-linejoin="round">
+          <path fill="url(#gClamA)" d="M250,232 L20.3,201.4 Q9.8,150.4 52.0,117.3 Z"/>
+          <path fill="url(#gClamB)" d="M250,232 L52.0,117.3 Q63.8,66.5 116.5,52.1 Z"/>
+          <path fill="url(#gClamA)" d="M250,232 L116.5,52.1 Q148.5,10.0 202.9,16.6 Z"/>
+          <path fill="url(#gClamB)" d="M250,232 L202.9,16.6 Q250.0,-10.0 297.1,16.6 Z"/>
+          <path fill="url(#gClamA)" d="M250,232 L297.1,16.6 Q351.5,10.0 383.5,52.1 Z"/>
+          <path fill="url(#gClamB)" d="M250,232 L383.5,52.1 Q436.2,66.5 448.0,117.3 Z"/>
+          <path fill="url(#gClamA)" d="M250,232 L448.0,117.3 Q490.2,150.4 479.7,201.4 Z"/>
+        </g>
+        <path d="M18,250 C26,318 150,346 250,346 C350,346 474,318 482,250 Z" fill="url(#gClamBot)" stroke="#6c56b4" stroke-width="3"/>
+        <g stroke="#6c56b4" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round">
+          <path d="M250,344 Q130,330 60,290"/><path d="M250,344 Q170,334 120,310"/><path d="M250,344 Q215,336 196,322"/><path d="M250,344 L250,330"/><path d="M250,344 Q285,336 304,322"/><path d="M250,344 Q330,334 380,310"/><path d="M250,344 Q370,330 440,290"/>
+        </g>
+        <ellipse cx="250" cy="250" rx="232" ry="82" fill="#c8b8f2" stroke="#6c56b4" stroke-width="3"/>
+        <ellipse cx="250" cy="252" rx="220" ry="74" fill="url(#gClamIn)"/>
+        <path d="M80,214 Q250,170 420,214" stroke="#fff" stroke-width="4" fill="none" opacity=".6" stroke-linecap="round"/>
+      </svg>
+      <!-- the 8 collected shells (the one just won sits front right) -->
+      <svg class="item" style="left:72px;  top:196px; transform: rotate(-8deg)" viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:162px; top:186px; transform: rotate(4deg)"  viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:254px; top:186px; transform: rotate(-3deg)" viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:344px; top:196px; transform: rotate(7deg)"  viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:110px; top:252px; transform: rotate(5deg)"  viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:200px; top:260px; transform: rotate(-6deg)" viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:290px; top:258px; transform: rotate(3deg)"  viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <svg class="item" style="left:378px; top:248px; transform: rotate(-4deg); filter: drop-shadow(0 0 10px #fff6c8) drop-shadow(0 4px 4px rgba(120,60,90,.28))" viewBox="0 -8 200 158"><use href="#scallopFull"/></svg>
+      <div class="badge">8</div>
+    </div>
+
+    <span class="bub" style="left:60px; top:600px; width:16px; height:16px; --t:11s; --d:-2s"></span>
+    <span class="bub" style="left:1120px; top:540px; width:20px; height:20px; --t:12s; --d:-6s"></span>
+    <span class="bub" style="left:880px; top:640px; width:12px; height:12px; --t:9s; --d:-3s"></span>
+    <span class="bub" style="left:300px; top:640px; width:14px; height:14px; --t:10s; --d:-8s"></span>
+
+    <svg class="weed" style="left:-6px; width:100px; height:260px" viewBox="0 0 110 300">
+      <path d="M30,300 C10,250 50,220 28,170 C8,122 46,88 30,40" stroke="#2f9a73" stroke-width="16" fill="none" stroke-linecap="round"/>
+      <path d="M68,300 C84,262 54,236 72,196" stroke="#43b384" stroke-width="13" fill="none" stroke-linecap="round"/>
+    </svg>
+    <svg class="weed" style="right:-4px; width:90px; height:230px; animation-delay:-3s" viewBox="0 0 90 250">
+      <path d="M50,250 C70,206 34,180 54,136 C70,100 42,80 56,40" stroke="#2f9a73" stroke-width="14" fill="none" stroke-linecap="round"/>
+      <path d="M78,250 C66,220 86,200 76,170" stroke="#43b384" stroke-width="11" fill="none" stroke-linecap="round"/>
+    </svg>
+    <svg class="sand" style="height:130px" viewBox="0 0 1180 130" preserveAspectRatio="none">
+      <path d="M0,36 C150,16 300,34 460,28 C640,20 760,42 920,30 C1040,22 1110,18 1180,28 V130 H0 Z" fill="url(#gSand)"/>
+      <path d="M0,36 C150,16 300,34 460,28 C640,20 760,42 920,30 C1040,22 1110,18 1180,28 V130 H0 Z" fill="url(#pGrain)"/>
+      <path d="M0,36 C150,16 300,34 460,28 C640,20 760,42 920,30 C1040,22 1110,18 1180,28" stroke="#fff4d6" stroke-width="3" fill="none"/>
+    </svg>
+    <svg class="deco" style="left:930px; top:730px; width:70px; height:70px; transform: rotate(18deg)" viewBox="0 0 80 80"><use href="#star"/></svg>
+    <svg class="deco" style="left:190px; top:762px; width:46px; height:26px" viewBox="0 0 46 26"><ellipse cx="23" cy="15" rx="21" ry="10" fill="#9fb3b8"/><ellipse cx="18" cy="11" rx="9" ry="4" fill="#c7d6d8"/></svg>
+
+    <div class="play" aria-label="Weiter">
+      <svg viewBox="0 0 64 64"><path d="M14,8 Q14,4 18,6 L56,28 Q60,32 56,36 L18,58 Q14,60 14,56 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></svg>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const fit = () => document.documentElement.style.setProperty('--s', Math.min(1, (innerWidth - 32) / 1180))
+  addEventListener('resize', fit); fit()
+</script>
+</body>
+</html>
