@@ -185,14 +185,15 @@ def post_json(url, body, headers):
     """POST with retries on rate limits and server errors."""
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json", **headers})
-    for attempt in range(4):
+    attempts = 8  # OpenRouter's shared upstream pool for Google rate-limits often
+    for attempt in range(attempts):
         try:
             with urllib.request.urlopen(req, timeout=180) as resp:
                 return json.load(resp)
         except urllib.error.HTTPError as e:
             detail = e.read().decode(errors="replace")[:500]
-            if e.code in (429, 500, 502, 503) and attempt < 3:
-                time.sleep(10 * (attempt + 1))
+            if e.code in (429, 500, 502, 503) and attempt < attempts - 1:
+                time.sleep(min(15 * (attempt + 1), 60))
                 continue
             raise RuntimeError(f"HTTP {e.code}: {detail}") from None
 
