@@ -1,0 +1,22 @@
+{
+  "name": "leserina",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "test": "vitest run",
+    "check": "tsc --noEmit && vitest run",
+    "words": "python3 scripts/score_words.py",
+    "render-audio": "python3 scripts/render_audio.py"
+  },
+  "devDependencies": {
+    "@fontsource/andika": "^5.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.5"
+  }
+}
