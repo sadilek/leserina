@@ -4,6 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   server: { port: 5180, strictPort: true },
   preview: { port: 5181, strictPort: true },
+  // Clips and pictures stay separate files (precached by the service worker), not inlined.
+  build: { assetsInlineLimit: 0 },
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
