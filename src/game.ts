@@ -55,6 +55,8 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   let items: Item[] = []
   let z = 10
   let finishing = false
+  /** While the star flies, the jar still shows the count without it. */
+  let celebrating = false
 
   // Android's back gesture (a swipe in from the screen edge, easily made while dragging) would
   // close the full-screen app. An extra history entry turns it into a way back to the start screen.
@@ -73,7 +75,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   // Stars from another device count as soon as a sync brings them; the celebration sets its own.
   const off = onSync(() => {
     if (!screen.isConnected) return off()
-    if (finishing) return
+    if (celebrating) return
     jar.set(profile.coins)
     count.textContent = String(profile.coins)
   })
@@ -303,6 +305,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   /** The round is over: record it right away, so closing the app mid-celebration loses nothing. */
   function finishRound() {
     finishing = true
+    celebrating = true
     const result: RoundResult = {}
     for (const id of round.ids) result[id] = outcome(round, id)
     recordRound(profile, result)
@@ -367,6 +370,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     sound.clink()
     jar.set(profile.coins, true)
     count.textContent = String(profile.coins)
+    celebrating = false
     jarBtn.animate(
       [{ transform: 'scale(1)' }, { transform: 'scale(1.2) rotate(-6deg)' }, { transform: 'scale(.96) rotate(4deg)' }, { transform: 'scale(1)' }],
       { duration: ms(600), easing: 'ease-out' },
