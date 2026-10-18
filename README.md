@@ -80,8 +80,8 @@ reads the word.
   bottom right of the start screen).
 - Profiles, coins, learning state and an unfinished round live in `localStorage`.
 - `mockups/`: static design drafts for themes (space, under the sea, dinosaurs, flower garden,
-  building site), not part of the app. With `npm run dev` running, open
-  http://localhost:5180/mockups/.
+  building site), not part of the app and not in the published site. With `npm run dev`
+  running, open http://localhost:5180/leserina/mockups/.
 
 ## The learning logic
 
