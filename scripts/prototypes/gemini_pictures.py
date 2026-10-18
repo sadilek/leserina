@@ -7,6 +7,10 @@ compare them. Three backends reach the same model family:
   openrouter (default)  google/gemini-nano-banana-2.1 through OpenRouter, billed per
                  image to the OpenRouter credit. The key comes from
                  OPENROUTER_API_KEY, else ~/.config/leserina/openrouter.key.
+                 On 2026-10-18 nano-banana-2.1 stayed rate-limited upstream (its only
+                 provider is OpenRouter's shared AI Studio pool), so the contact sheet
+                 was made with --model google/gemini-3.1-flash-image (Nano Banana 2,
+                 also served via Vertex): about $0.068 per 1K picture.
   api            gemini-nano-banana-2.1 through the Gemini API (generateContent),
                  billed per image; needs billing on the Google project (image models
                  have no free tier). The key comes from GEMINI_API_KEY, else
@@ -37,7 +41,6 @@ import concurrent.futures
 import html
 import json
 import os
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -50,6 +53,7 @@ from pathlib import Path
 
 API_MODEL = "gemini-nano-banana-2.1"
 OPENROUTER_MODEL = "google/gemini-nano-banana-2.1"
+openrouter_model = OPENROUTER_MODEL  # --model overrides it
 OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 AGY_MODEL = "Gemini image model via agy generate_image (Google AI Pro)"
 AGY_BRAIN = Path.home() / ".gemini" / "antigravity-cli" / "brain"
@@ -99,7 +103,7 @@ REFERENCE_SUBJECT = "a teapot"
 
 
 def model_name(backend):
-    return {"api": API_MODEL, "openrouter": f"{OPENROUTER_MODEL} (OpenRouter)",
+    return {"api": API_MODEL, "openrouter": f"{openrouter_model} (OpenRouter)",
             "agy": AGY_MODEL}[backend]
 
 
@@ -163,7 +167,7 @@ def openrouter_image(prompt, reference):
         content.append({"type": "image_url",
                         "image_url": {"url": f"data:image/png;base64,{data}"}})
     body = {
-        "model": OPENROUTER_MODEL,
+        "model": openrouter_model,
         "messages": [{"role": "user", "content": content}],
         "modalities": ["image", "text"],
         "image_config": {"aspect_ratio": "1:1", "image_size": IMAGE_SIZE},
@@ -296,6 +300,8 @@ def generate_one(backend, style, word, reference, force):
 
 
 def generate(args):
+    global openrouter_model
+    openrouter_model = args.model
     if args.backend == "api":  # fail early without a key
         api_key()
     if args.backend == "openrouter":
@@ -362,7 +368,9 @@ def sheet(args):
         if not src.exists():
             return '<td class="missing">missing</td>'
         name = f"{style}-{wid}.png"
-        shutil.copy(src, dest / "img" / name)
+        # 512 px is plenty for the sheet and keeps it light to load
+        subprocess.run(["sips", "-Z", "512", str(src), "--out", str(dest / "img" / name)],
+                       check=True, capture_output=True)
         e = costs.get((style, wid), {})
         note = f"${e['cost']:.3f}" if e.get("cost") else ""
         return f'<td><img src="img/{name}" loading="lazy" alt=""><small>{note}</small></td>'
@@ -415,6 +423,8 @@ def main():
     g.add_argument("--word", choices=[w[0] for w in WORDS])
     g.add_argument("--force", action="store_true", help="regenerate existing pictures")
     g.add_argument("--backend", choices=["openrouter", "api", "agy"], default="openrouter")
+    g.add_argument("--model", default=OPENROUTER_MODEL,
+                   help="OpenRouter model id (openrouter backend only)")
     g.add_argument("--parallel", type=int, default=3)
     g.set_defaults(fn=generate)
     s = sub.add_parser("sheet", help="write the contact sheet (HTML) with its images")
