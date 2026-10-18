@@ -25,12 +25,15 @@ style look like one set. The reference of a style is
 generated once from text (an object outside the word list) and reused; put
 your own picture at <out>/<style>/reference.png to steer a style instead.
 
-Images stay out of git: they go to prototypes-out/p2-gemini/ (ignored).
+Images stay out of git: they go to prototypes-out/p2-gemini/<model>/ (ignored),
+one folder per model, so models can be compared on one contact sheet.
 
     scripts/prototypes/gemini_pictures.py generate          # all styles, all words
     scripts/prototypes/gemini_pictures.py generate --style sticker --word hund --force
+    scripts/prototypes/gemini_pictures.py generate --model google/gemini-3.1-flash-image
+    scripts/prototypes/gemini_pictures.py generate --retry-minutes 120   # wait out rate limits
     scripts/prototypes/gemini_pictures.py generate --backend agy
-    scripts/prototypes/gemini_pictures.py sheet ~/demos/leserina-p2-gemini
+    scripts/prototypes/gemini_pictures.py sheet ~/demos/leserina-p2-gemini   # all models
 
 Standard library only.
 """
@@ -41,6 +44,7 @@ import concurrent.futures
 import html
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -64,7 +68,9 @@ PRICE_OUTPUT_TEXT_PER_TOKEN = 3.00 / 1e6
 IMAGE_SIZE = "1K"
 
 REPO = Path(__file__).resolve().parents[2]
-OUT = REPO / "prototypes-out" / "p2-gemini"
+OUT_ROOT = REPO / "prototypes-out" / "p2-gemini"
+OUT = OUT_ROOT  # the folder of the model being generated; set by generate()
+retry_minutes = 5  # how long post_json keeps retrying rate limits; --retry-minutes
 KEY_FILE = Path.home() / ".config" / "leserina" / "gemini.key"
 OPENROUTER_KEY_FILE = Path.home() / ".config" / "leserina" / "openrouter.key"
 ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
@@ -189,15 +195,18 @@ def post_json(url, body, headers):
     """POST with retries on rate limits and server errors."""
     req = urllib.request.Request(url, data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json", **headers})
-    attempts = 8  # OpenRouter's shared upstream pool for Google rate-limits often
-    for attempt in range(attempts):
+    # OpenRouter's shared upstream pool for Google is often rate-limited for a while
+    deadline = time.time() + retry_minutes * 60
+    attempt = 0
+    while True:
         try:
             with urllib.request.urlopen(req, timeout=180) as resp:
                 return json.load(resp)
         except urllib.error.HTTPError as e:
             detail = e.read().decode(errors="replace")[:500]
-            if e.code in (429, 500, 502, 503) and attempt < attempts - 1:
-                time.sleep(min(15 * (attempt + 1), 60))
+            if e.code in (429, 500, 502, 503) and time.time() < deadline:
+                attempt += 1
+                time.sleep(min(15 * attempt, 60))
                 continue
             raise RuntimeError(f"HTTP {e.code}: {detail}") from None
 
@@ -299,9 +308,15 @@ def generate_one(backend, style, word, reference, force):
     print(f"{style}/{wid}  ${fields['cost']:.4f}  {time.time() - t0:.0f}s")
 
 
+def run_name(backend, model):
+    return {"api": API_MODEL, "agy": "agy"}.get(backend, model.split("/")[-1])
+
+
 def generate(args):
-    global openrouter_model
+    global openrouter_model, OUT, retry_minutes
     openrouter_model = args.model
+    retry_minutes = args.retry_minutes
+    OUT = OUT_ROOT / run_name(args.backend, args.model)
     if args.backend == "api":  # fail early without a key
         api_key()
     if args.backend == "openrouter":
@@ -329,51 +344,43 @@ def generate(args):
         sys.exit(f"{failed} pictures failed; run again to retry them")
 
 
+def log_entries(out):
+    if not (out / "log.jsonl").exists():
+        return []
+    return [json.loads(l) for l in (out / "log.jsonl").read_text().splitlines() if l]
+
+
 def spent():
-    entries = []
-    if (OUT / "log.jsonl").exists():
-        entries = [json.loads(l) for l in (OUT / "log.jsonl").read_text().splitlines() if l]
+    entries = log_entries(OUT)
     return sum(e["cost"] for e in entries), len(entries)
 
 
-def latest_costs():
-    """Cost of the picture currently on disk, per (style, id): the last log entry wins."""
-    costs = {}
-    if (OUT / "log.jsonl").exists():
-        for line in (OUT / "log.jsonl").read_text().splitlines():
-            e = json.loads(line)
-            costs[(e["style"], e["id"])] = e
-    return costs
-
-
-def sheet(args):
-    dest = Path(args.dest).expanduser()
-    (dest / "img").mkdir(parents=True, exist_ok=True)
-    costs = latest_costs()
-    shown = [e for e in costs.values() if (OUT / e["style"]).exists()]
-    models = sorted({e["model"] for e in shown})
-    secs = [e["seconds"] for e in shown if "seconds" in e]
-    total, n = spent()
+def section(out, dest):
+    """The table of one model folder; copies its pictures (scaled) next to the sheet."""
+    entries = log_entries(out)
+    latest = {(e["style"], e["id"]): e for e in entries}  # the last entry is the file on disk
+    models = sorted({e["model"] for e in latest.values()})
+    secs = [e["seconds"] for e in latest.values() if "seconds" in e]
+    total = sum(e["cost"] for e in entries)
     if total:
-        cost_note = (f"${total:.2f} spent for {n} generated images (including the 3 style "
-                     f"references and any reruns), {IMAGE_SIZE} square.")
+        note = (f"${total:.2f} spent for {len(entries)} generated images (including the 3 "
+                f"style references and any reruns), {IMAGE_SIZE} square.")
     else:
-        cost_note = ("No per-image cost: billed to the Google AI Pro subscription "
-                     "(its daily image quota), 1024×1024.")
+        note = "No per-image cost: billed to the Google AI Pro subscription, 1024×1024."
     if secs:
-        cost_note += f" About {sum(secs) / len(secs):.0f} s per picture."
+        note += f" About {sum(secs) / len(secs):.0f} s per picture."
 
     def cell(style, wid):
-        src = OUT / style / ("reference.png" if wid == "reference" else f"pictures/{wid}.png")
+        src = out / style / ("reference.png" if wid == "reference" else f"pictures/{wid}.png")
         if not src.exists():
             return '<td class="missing">missing</td>'
-        name = f"{style}-{wid}.png"
+        name = f"{out.name}-{style}-{wid}.png"
         # 512 px is plenty for the sheet and keeps it light to load
         subprocess.run(["sips", "-Z", "512", str(src), "--out", str(dest / "img" / name)],
                        check=True, capture_output=True)
-        e = costs.get((style, wid), {})
-        note = f"${e['cost']:.3f}" if e.get("cost") else ""
-        return f'<td><img src="img/{name}" loading="lazy" alt=""><small>{note}</small></td>'
+        e = latest.get((style, wid), {})
+        price = f"${e['cost']:.3f}" if e.get("cost") else ""
+        return f'<td><img src="img/{name}" loading="lazy" alt=""><small>{price}</small></td>'
 
     head = "".join(f"<th>{html.escape(label)}<br><small>{html.escape(desc)}</small></th>"
                    for label, desc in STYLES.values())
@@ -382,12 +389,43 @@ def sheet(args):
     for wid, german, _ in WORDS:
         rows.append(f"<tr><th>{html.escape(german)}</th>"
                     f"{''.join(cell(s, wid) for s in STYLES)}</tr>")
+    return f"""<p>Model: <b>{html.escape("; ".join(models) or "none yet")}</b>.
+{html.escape(note)} Each picture was made with the style reference in the top row
+passed along.</p>
+<table>
+<thead><tr><th>Word</th>{head}</tr></thead>
+<tbody>
+{chr(10).join(rows)}
+</tbody>
+</table>"""
+
+
+def sheet(args):
+    dest = Path(args.dest).expanduser()
+    if (dest / "img").exists():
+        shutil.rmtree(dest / "img")
+    (dest / "img").mkdir(parents=True)
+    runs = [OUT_ROOT / r for r in args.models] if args.models else sorted(
+        d for d in OUT_ROOT.iterdir() if (d / "log.jsonl").exists())
+    tabs, panels, css = [], [], []
+    for i, out in enumerate(runs):
+        checked = " checked" if i == 0 else ""
+        tabs.append(f'<input type="radio" name="run" id="t{i}"{checked}>'
+                    f'<label for="t{i}">{html.escape(out.name)}</label>')
+        panels.append(f'<section id="p{i}">{section(out, dest)}</section>')
+        css.append(f"#t{i}:checked ~ main #p{i} {{ display: block; }}")
     page = f"""<!doctype html>
 <html lang="en"><meta charset="utf-8">
 <title>Picture prototype P2: Gemini image model</title>
 <style>
   body {{ font: 15px/1.4 system-ui, sans-serif; margin: 16px; color: #222; background: #fafafa; }}
-  h1 {{ font-size: 20px; margin: 0 0 4px; }}
+  h1 {{ font-size: 20px; margin: 0 0 8px; }}
+  input[name=run] {{ display: none; }}
+  label {{ display: inline-block; padding: 6px 14px; margin: 0 4px 8px 0; border: 1px solid #ccc;
+           border-radius: 16px; cursor: pointer; background: #fff; }}
+  input[name=run]:checked + label {{ background: #222; color: #fff; border-color: #222; }}
+  section {{ display: none; }}
+  {chr(10).join(css)}
   p {{ margin: 4px 0 12px; color: #555; }}
   table {{ border-collapse: collapse; width: 100%; table-layout: fixed; }}
   th, td {{ border: 1px solid #ddd; padding: 6px; text-align: center; vertical-align: middle; background: #fff; }}
@@ -400,15 +438,10 @@ def sheet(args):
   td.missing {{ color: #c00; }}
 </style>
 <h1>Picture prototype P2: Gemini image model</h1>
-<p>Model: <b>{html.escape("; ".join(models) or "none yet")}</b>.
-{html.escape(cost_note)} Each picture was made with the style reference in the top row
-passed along.</p>
-<table>
-<thead><tr><th>Word</th>{head}</tr></thead>
-<tbody>
-{chr(10).join(rows)}
-</tbody>
-</table>
+{"".join(tabs)}
+<main>
+{chr(10).join(panels)}
+</main>
 </html>
 """
     (dest / "index.html").write_text(page)
@@ -426,9 +459,13 @@ def main():
     g.add_argument("--model", default=OPENROUTER_MODEL,
                    help="OpenRouter model id (openrouter backend only)")
     g.add_argument("--parallel", type=int, default=3)
+    g.add_argument("--retry-minutes", type=float, default=5,
+                   help="how long to keep retrying a rate-limited request")
     g.set_defaults(fn=generate)
     s = sub.add_parser("sheet", help="write the contact sheet (HTML) with its images")
     s.add_argument("dest", help="directory for index.html and img/")
+    s.add_argument("models", nargs="*",
+                   help="model folders under prototypes-out/p2-gemini (default: all)")
     s.set_defaults(fn=sheet)
     args = p.parse_args()
     args.fn(args)
