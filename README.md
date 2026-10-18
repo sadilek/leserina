@@ -1,26 +1,59 @@
 # Leserina
 
-A reading game for children on an iPad. Pictures and words lie scattered on a mat; the child drags
-a word onto its picture (or the picture onto its word). Each pair fills a slice of a gold coin, and
-a full coin goes into the child's treasure chest. Tapping a picture or a word reads the word aloud,
-in a parent's own voice. Words start easy and get harder per child, and the ones a child gets wrong
-come back, as with flashcards.
+A reading game for young children, made by a parent for their own kids and published as is.
+It runs in the browser and installs as a full-screen app on a tablet or phone:
+**https://sadilek.github.io/leserina/**. The words and the interface are German.
+
+Pictures and words lie scattered on a mat; the child drags a word onto its picture (or the picture
+onto its word). Each pair fills a slice of a gold coin, and a full coin goes into the child's
+treasure chest. Tapping a picture or a word reads the word aloud, in a parent's own voice. Words
+start easy and get harder per child, and the ones a child gets wrong come back, as with flashcards.
+
+Everything runs on the device: no account, no server, no tracking. Progress stays in the
+browser's local storage.
 
 ## Running it
 
 ```bash
 npm install
-npm run dev        # http://localhost:5180, also on the LAN address Vite prints
+npm run dev        # http://localhost:5180/leserina/, also on the LAN address Vite prints
 npm run check      # type check and unit tests
 npm run build      # static site in dist/, with a service worker for offline use
-npm run preview    # serves dist/ on http://localhost:5181
+npm run preview    # serves dist/ on http://localhost:5181/leserina/
 ```
 
-The app is a static site: no server, no key, no network once loaded. On the iPad, open it in
-Safari and choose "Zum Home-Bildschirm". It then runs full-screen and keeps its data: iOS may wipe
-a website's storage after 7 days without use, but not that of a home-screen app. The service
-worker (offline use) needs HTTPS, so the iPad has to load the app from an HTTPS address, not
-from the Mac's plain LAN address.
+## Publishing and updating
+
+A push to `main` publishes the app: the GitHub Actions workflow (`.github/workflows/pages.yml`)
+runs `npm ci`, `npm run check` and `npm run build` and deploys `dist/` to GitHub Pages. Installed
+apps update themselves: the service worker (`registerType: 'autoUpdate'`) fetches the new version
+in the background, and the next start of the app runs it.
+
+The address must never change. An installed app keeps its data (profiles, coins, learning state)
+in `localStorage`, which belongs to its origin, `https://sadilek.github.io`, and the app is
+installed for the path `/leserina/`. Under a new address it would start empty. Hence:
+
+- The repository stays `sadilek/leserina`, and Vite's `base` stays `/leserina/`.
+- `sadilek.github.io` must never get a custom domain. GitHub would then redirect every project
+  page of the account to that domain, the origin would change, and every installed app would
+  lose its data.
+
+## Installing
+
+- iPad (Safari): open https://sadilek.github.io/leserina/, then "Teilen → Zum Home-Bildschirm".
+- Android (Chrome): open the address, then the menu (⋮) → "App installieren".
+
+The installed app starts full-screen and works offline: every picture and clip is cached on
+install. On the iPad this also protects the data: iOS may wipe a website's storage after 7 days
+without use, but not that of a home-screen app. The game works in both orientations, on a phone
+too; on Android the back gesture during a round only returns to the start screen.
+
+## The voice
+
+The clips in `audio/` are the owner's own voice, rendered through a voice clone. They are not
+under the MIT license of the code: you may use them only with this app. To use another voice,
+render your own clips (see below) or delete them; without a clip, the device's own German voice
+reads the word.
 
 ## How it is built
 
@@ -29,18 +62,22 @@ from the Mac's plain LAN address.
   the script's docstring explains the score. To move a word, put a number in that row's optional
   `adjust` column (negative = earlier) and rerun.
 - `audio/<id>.mp3`: one clip per word, rendered by `npm run render-audio`
-  (`scripts/render_audio.py`) through the voice clone in `~/dev/stimmzwilling`; `--only` re-renders
-  single words, `--names Lena,Max` renders the children's names for the start screen.
-  `uv run --project ~/dev/stimmzwilling python scripts/check_audio.py` transcribes every clip with
-  Whisper and lists those that may not say their word. Whisper itself cannot tell very short words
-  (Ei, Ohr, Wal) apart, so a person has to listen to those.
+  (`scripts/render_audio.py`). A separate voice-clone setup renders the clips: any command that
+  reads text on stdin and writes a WAV to `$DEMO_WAV`, set in `LESERINA_TTS_CMD`. `--only`
+  re-renders single words, `--names Lena,Max` renders the children's names for the start screen
+  as `audio/name-<id>.mp3`. Those stay on the local machine (`.gitignore`), so children's names
+  never reach the public repository; the published app reads names with the device's voice.
+  `scripts/check_audio.py` transcribes every clip with Whisper (it needs a Python environment
+  with Whisper, such as the voice clone's) and lists those that may not say their word. Whisper
+  itself cannot tell very short words (Ei, Ohr, Wal) apart, so a person has to listen to those.
   Without a clip, the device's own German voice reads the word.
 - `pictures/<id>.png`: one picture per word. Without one, the word's emoji stands in. See
   `pictures/README.md`.
 - `src/scheduler.ts`: the learning logic, a Leitner box system counted in rounds, as pure
   functions with tests that simulate children (`src/scheduler.test.ts`).
-- `src/game.ts`: the game screen; `src/start.ts`: picking a child; `src/parents.ts`: the parents'
-  corner (hold the lock at the bottom right of the start screen).
+- `src/game.ts`: the game screen; `src/layout.ts`: scattering the cards on the mat;
+  `src/start.ts`: picking a child; `src/parents.ts`: the parents' corner (hold the lock at the
+  bottom right of the start screen).
 - Profiles, coins, learning state and an unfinished round live in `localStorage`.
 
 ## The learning logic
@@ -59,3 +96,8 @@ difficulty order while at most 8 words sit in boxes 1-2, then due words in boxes
 not-yet-due words from the lowest boxes. Reviews of nearly known words wait behind the new ones
 so that a child who gets everything right keeps getting new words. Words below the child's start
 level are never introduced.
+
+## License
+
+The code is under the MIT license (`LICENSE`). The voice clips in `audio/` are not; see
+"The voice" above.

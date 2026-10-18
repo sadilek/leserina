@@ -12,12 +12,18 @@ export interface Point {
 const overlaps = (a: Point & Size, b: Point & Size, gap: number) =>
   a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap
 
+export interface Placement {
+  points: Point[]
+  /** 1 if the boxes fit as they are; below 1 if they fit only scaled down by this factor. */
+  scale: number
+}
+
 /**
  * Top-left corners for boxes of the given sizes inside area, none overlapping.
  * Tries with a generous gap first and shrinks it if the boxes do not fit; as a last resort the
- * boxes go into a grid, so the result never overlaps as long as they fit side by side at all.
+ * boxes go into tidy rows, scaled down as far as needed: then the points are for the scaled boxes.
  */
-export function place(sizes: Size[], area: Size, rand: () => number = Math.random, gap = 24): Point[] {
+export function place(sizes: Size[], area: Size, rand: () => number = Math.random, gap = 24): Placement {
   const order = sizes.map((_, i) => i).sort((a, b) => sizes[b].w * sizes[b].h - sizes[a].w * sizes[a].h)
   for (const g of [gap, gap / 2, 4]) {
     for (let attempt = 0; attempt < 40; attempt++) {
@@ -38,18 +44,51 @@ export function place(sizes: Size[], area: Size, rand: () => number = Math.rando
         placed.push(found)
         out[i] = { x: found.x, y: found.y }
       }
-      if (ok) return out
+      if (ok) return { points: out, scale: 1 }
     }
   }
-  return grid(sizes, area)
+  return rows(sizes, area, 8)
 }
 
-function grid(sizes: Size[], area: Size): Point[] {
-  const cols = Math.ceil(Math.sqrt(sizes.length * (area.w / area.h)))
-  const rows = Math.ceil(sizes.length / cols)
-  const cw = area.w / cols, ch = area.h / rows
-  return sizes.map((s, i) => ({
-    x: (i % cols) * cw + Math.max(0, (cw - s.w) / 2),
-    y: Math.floor(i / cols) * ch + Math.max(0, (ch - s.h) / 2),
-  }))
+/** Rows of boxes in the given order, as many to a row as fit, spread evenly over the area. */
+function rows(sizes: Size[], area: Size, gap: number): Placement {
+  const split = (k: number) => {
+    const lines: number[][] = []
+    let line: number[] = [], width = 0
+    sizes.forEach((s, i) => {
+      if (line.length && width + gap + s.w * k > area.w) {
+        lines.push(line)
+        line = []
+        width = 0
+      }
+      width += (line.length ? gap : 0) + s.w * k
+      line.push(i)
+    })
+    if (line.length) lines.push(line)
+    return lines
+  }
+  const height = (k: number) => {
+    const lines = split(k)
+    return lines.reduce((sum, line) => sum + Math.max(...line.map((i) => sizes[i].h * k)), 0) + gap * (lines.length - 1)
+  }
+  const widest = (k: number) => Math.max(...sizes.map((s) => s.w * k))
+  // The largest scale (to 1%) at which every box fits in width and the rows fit in height.
+  let k = 1
+  while (k > 0.01 && (widest(k) > area.w || height(k) > area.h)) k = Math.round((k - 0.01) * 100) / 100
+  const lines = split(k)
+  const heights = lines.map((line) => Math.max(...line.map((i) => sizes[i].h * k)))
+  const vgap = (area.h - heights.reduce((a, b) => a + b, 0)) / (lines.length + 1)
+  const out: Point[] = new Array(sizes.length)
+  let y = vgap
+  lines.forEach((line, r) => {
+    const used = line.reduce((sum, i) => sum + sizes[i].w * k, 0)
+    const hgap = (area.w - used) / (line.length + 1)
+    let x = hgap
+    for (const i of line) {
+      out[i] = { x, y: y + (heights[r] - sizes[i].h * k) / 2 }
+      x += sizes[i].w * k + hgap
+    }
+    y += heights[r] + vgap
+  })
+  return { points: out, scale: k }
 }

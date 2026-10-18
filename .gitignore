@@ -2,3 +2,5 @@ node_modules/
 dist/
 dev-dist/
 .DS_Store
+# The children's names (render_audio.py --names): never in the public repository.
+audio/name-*

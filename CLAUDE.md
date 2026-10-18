@@ -10,3 +10,7 @@ See README.md for what the app is, how to run it and how the learning logic work
 - Clips and pictures are picked up at build time via `import.meta.glob` (`src/assets.ts`); while
   `npm run dev` runs, every new file in `audio/` or `pictures/` reloads the page.
 - UI text is German (the children and parents are German speakers); code and docs are English.
+- Published at https://sadilek.github.io/leserina/ by every push to `main`. Vite's `base`
+  (`/leserina/`) and the repo name must never change, and `sadilek.github.io` must never get a custom
+  domain: installed apps would lose their data (README, "Publishing and updating").
+- The repository is public: children's names (`audio/name-*`, gitignored) never go into it.

@@ -54,7 +54,19 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   let z = 10
   let finishing = false
 
-  home.addEventListener('click', onHome)
+  // Android's back gesture (a swipe in from the screen edge, easily made while dragging) would
+  // close the full-screen app. An extra history entry turns it into a way back to the start screen.
+  history.pushState({ round: true }, '')
+  const leave = () => {
+    removeEventListener('popstate', leave)
+    onHome()
+  }
+  addEventListener('popstate', leave)
+  home.addEventListener('click', () => {
+    removeEventListener('popstate', leave)
+    if (history.state?.round) history.back()
+    onHome()
+  })
   chest.addEventListener('click', () => showChest(screen, profile.coins))
 
   const commit = () => save()
@@ -90,14 +102,20 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     const n = Math.max(round.ids.length, 4)
     const pic = Math.round(Math.max(96, Math.min(210, Math.sqrt((0.3 * r.width * r.height) / (1.55 * n)))))
     screen.style.setProperty('--pic', `${pic}px`)
-    const sizes = items.map((it) => ({ w: it.el.offsetWidth, h: it.el.offsetHeight }))
+    const sizes = () => items.map((it) => ({ w: it.el.offsetWidth, h: it.el.offsetHeight }))
     const saved = items.map((it) => round.pos[`${it.kind}:${it.id}`])
     if (!fresh && saved.every(Boolean)) {
       items.forEach((it, i) => setPos(it, saved[i][0] * r.width, saved[i][1] * r.height, false))
       return
     }
-    const pts = place(sizes, { w: r.width, h: r.height })
-    items.forEach((it, i) => setPos(it, pts[i].x, pts[i].y))
+    const area = { w: r.width, h: r.height }
+    let placed = place(sizes(), area)
+    if (placed.scale < 1) {
+      // Too little room (a phone on its side): smaller cards, laid out again at their real size.
+      screen.style.setProperty('--pic', `${Math.floor(pic * placed.scale)}px`)
+      placed = place(sizes(), area)
+    }
+    items.forEach((it, i) => setPos(it, placed.points[i].x, placed.points[i].y))
     commit()
   }
 
