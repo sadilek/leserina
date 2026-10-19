@@ -283,8 +283,11 @@ input:focus-visible {
   padding: 7px 7px 4px;
 }
 
+/* Square, so a picture's own width cannot stretch the card. */
 .pair.small .pair-pic {
+  width: 72px;
   height: 72px;
+  margin: 0 auto;
 }
 
 .pair.small .face.placeholder {
@@ -839,6 +842,7 @@ input:focus-visible {
     border-radius: 12px;
   }
   .pair.small .pair-pic {
+    width: 44px;
     height: 44px;
   }
   .pair.small .face {
