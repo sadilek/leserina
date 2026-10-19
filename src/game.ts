@@ -278,16 +278,22 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     const slot = shelfCard(id)
     slot.style.visibility = 'hidden'
     shelfCards.append(slot)
-    const to = slot.getBoundingClientRect()
-    const scale = to.width / cw
+    // The big card shrinks about its top-left corner until its picture covers the slot's picture.
+    const from = card.querySelector('.pair-pic')!.getBoundingClientRect()
+    const to = slot.querySelector('.pair-pic')!.getBoundingClientRect()
+    const scale = to.width / from.width
+    const dx = to.left - cx - (from.left - cx) * scale
+    const dy = to.top - cy - (from.top - cy) * scale
     await card.animate(
-      [{ transform: 'none' }, {
-        transform: `translate(${to.left - cx + (to.width - cw) / 2}px, ${to.top - cy + (to.height - ch) / 2}px) scale(${scale})`,
-      }],
+      [{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }],
       { duration: ms(650), easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' },
     ).finished
-    card.remove()
+    // The slot's card is a little wider than the shrunken one: fade from one to the other.
     slot.style.visibility = ''
+    const fade = { duration: ms(160), easing: 'ease-out' }
+    slot.animate([{ opacity: 0 }, { opacity: 1 }], fade)
+    await card.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished
+    card.remove()
     if (done) await celebrate()
   }
 
