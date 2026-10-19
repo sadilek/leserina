@@ -32,8 +32,11 @@ address Vite prints. `VITE_SYNC_URL` overrides the worker's address.
 
 A push to `main` publishes the app: the GitHub Actions workflow (`.github/workflows/pages.yml`)
 runs `npm ci`, `npm run check` and `npm run build` and deploys `dist/` to GitHub Pages. Installed
-apps update themselves: the service worker (`registerType: 'autoUpdate'`) fetches the new version
-in the background, and the next start of the app runs it.
+apps update themselves (`registerType: 'autoUpdate'`): they look for a new version when they
+start, whenever they come back to the foreground and every hour while open, fetch it in the
+background and switch to it on the start screen (never during a round). A home-screen app mostly
+resumes from the background rather than starting anew, which is why the foreground check matters.
+The parents' corner shows at the bottom when the running version was built.
 
 The address must never change. An installed app keeps its data (profiles, stars, learning state)
 in `localStorage`, which belongs to its origin, `https://sadilek.github.io`, and the app is
