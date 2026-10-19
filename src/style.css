@@ -329,7 +329,8 @@ input:focus-visible {
 .flying-star {
   position: fixed;
   transform-origin: 50% 50%;
-  filter: drop-shadow(0 0 20px rgba(255, 200, 80, 0.75));
+  /* --k: how many times the star is larger than in the bar; game.ts sets it. */
+  filter: drop-shadow(0 0 calc(20px * var(--k, 1)) rgba(255, 200, 80, 0.75));
 }
 
 /* Rays and a warm glow behind the finished star. */

@@ -349,22 +349,27 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     const big = fullStar(round.ids.length)
     big.classList.add('flying-star')
     fx.append(big)
-    Object.assign(big.style, { left: `${from.left}px`, top: `${from.top}px`, width: `${from.width}px`, height: `${from.height}px` })
+    // The star is drawn at its size in the middle of the screen and scaled down from there:
+    // scaled up, the browser would stretch the small star's pixels.
+    const k = Math.min(innerWidth, innerHeight) / 2.4 / from.width
+    const size = k * from.width
+    const x0 = from.left + from.width / 2, y0 = from.top + from.height / 2
+    Object.assign(big.style, { left: `${x0 - size / 2}px`, top: `${y0 - size / 2}px`, width: `${size}px`, height: `${size}px` })
+    big.style.setProperty('--k', String(k))
     star.set(0, round.ids.length)
     // The star scales and turns about its centre; these move that centre.
-    const k = Math.min(innerWidth, innerHeight) / 2.4 / from.width
     const cx = innerWidth / 2, cy = innerHeight / 2.4
-    const at = (x: number, y: number) => `translate(${x - from.left - from.width / 2}px, ${y - from.top - from.height / 2}px)`
+    const at = (x: number, y: number) => `translate(${x - x0}px, ${y - y0}px)`
     const glow = h('div', 'star-glow')
-    const d = k * from.width * 2
+    const d = size * 2
     Object.assign(glow.style, { left: `${cx - d / 2}px`, top: `${cy - d / 2}px`, width: `${d}px`, height: `${d}px` })
     fx.prepend(glow)
     glow.animate([{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1)' }], { duration: ms(1100), easing: 'ease-out', fill: 'forwards' })
     sound.fanfare()
     await big.animate(
       [
-        { transform: 'translate(0,0) scale(1) rotate(0)' },
-        { transform: `${at(cx, cy)} scale(${k}) rotate(360deg)` },
+        { transform: `translate(0,0) scale(${1 / k}) rotate(0)` },
+        { transform: `${at(cx, cy)} scale(1) rotate(360deg)` },
       ],
       { duration: ms(1100), easing: 'cubic-bezier(.3,.8,.3,1)', fill: 'forwards' },
     ).finished
@@ -374,7 +379,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     // Up to the jar's mouth while its lid lifts, then down into the glass.
     const c = jar.svg.getBoundingClientRect()
     const mouth = { x: c.left + c.width / 2, y: c.top + c.height * 0.12 }
-    const end = (0.32 * c.width) / from.width
+    const end = (0.32 * c.width) / size
     const lid = jar.lid
     glow.animate([{ opacity: 1 }, { opacity: 0 }], { duration: ms(500), fill: 'forwards' })
     lid.animate([{ transform: 'none' }, { transform: 'translate(-6px, -70px) rotate(-24deg)' }], {
@@ -382,7 +387,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     })
     await big.animate(
       [
-        { transform: `${at(cx, cy)} scale(${k}) rotate(360deg)` },
+        { transform: `${at(cx, cy)} scale(1) rotate(360deg)` },
         { transform: `${at(mouth.x, mouth.y - c.height * 0.25)} scale(${end}) rotate(720deg)` },
       ],
       { duration: ms(800), easing: 'cubic-bezier(.6,0,.4,1)', fill: 'forwards' },
