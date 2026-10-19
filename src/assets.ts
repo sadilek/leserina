@@ -31,7 +31,8 @@ export function pictureUrl(id: string, style: string) {
   }
 }
 export const clipUrl = (id: string) => clips.get(id)
-export const nameClipUrl = (nameSlug: string) => clips.get(`name-${nameSlug}`)
+/** A child's name clip; a name that is also a word (Mama, Papa) uses the word's clip. */
+export const nameClipUrl = (nameSlug: string) => clips.get(`name-${nameSlug}`) ?? clips.get(nameSlug)
 
 /** Pastel card colours for placeholders, picked by the word so a word keeps its colour. */
 const TINTS = ['#ffe3d6', '#fff1bf', '#d9f2d0', '#d6ecff', '#eadcff', '#ffd9e8']

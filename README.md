@@ -158,8 +158,8 @@ reads the word.
   `$DEMO_WAV` can, set in `LESERINA_TTS_CMD`. `--only`
   re-renders single words, `--names Lena,Max` renders the children's names for the start screen
   as `audio/name-<id>.mp3`. Those stay on the local machine (`.gitignore`), so children's names
-  never reach the public repository; the published app reads other names with the device's
-  voice. The owner's own children, Katharina and Alexander, are the exception: their clips are
+  never reach the public repository; a name that is also a word (Mama, Papa) uses the word's
+  clip, and the published app reads other names with the device's voice. The owner's own children, Katharina and Alexander, are the exception: their clips are
   in the repository (an exception each in `.gitignore`) and ship with the app.
   `scripts/check_audio.py` transcribes every clip with Whisper (it needs a Python environment
   with Whisper, such as the voice clone's) and lists those that may not say their word. Whisper
