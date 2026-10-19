@@ -25,9 +25,11 @@ import wave
 from pathlib import Path
 
 VOICE = os.environ.get("ELEVENLABS_VOICE_ID", "AJX546nEWdCoekjOePfl")
-MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2")
-# 1.0 is the voice's own pace; ElevenLabs takes 0.7 to 1.2.
-SPEED = float(os.environ.get("ELEVENLABS_SPEED", "1.0"))
+# The owner preferred v4 over multilingual v2 by far, in a side-by-side of the first 18 words.
+MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_v4")
+# 1.0 is the voice's own pace; ElevenLabs takes 0.7 to 1.2. v4 hardly changes with it, and speaks a
+# little slower than v2 by itself, which suits children learning to read.
+SPEED = float(os.environ.get("ELEVENLABS_SPEED", "0.9"))
 BEFORE = "Haus. Baum. Sonne. Hund. Katze. Apfel. Brot. Mond."
 RATE = 24000
 
