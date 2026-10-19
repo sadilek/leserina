@@ -1,6 +1,52 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="0" fill="#2f6b6e"/>
-  <circle cx="256" cy="256" r="170" fill="#f5c542" stroke="#b8891a" stroke-width="18"/>
-  <circle cx="256" cy="256" r="128" fill="none" stroke="#d9a62a" stroke-width="10"/>
-  <path d="M256 168 L280 228 L344 232 L294 272 L311 334 L256 299 L201 334 L218 272 L168 232 L232 228 Z" fill="#fff3c4" stroke="#b8891a" stroke-width="8" stroke-linejoin="round"/>
+  <!-- The round's gold star (src/star.ts) in the jar's night sky; inside the maskable safe zone. -->
+  <defs>
+    <linearGradient id="gold" gradientUnits="userSpaceOnUse" x1="-30" y1="-48" x2="30" y2="48">
+      <stop offset="0" stop-color="#fff0a8"/><stop offset=".45" stop-color="#ffd347"/><stop offset="1" stop-color="#f5a21b"/></linearGradient>
+    <radialGradient id="halo"><stop offset="0" stop-color="#ffe9a0" stop-opacity=".9"/>
+      <stop offset=".45" stop-color="#ffd76a" stop-opacity=".35"/><stop offset="1" stop-color="#ffd76a" stop-opacity="0"/></radialGradient>
+    <radialGradient id="night" cx=".45" cy=".5" r=".7">
+      <stop offset="0" stop-color="#34479e"/><stop offset=".7" stop-color="#22266b"/><stop offset="1" stop-color="#1c1650"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#night)"/>
+  <circle cx="56.2" cy="227.3" r="2.5" fill="#fff" opacity="0.40"/>
+  <circle cx="61.4" cy="135.5" r="4.5" fill="#fff" opacity="0.64"/>
+  <circle cx="67.1" cy="65.7" r="2.5" fill="#fff" opacity="0.50"/>
+  <circle cx="75.4" cy="169.7" r="3.5" fill="#fff" opacity="0.65"/>
+  <circle cx="463.4" cy="91.0" r="3.5" fill="#fff" opacity="0.37"/>
+  <circle cx="222.2" cy="455.6" r="2.5" fill="#fff" opacity="0.61"/>
+  <circle cx="326.9" cy="66.2" r="4.5" fill="#fff" opacity="0.42"/>
+  <circle cx="446.4" cy="193.6" r="4.5" fill="#fff" opacity="0.35"/>
+  <circle cx="65.5" cy="371.9" r="2.5" fill="#fff" opacity="0.60"/>
+  <circle cx="466.2" cy="334.9" r="3.5" fill="#fff" opacity="0.68"/>
+  <circle cx="105.2" cy="116.1" r="2.5" fill="#fff" opacity="0.56"/>
+  <circle cx="45.2" cy="399.0" r="2.5" fill="#fff" opacity="0.41"/>
+  <circle cx="41.8" cy="221.0" r="3.5" fill="#fff" opacity="0.54"/>
+  <circle cx="411.2" cy="450.5" r="4.5" fill="#fff" opacity="0.57"/>
+  <circle cx="63.3" cy="428.6" r="4.5" fill="#fff" opacity="0.62"/>
+  <circle cx="66.9" cy="69.1" r="2.5" fill="#fff" opacity="0.48"/>
+  <circle cx="314.1" cy="452.8" r="4.5" fill="#fff" opacity="0.45"/>
+  <circle cx="93.1" cy="406.7" r="3.5" fill="#fff" opacity="0.49"/>
+  <circle cx="451.3" cy="196.3" r="4.5" fill="#fff" opacity="0.52"/>
+  <circle cx="51.7" cy="268.1" r="4.5" fill="#fff" opacity="0.65"/>
+  <circle cx="465.5" cy="408.3" r="2.5" fill="#fff" opacity="0.63"/>
+  <circle cx="52.5" cy="52.1" r="3.5" fill="#fff" opacity="0.49"/>
+  <circle cx="256" cy="256" r="236" fill="url(#halo)" opacity=".55"/>
+  <g transform="translate(256 272.9) scale(3.85)" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="0.0,0.0 -12.4,-17.1 0.0,-46.0 12.4,-17.1" fill="url(#gold)" stroke="url(#gold)" stroke-width="3.2"/>
+    <polygon points="0.0,0.0 12.4,-17.1 43.7,-14.2 20.1,6.5" fill="url(#gold)" stroke="url(#gold)" stroke-width="3.2"/>
+    <polygon points="0.0,0.0 20.1,6.5 27.0,37.2 0.0,21.2" fill="url(#gold)" stroke="url(#gold)" stroke-width="3.2"/>
+    <polygon points="0.0,0.0 0.0,21.2 -27.0,37.2 -20.1,6.5" fill="url(#gold)" stroke="url(#gold)" stroke-width="3.2"/>
+    <polygon points="0.0,0.0 -20.1,6.5 -43.7,-14.2 -12.4,-17.1" fill="url(#gold)" stroke="url(#gold)" stroke-width="3.2"/>
+    <line x1="0" y1="0" x2="-12.4" y2="-17.1" stroke="#b86a10" stroke-opacity=".55" stroke-width="1.3"/>
+    <line x1="0.0" y1="-18.9" x2="0.0" y2="-35.9" stroke="#fff6d0" stroke-opacity=".7" stroke-width="2.4"/>
+    <line x1="0" y1="0" x2="12.4" y2="-17.1" stroke="#b86a10" stroke-opacity=".55" stroke-width="1.3"/>
+    <line x1="17.9" y1="-5.8" x2="34.1" y2="-11.1" stroke="#fff6d0" stroke-opacity=".7" stroke-width="2.4"/>
+    <line x1="0" y1="0" x2="20.1" y2="6.5" stroke="#b86a10" stroke-opacity=".55" stroke-width="1.3"/>
+    <line x1="11.1" y1="15.3" x2="21.1" y2="29.0" stroke="#fff6d0" stroke-opacity=".7" stroke-width="2.4"/>
+    <line x1="0" y1="0" x2="0.0" y2="21.2" stroke="#b86a10" stroke-opacity=".55" stroke-width="1.3"/>
+    <line x1="-11.1" y1="15.3" x2="-21.1" y2="29.0" stroke="#fff6d0" stroke-opacity=".7" stroke-width="2.4"/>
+    <line x1="0" y1="0" x2="-20.1" y2="6.5" stroke="#b86a10" stroke-opacity=".55" stroke-width="1.3"/>
+    <line x1="-17.9" y1="-5.8" x2="-34.1" y2="-11.1" stroke="#fff6d0" stroke-opacity=".7" stroke-width="2.4"/>
+  </g>
 </svg>
