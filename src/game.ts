@@ -255,44 +255,60 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     if (done) finishRound()
     else commit()
 
-    // The pair becomes one card where the partner lay, pops, and flies onto the shelf.
-    const s = still.el.getBoundingClientRect()
+    // The pair forms around the picture, which stays where it is (where it lay, or where it was
+    // dropped): the word glides over from where it is, and the card fades in around both.
+    const [pic, wrd] = dragged.kind === 'p' ? [dragged, still] : [still, dragged]
+    pic.el.style.pointerEvents = wrd.el.style.pointerEvents = 'none'
+    sound.jingle()
+    // Centres only: a card just let go still shrinks back from its lift, about its centre.
+    const centre = (r: DOMRect) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+    // A word's letters sit off its centre by half the difference of its top and bottom padding.
+    const lift = (el: Element) => {
+      const cs = getComputedStyle(el)
+      return (parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) / 2
+    }
     const card = pairCard(word, profile.pictures, 'pair big')
+    card.style.opacity = '0'
     fx.append(card)
+    const cardPic = card.querySelector<HTMLElement>('.pair-pic')!
+    const cardWord = card.querySelector<HTMLElement>('.pair-word')!
+    const p = centre(pic.el.getBoundingClientRect()), q = centre(cardPic.getBoundingClientRect())
     const cw = card.offsetWidth, ch = card.offsetHeight
-    const cx = Math.max(8, Math.min(innerWidth - cw - 8, s.left + s.width / 2 - cw / 2))
-    const cy = Math.max(8, Math.min(innerHeight - ch - 8, s.top + s.height / 2 - ch / 2))
+    const cx = Math.max(8, Math.min(innerWidth - cw - 8, p.x - q.x))
+    const cy = Math.max(8, Math.min(innerHeight - ch - 8, p.y - q.y))
     card.style.left = `${cx}px`
     card.style.top = `${cy}px`
-    dragged.el.remove()
-    still.el.remove()
-    sound.jingle()
+    const from = centre(wrd.el.getBoundingClientRect()), to = centre(cardWord.getBoundingClientRect())
+    const dx = to.x - from.x
+    const dy = to.y + lift(cardWord) - from.y - lift(wrd.el)
+    // Above the other cards, the dropped one still on top: a word slides out from under a picture.
+    still.el.style.zIndex = String(++z)
+    dragged.el.style.zIndex = String(++z)
+    wrd.el.animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], {
+      duration: ms(560), easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards',
+    })
+    const fade = { duration: ms(200), delay: ms(450), easing: 'ease-in-out', fill: 'forwards' } as const
+    wrd.el.animate([{ opacity: 1 }, { opacity: 0 }], fade)
+    await card.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished
+    card.style.opacity = ''
+    pic.el.remove()
+    wrd.el.remove()
     burst(fx, cx + cw / 2, cy + ch / 2, 14, ['#ffd84d', '#ffffff', '#ff9fb2', '#9fe3ff'])
-    await card.animate([{ transform: 'scale(.55)' }, { transform: 'scale(1.12)', offset: 0.6 }, { transform: 'scale(1)' }], {
-      duration: ms(480), easing: 'ease-out',
-    }).finished
     star.set(round.matched.length, round.ids.length, true)
     void sound.sayWord(word.id, word.word)
     await wait(650)
 
+    // It flies onto the shelf and takes on the shape of the shelf's card on the way.
     const slot = shelfCard(id)
     slot.style.visibility = 'hidden'
     shelfCards.append(slot)
-    // The big card shrinks about its top-left corner until its picture covers the slot's picture.
-    const from = card.querySelector('.pair-pic')!.getBoundingClientRect()
-    const to = slot.querySelector('.pair-pic')!.getBoundingClientRect()
-    const scale = to.width / from.width
-    const dx = to.left - cx - (from.left - cx) * scale
-    const dy = to.top - cy - (from.top - cy) * scale
-    await card.animate(
-      [{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px) scale(${scale})` }],
-      { duration: ms(650), easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' },
-    ).finished
-    // The slot's card is a little wider than the shrunken one: fade from one to the other.
+    const at = slot.getBoundingClientRect()
+    const flight = { duration: ms(650), easing: 'cubic-bezier(.5,0,.3,1)', fill: 'forwards' } as const
+    morph(card, slot, ['width', 'padding', 'borderRadius', 'boxShadow'], flight, { left: `${at.left}px`, top: `${at.top}px` })
+    morph(cardPic, slot.querySelector('.pair-pic')!, ['width', 'height'], flight)
+    morph(cardPic.firstElementChild as HTMLElement, slot.querySelector('.face')!, ['borderRadius', 'fontSize'], flight)
+    await morph(cardWord, slot.querySelector('.pair-word')!, ['fontSize', 'lineHeight', 'letterSpacing', 'padding'], flight).finished
     slot.style.visibility = ''
-    const fade = { duration: ms(160), easing: 'ease-out' }
-    slot.animate([{ opacity: 0 }, { opacity: 1 }], fade)
-    await card.animate([{ opacity: 1 }, { opacity: 0 }], { ...fade, fill: 'forwards' }).finished
     card.remove()
     if (done) await celebrate()
   }
@@ -421,6 +437,19 @@ export function outcome(round: SavedRound, id: string): Outcome {
 
 function pairCard(word: Word, style: string, cls: string) {
   return h('div', cls, h('div', 'pair-pic', pictureFace(word, style)), h('div', 'pair-word', word.word))
+}
+
+/** Animates the given CSS properties of an element from their values now to those of another element. */
+function morph(el: HTMLElement, like: Element, props: string[], timing: KeyframeAnimationOptions, extra: Keyframe = {}) {
+  const from = getComputedStyle(el), to = getComputedStyle(like)
+  const css = (p: string) => p.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
+  const a: Keyframe = {}, b: Keyframe = { ...extra }
+  for (const p of props) {
+    a[p] = from.getPropertyValue(css(p))
+    b[p] = to.getPropertyValue(css(p))
+  }
+  for (const p of Object.keys(extra)) a[p] = from.getPropertyValue(css(p))
+  return el.animate([a, b], timing)
 }
 
 function shuffle<T>(a: T[]): T[] {

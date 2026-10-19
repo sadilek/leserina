@@ -259,23 +259,32 @@ input:focus-visible {
   border-radius: 12px;
 }
 
+/* A pair while it forms and flies: its picture exactly as on the picture card, the word as on
+   the word card, so that both join without changing size. */
 .pair.big {
   position: fixed;
-  width: calc(var(--pic) * 1.15);
-  padding: calc(var(--pic) * 0.07);
+  padding: calc(var(--pic) * 0.06);
   border-radius: calc(var(--pic) * 0.16);
-  transform-origin: 0 0;
   z-index: 50;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.16), 0 10px 22px rgba(0, 0, 0, 0.14);
 }
 
 .pair.big .pair-pic {
-  height: calc(var(--pic) * 1.01);
+  width: calc(var(--pic) * 0.88);
+  height: calc(var(--pic) * 0.88);
+  margin: 0 auto;
+}
+
+.pair.big .face {
+  border-radius: calc(var(--pic) * 0.11);
 }
 
 .pair.big .pair-word {
-  font-size: calc(var(--pic) * 0.27);
-  padding-top: 4px;
+  padding: calc(var(--pic) * 0.04) calc(var(--pic) * 0.04) 0;
+  font-size: calc(var(--pic) * 0.3);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .pair.small {
@@ -298,11 +307,8 @@ input:focus-visible {
   padding: 0 4px;
   font-size: 19px;
   line-height: 1.3;
+  letter-spacing: 0;
   white-space: nowrap;
-}
-
-.pair.big .pair-pic {
-  transform-origin: 50% 50%;
 }
 
 .fx {
