@@ -62,8 +62,8 @@ export function parentsCorner(root: HTMLElement, onDone: () => void) {
     }))
     const devices = devicesSection(render)
     // On a new device, joining the family comes first: it brings the children's profiles along.
-    if (profiles.length) screen.replaceChildren(head, list, add, devices, listenSection())
-    else screen.replaceChildren(head, devices, list, add, listenSection())
+    if (profiles.length) screen.replaceChildren(head, list, add, devices, listenSection(), version())
+    else screen.replaceChildren(head, devices, list, add, listenSection(), version())
   }
   render()
   root.replaceChildren(screen)
@@ -211,6 +211,14 @@ const PROBLEMS: Record<Problem | 'typo', string> = {
 }
 
 const loadWords = () => import('./family-words.txt?raw').then((m) => codeWords(m.default))
+
+/** When the running version was built, so parents can tell whether an update has arrived. */
+function version() {
+  const d = new Date(__BUILD_TIME__)
+  const day = d.toLocaleDateString('de-DE', { day: 'numeric', month: 'numeric', year: 'numeric' })
+  const time = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  return h('p', 'hint version', `Version vom ${day}, ${time}`)
+}
 
 function syncedAt(t: number | null) {
   if (!t) return 'Noch nicht synchronisiert.'

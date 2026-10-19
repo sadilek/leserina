@@ -8,6 +8,7 @@ const base = '/leserina/'
 
 export default defineConfig({
   base,
+  define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
   server: { port: 5180, strictPort: true },
   preview: { port: 5181, strictPort: true },
   // Clips and pictures stay separate files (precached by the service worker), not inlined.

@@ -930,3 +930,8 @@ input:focus-visible {
   background: #fffdf8;
   color: var(--ink);
 }
+
+.hint.version {
+  text-align: center;
+  margin-top: 8px;
+}

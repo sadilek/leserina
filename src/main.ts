@@ -12,8 +12,11 @@ import { startAutoSync } from './sync'
 const root = document.getElementById('app')!
 
 let onStart = false
+// A new version that arrives during a round or in the parents' corner waits for the start screen.
+let reloadPending = false
 
 function home() {
+  if (reloadPending) return location.reload()
   onStart = true
   startScreen(root, (p) => {
     onStart = false
@@ -42,6 +45,25 @@ for (const type of ['pointerdown', 'pointerup', 'touchend', 'click']) {
 }
 
 persist()
-registerSW({ immediate: true })
+registerSW({
+  immediate: true,
+  // The new version takes over at once (autoUpdate); the page reloads into it on the start
+  // screen, never in the middle of a round.
+  onNeedReload() {
+    if (onStart) location.reload()
+    else reloadPending = true
+  },
+  // A home-screen app mostly comes back from the background instead of starting anew, and the
+  // browser looks for a new version only when the page loads. So look whenever the app comes to
+  // the foreground, and every hour while it stays there.
+  onRegisteredSW(_url, r) {
+    if (!r) return
+    const check = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) r.update().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', check)
+    setInterval(check, 60 * 60 * 1000)
+  },
+})
 home()
 startAutoSync()
