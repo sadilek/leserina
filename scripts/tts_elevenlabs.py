@@ -4,9 +4,13 @@
 The voice command `render_audio.py` uses by default. The key comes from ELEVENLABS_API_KEY or
 from the file named in ELEVENLABS_KEY_FILE; ELEVENLABS_VOICE_ID names another voice.
 
-Given a bare word, multilingual v2 often speaks it as English (Igel as "Eagle", Pinguin as
-"Penguin"), and `language_code` alone does not stop that for this model. A German sentence sent as
-`previous_text` does: it sets the language without being spoken.
+Spoken alone, many words come out English, whatever the model and `language_code`: Rose as
+"rouz", Giraffe with an English "dsch", Igel as "Eagle". A row of German words sent as
+`previous_text` makes them German: the model speaks the word as if it came after that row,
+without speaking the row. One German sentence there was not enough for Rose and Giraffe; a row as
+`next_text` as well made the model start the next word at the end of the clip ("Igel ab");
+speaking several words at once and cutting them apart either let the next word's first sound into
+a clip or, with pauses between the words, lost the German again.
 """
 
 from __future__ import annotations
@@ -21,7 +25,7 @@ from pathlib import Path
 
 VOICE = os.environ.get("ELEVENLABS_VOICE_ID", "AJX546nEWdCoekjOePfl")
 MODEL = "eleven_multilingual_v2"
-LEAD_IN = "Auf dem Bild ist das hier:"
+BEFORE = "Haus. Baum. Sonne. Hund. Katze. Apfel. Brot. Mond."
 RATE = 24000
 
 
@@ -42,7 +46,8 @@ def main() -> None:
         sys.exit("no text on stdin")
     request = urllib.request.Request(
         f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE}?output_format=pcm_{RATE}",
-        json.dumps({"text": text, "model_id": MODEL, "language_code": "de", "previous_text": LEAD_IN}).encode(),
+        json.dumps({"text": text, "model_id": MODEL, "language_code": "de",
+                    "previous_text": BEFORE}).encode(),
         {"xi-api-key": api_key(), "Content-Type": "application/json"},
     )
     try:
