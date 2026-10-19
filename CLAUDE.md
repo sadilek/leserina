@@ -20,9 +20,10 @@ See README.md for what the app is, how to run it and how the learning logic work
 - The repository is public: children's names (`audio/name-*`, gitignored) never go into it. The
   one exception, decided by the owner: `name-katharina.mp3` and `name-alexander.mp3` ship with
   the app (listed in `.gitignore`). Any other name needs the owner's say first.
-- Rendering audio with ElevenLabs (`scripts/render_audio.py`, `scripts/tts_elevenlabs.py`) takes
-  `ELEVENLABS_KEY_FILE=/Users/sadilek/dev/obeya/.voice/elevenlabs.key` (outside this repo,
-  gitignored there). The key itself never goes into this repository.
+- Rendering audio with ElevenLabs (`scripts/render_audio.py`, `scripts/tts_elevenlabs.py`) reads
+  the key from `.secrets/elevenlabs.key` in the main checkout (gitignored; a worktree has none of
+  its own): `ELEVENLABS_KEY_FILE="$(git rev-parse --path-format=absolute --git-common-dir)/../.secrets/elevenlabs.key"`.
+  The key itself never goes into the repository.
 - Automated browser runs stay silent on the owner's Mac. Obeya's browser and demo skills already
   silence `speechSynthesis`; any other browser tool needs it stubbed in the page, because
   `src/sound.ts` speaks words without a clip (name clips are never in the repo) through the system

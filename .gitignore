@@ -14,3 +14,6 @@ firebase-debug.log
 
 # The model's full-size pictures (scripts/render_pictures.py); the app gets WebPs in pictures/.
 pictures-raw/
+
+# API keys (CLAUDE.md); the repository is public.
+.secrets/
