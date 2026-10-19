@@ -2,7 +2,8 @@
 """Speak German text in the owner's ElevenLabs voice: text on stdin, WAV to $DEMO_WAV.
 
 The voice command `render_audio.py` uses by default. The key comes from ELEVENLABS_API_KEY or
-from the file named in ELEVENLABS_KEY_FILE; ELEVENLABS_VOICE_ID names another voice.
+from the file named in ELEVENLABS_KEY_FILE; ELEVENLABS_VOICE_ID names another voice,
+ELEVENLABS_MODEL another model and ELEVENLABS_SPEED another pace.
 
 Spoken alone, many words come out English, whatever the model and `language_code`: Rose as
 "rouz", Giraffe with an English "dsch", Igel as "Eagle". A row of German words sent as
@@ -24,7 +25,9 @@ import wave
 from pathlib import Path
 
 VOICE = os.environ.get("ELEVENLABS_VOICE_ID", "AJX546nEWdCoekjOePfl")
-MODEL = "eleven_multilingual_v2"
+MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2")
+# 1.0 is the voice's own pace; ElevenLabs takes 0.7 to 1.2.
+SPEED = float(os.environ.get("ELEVENLABS_SPEED", "1.0"))
 BEFORE = "Haus. Baum. Sonne. Hund. Katze. Apfel. Brot. Mond."
 RATE = 24000
 
@@ -47,7 +50,7 @@ def main() -> None:
     request = urllib.request.Request(
         f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE}?output_format=pcm_{RATE}",
         json.dumps({"text": text, "model_id": MODEL, "language_code": "de",
-                    "previous_text": BEFORE}).encode(),
+                    "previous_text": BEFORE, "voice_settings": {"speed": SPEED}}).encode(),
         {"xi-api-key": api_key(), "Content-Type": "application/json"},
     )
     try:
