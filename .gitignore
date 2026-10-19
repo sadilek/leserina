@@ -7,3 +7,4 @@ audio/name-*
 prototypes-out/
 __pycache__/
 .venv/
+firebase-debug.log
