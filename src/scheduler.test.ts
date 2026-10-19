@@ -173,9 +173,11 @@ describe('goOn', () => {
     expect(goOn(saved(first), later)).toBe(false)
   })
 
-  it('goes on with a started round whatever the next words are', () => {
+  it('deals anew when the child only heard a word or dropped one wrong', () => {
+    expect(goOn(saved(first, { wrong: [first[1]], help: [first[2]] }), later)).toBe(false)
+  })
+
+  it('goes on once a pair is made, whatever the next words are', () => {
     expect(goOn(saved(first, { matched: [first[0]] }), later)).toBe(true)
-    expect(goOn(saved(first, { wrong: [first[1]] }), later)).toBe(true)
-    expect(goOn(saved(first, { help: [first[2]] }), later)).toBe(true)
   })
 })
