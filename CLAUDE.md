@@ -17,7 +17,9 @@ See README.md for what the app is, how to run it and how the learning logic work
 - Published at https://sadilek.github.io/leserina/ by every push to `main`. Vite's `base`
   (`/leserina/`) and the repo name must never change, and `sadilek.github.io` must never get a custom
   domain: installed apps would lose their data (README, "Publishing and updating").
-- The repository is public: children's names (`audio/name-*`, gitignored) never go into it.
+- The repository is public: children's names (`audio/name-*`, gitignored) never go into it. The
+  one exception, decided by the owner: `name-katharina.mp3` and `name-alexander.mp3` ship with
+  the app (listed in `.gitignore`). Any other name needs the owner's say first.
 - Automated browser runs stay silent on the owner's Mac. Obeya's browser and demo skills already
   silence `speechSynthesis`; any other browser tool needs it stubbed in the page, because
   `src/sound.ts` speaks words without a clip (name clips are never in the repo) through the system

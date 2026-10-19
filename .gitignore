@@ -2,8 +2,11 @@ node_modules/
 dist/
 dev-dist/
 .DS_Store
-# The children's names (render_audio.py --names): never in the public repository.
+# Children's names (render_audio.py --names) stay out of the public repository, except the
+# owner's two, which ship with the app.
 audio/name-*
+!audio/name-katharina.mp3
+!audio/name-alexander.mp3
 prototypes-out/
 __pycache__/
 .venv/
