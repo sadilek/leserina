@@ -2,20 +2,34 @@
 import type { Word } from './scheduler'
 import { avatarById } from './avatars'
 
-const pictureFiles = import.meta.glob('../pictures/*.{png,webp,jpg,jpeg}', {
+/** The picture styles, one folder each in pictures/; a child's profile picks one. The first is the default. */
+export const PICTURE_STYLES = [
+  { id: 'watercolour', label: 'Wasserfarben' },
+  { id: 'clay', label: 'Knete' },
+]
+
+const pictureFiles = import.meta.glob('../pictures/*/*.{png,webp,jpg,jpeg}', {
   eager: true, query: '?url', import: 'default',
 }) as Record<string, string>
 const audioFiles = import.meta.glob('../audio/*.mp3', {
   eager: true, query: '?url', import: 'default',
 }) as Record<string, string>
 
+/** Keyed by the file name without extension, and for pictures by "<style>/<name>". */
 const byName = (files: Record<string, string>) =>
-  new Map(Object.entries(files).map(([path, url]) => [path.replace(/^.*\/|\.[^.]+$/g, ''), url]))
+  new Map(Object.entries(files).map(([path, url]) => [path.replace(/^.*?\/(audio|pictures)\/|\.[^.]+$/g, ''), url]))
 
 const pictures = byName(pictureFiles)
 const clips = byName(audioFiles)
 
-export const pictureUrl = (id: string) => pictures.get(id)
+/** The picture in the given style; else in another style, so a missing one does not show an emoji. */
+export function pictureUrl(id: string, style: string) {
+  const styles = [style, ...PICTURE_STYLES.map((s) => s.id)]
+  for (const s of styles) {
+    const url = pictures.get(`${s}/${id}`)
+    if (url) return url
+  }
+}
 export const clipUrl = (id: string) => clips.get(id)
 export const nameClipUrl = (nameSlug: string) => clips.get(`name-${nameSlug}`)
 
@@ -27,17 +41,21 @@ function tint(id: string) {
   return TINTS[h % TINTS.length]
 }
 
+function image(url: string) {
+  const img = document.createElement('img')
+  img.src = url
+  img.alt = ''
+  img.draggable = false
+  return img
+}
+
 /** The contents of a picture card: the picture if there is one, else the emoji on a tint. */
-export function pictureFace(word: Word): HTMLElement {
+export function pictureFace(word: Word, style: string): HTMLElement {
   const face = document.createElement('div')
   face.className = 'face'
-  const url = pictureUrl(word.id)
+  const url = pictureUrl(word.id, style)
   if (url) {
-    const img = document.createElement('img')
-    img.src = url
-    img.alt = ''
-    img.draggable = false
-    face.append(img)
+    face.append(image(url))
   } else {
     face.classList.add('placeholder')
     face.style.background = tint(word.id)
@@ -46,18 +64,11 @@ export function pictureFace(word: Word): HTMLElement {
   return face
 }
 
-export function avatarFace(avatarId: string): HTMLElement {
+export function avatarFace(avatarId: string, style: string): HTMLElement {
   const face = document.createElement('div')
   face.className = 'avatar-face'
-  const url = pictureUrl(`avatar-${avatarId}`)
-  if (url) {
-    const img = document.createElement('img')
-    img.src = url
-    img.alt = ''
-    img.draggable = false
-    face.append(img)
-  } else {
-    face.textContent = avatarById(avatarId).emoji
-  }
+  const url = pictureUrl(`avatar-${avatarId}`, style)
+  if (url) face.append(image(url))
+  else face.textContent = avatarById(avatarId).emoji
   return face
 }

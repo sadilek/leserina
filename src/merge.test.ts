@@ -32,7 +32,7 @@ class Device {
     return this.profiles().find((p) => p.name === name)
   }
   add(id: string, name: string, fields: Partial<Fields> = {}) {
-    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, ...fields }, this.now())
+    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', ...fields }, this.now())
   }
   set<K extends keyof Fields>(name: string, k: K, v: Fields[K]) {
     const p = this.profile(name)!
@@ -136,14 +136,25 @@ describe('two devices', () => {
     pixel.sync(server)
     ipad.set('Lena', 'pairs', 6)
     pixel.set('Lena', 'avatar', 'owl')
+    pixel.set('Lena', 'pictures', 'clay')
     pixel.set('Lena', 'name', 'Lena B.')
     ipad.set('Lena', 'startLevel', 2)
     ipad.sync(server)
     pixel.sync(server)
     ipad.sync(server)
     for (const d of [ipad, pixel]) {
-      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2 }])
+      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2, pictures: 'clay' }])
     }
+  })
+
+  it('show watercolour pictures for profiles from apps before the picture style', () => {
+    const server: Server = {}
+    const old = new Device('old'), ipad = new Device('ipad')
+    old.add('lena', 'Lena')
+    delete old.own.profiles.lena.pictures
+    old.sync(server)
+    ipad.sync(server)
+    expect(ipad.profile('Lena')!.pictures).toBe('watercolour')
   })
 
   it('hold a reset against coins and words from before it', () => {
@@ -265,7 +276,7 @@ describe('fromV1', () => {
     ]
     const ipad = new Device('ipad')
     ipad.own = JSON.parse(JSON.stringify(fromV1(v1, clock)))
-    expect(ipad.profiles()).toMatchObject(v1)
+    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour' })))
 
     // The pixel had its own children before; joining keeps both, and Lena's coins carry on.
     const server: Server = {}

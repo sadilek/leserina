@@ -142,7 +142,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   function makeItem(kind: Kind, id: string): Item {
     const word = wordById.get(id)!
     const el =
-      kind === 'p' ? h('div', 'item picture', pictureFace(word)) : h('div', 'item word', word.word)
+      kind === 'p' ? h('div', 'item picture', pictureFace(word, profile.pictures)) : h('div', 'item word', word.word)
     el.dataset.id = id
     const it: Item = { kind, id, el }
     el.addEventListener('pointerdown', (e) => grab(it, e))
@@ -257,7 +257,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
 
     // The pair becomes one card where the partner lay, pops, and flies onto the shelf.
     const s = still.el.getBoundingClientRect()
-    const card = pairCard(word, 'pair big')
+    const card = pairCard(word, profile.pictures, 'pair big')
     fx.append(card)
     const cw = card.offsetWidth, ch = card.offsetHeight
     const cx = Math.max(8, Math.min(innerWidth - cw - 8, s.left + s.width / 2 - cw / 2))
@@ -293,7 +293,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
 
   function shelfCard(id: string) {
     const word = wordById.get(id)!
-    const card = pairCard(word, 'pair small')
+    const card = pairCard(word, profile.pictures, 'pair small')
     card.addEventListener('pointerdown', () => {
       sound.unlock()
       void sound.sayWord(word.id, word.word)
@@ -413,8 +413,8 @@ export function outcome(round: SavedRound, id: string): Outcome {
   return 'right'
 }
 
-function pairCard(word: Word, cls: string) {
-  return h('div', cls, h('div', 'pair-pic', pictureFace(word)), h('div', 'pair-word', word.word))
+function pairCard(word: Word, style: string, cls: string) {
+  return h('div', cls, h('div', 'pair-pic', pictureFace(word, style)), h('div', 'pair-word', word.word))
 }
 
 function shuffle<T>(a: T[]): T[] {

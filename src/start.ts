@@ -21,7 +21,7 @@ export function startScreen(root: HTMLElement, onPick: (p: Profile) => void, onP
     const name = document.createElement('span')
     name.className = 'kid-name'
     name.textContent = p.name
-    b.append(avatarFace(p.avatar), name)
+    b.append(avatarFace(p.avatar, p.pictures), name)
     let picked = false
     b.addEventListener('click', () => {
       if (picked) return

@@ -2,7 +2,7 @@
 // reads everyone else's; merging all documents gives the profiles every device shows.
 // No write ever conflicts, so the server only stores and returns documents.
 //
-// - Name, avatar, start level and pairs: the most recent write wins, per field.
+// - Name, avatar, start level, pairs and picture style: the most recent write wins, per field.
 // - Stars (`coins`) and rounds: each device counts its own since the last reset; the total is the sum.
 //   A reset starts a new epoch (its time), and counts from older epochs drop out.
 // - Word states: the most recently written state wins; states older than the reset drop out.
@@ -14,12 +14,14 @@ export interface Stamped<T> {
   t: number
 }
 
-export type Field = 'name' | 'avatar' | 'startLevel' | 'pairs'
+export type Field = 'name' | 'avatar' | 'startLevel' | 'pairs' | 'pictures'
 export interface Fields {
   name: string
   avatar: string
   startLevel: number
   pairs: number
+  /** The picture style (`src/assets.ts`). Apps from before it was added ignore it. */
+  pictures: string
 }
 
 /** One profile as one device knows it: its own writes, and its own counts. */
@@ -30,6 +32,7 @@ export interface ProfileDoc {
   avatar?: Stamped<string>
   startLevel?: Stamped<number>
   pairs?: Stamped<number>
+  pictures?: Stamped<string>
   /** When the profile was deleted. */
   deleted?: number
   /** The reset this device's counts belong to: its time, 0 before the first reset. */
@@ -57,8 +60,8 @@ export interface ProfileView extends Fields {
   latest: number
 }
 
-export const FIELDS: Field[] = ['name', 'avatar', 'startLevel', 'pairs']
-const DEFAULTS: Fields = { name: '', avatar: '', startLevel: 1, pairs: 4 }
+export const FIELDS: Field[] = ['name', 'avatar', 'startLevel', 'pairs', 'pictures']
+export const DEFAULTS: Fields = { name: '', avatar: '', startLevel: 1, pairs: 4, pictures: 'watercolour' }
 
 export function emptyDoc(): DeviceDoc {
   return { v: 2, profiles: {} }
@@ -85,6 +88,7 @@ export function combine(docs: ProfileDoc[]): ProfileDoc {
     out.avatar = later(out.avatar, d.avatar)
     out.startLevel = later(out.startLevel, d.startLevel)
     out.pairs = later(out.pairs, d.pairs)
+    out.pictures = later(out.pictures, d.pictures)
     if (d.epoch === out.epoch) {
       out.coins += d.coins
       out.rounds += d.rounds
@@ -125,6 +129,7 @@ export function merge(docs: DeviceDoc[]): ProfileView[] {
       avatar: p.avatar?.v ?? DEFAULTS.avatar,
       startLevel: p.startLevel?.v ?? DEFAULTS.startLevel,
       pairs: p.pairs?.v ?? DEFAULTS.pairs,
+      pictures: p.pictures?.v ?? DEFAULTS.pictures,
       coins: p.coins,
       learning: { round, words },
       epoch: p.epoch,
@@ -190,10 +195,10 @@ export function deleteProfile(doc: DeviceDoc, id: string, now: number) {
 }
 
 /** A device's progress from before syncing (store v1) as its own document: all of it its share. */
-export function fromV1(profiles: (Fields & { id: string; coins: number; learning: LearningState })[], now: number): DeviceDoc {
+export function fromV1(profiles: (Omit<Fields, 'pictures'> & { id: string; coins: number; learning: LearningState })[], now: number): DeviceDoc {
   const doc = emptyDoc()
   profiles.forEach((p, i) => {
-    createProfile(doc, p.id, p, now + i)
+    createProfile(doc, p.id, { ...DEFAULTS, ...p }, now + i)
     const words: ProfileDoc['words'] = {}
     for (const [id, s] of Object.entries(p.learning.words)) words[id] = { ...s, t: now + i }
     Object.assign(doc.profiles[p.id], { coins: p.coins, rounds: p.learning.round, words })

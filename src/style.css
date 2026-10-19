@@ -624,6 +624,42 @@ input:focus-visible {
   color: #5b6b6c;
 }
 
+.settings .setting {
+  display: grid;
+  gap: 4px;
+  font-size: 15px;
+  color: #5b6b6c;
+}
+
+.style-pick {
+  display: flex;
+  gap: 8px;
+}
+
+.style-pick button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: 18px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 10px;
+  border: 1.5px solid #d8d1c2;
+  background: #fffdf8;
+  color: var(--ink);
+}
+
+.style-pick button.on {
+  border-color: var(--felt);
+  box-shadow: 0 0 0 2.5px var(--felt);
+}
+
+.style-pick .face {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+}
+
 .settings select {
   font: inherit;
   font-size: 18px;

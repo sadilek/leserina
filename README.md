@@ -134,8 +134,11 @@ reads the word.
   with Whisper, such as the voice clone's) and lists those that may not say their word. Whisper
   itself cannot tell very short words (Ei, Ohr, Wal) apart, so a person has to listen to those.
   Without a clip, the device's own German voice reads the word.
-- `pictures/<id>.png`: one picture per word. Without one, the word's emoji stands in. See
-  `pictures/README.md`.
+- `pictures/<style>/<id>.webp`: one picture per word and per avatar, in two styles, soft
+  watercolour (the default) and round 3D clay; each child's profile picks one in the parents'
+  corner. Rendered by Nano Banana 2.1 through the Gemini API with `scripts/render_pictures.py`
+  (about $0.04 a picture, so about $11 for all of them), from `data/picture-prompts.csv`. Without
+  a picture, the word's emoji stands in. See `pictures/README.md`.
 - `src/scheduler.ts`: the learning logic, a Leitner box system counted in rounds, as pure
   functions with tests that simulate children (`src/scheduler.test.ts`).
 - `src/game.ts`: the game screen; `src/layout.ts`: scattering the cards on the mat;

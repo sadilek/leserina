@@ -39,7 +39,7 @@ interface Data {
   current: Record<string, SavedRound>
 }
 
-interface V1Profile extends Fields {
+interface V1Profile extends Omit<Fields, 'pictures'> {
   id: string
   coins: number
   learning: LearningState
@@ -126,7 +126,7 @@ save()
 
 export function addProfile(name: string, avatar: string): Profile {
   const id = randomId(8)
-  merge.createProfile(data.own, id, { name, avatar, startLevel: 1, pairs: 4 }, Date.now())
+  merge.createProfile(data.own, id, { ...merge.DEFAULTS, name, avatar }, Date.now())
   change()
   return profiles.find((p) => p.id === id)!
 }

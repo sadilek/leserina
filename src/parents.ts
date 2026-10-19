@@ -1,6 +1,6 @@
 // The parents' corner: children's profiles, their settings, and which words sit in which box.
 import wordList from '../words.json'
-import { avatarFace, clipUrl, nameClipUrl } from './assets'
+import { avatarFace, clipUrl, nameClipUrl, pictureFace, PICTURE_STYLES } from './assets'
 import { AVATARS } from './avatars'
 import { boxes, type Word } from './scheduler'
 import { slug } from './slug'
@@ -91,7 +91,7 @@ function profilePanel(p: Profile, rerender: () => void) {
 
   const avatars = h('div', 'avatar-row')
   for (const a of AVATARS) {
-    const b = h('button', `avatar-pick${a.id === p.avatar ? ' on' : ''}`, avatarFace(a.id))
+    const b = h('button', `avatar-pick${a.id === p.avatar ? ' on' : ''}`, avatarFace(a.id, p.pictures))
     b.setAttribute('aria-label', a.id)
     b.addEventListener('click', () => {
       setField(p, 'avatar', a.id)
@@ -119,9 +119,22 @@ function profilePanel(p: Profile, rerender: () => void) {
   pairs.value = String(p.pairs)
   pairs.addEventListener('change', () => setField(p, 'pairs', Number(pairs.value)))
 
+  // Each style shows the dog in it, so parents see what they pick.
+  const dog = wordById.get('hund')!
+  const styles = h('div', 'style-pick')
+  for (const s of PICTURE_STYLES) {
+    const b = h('button', s.id === p.pictures ? 'on' : '', pictureFace(dog, s.id), h('span', '', s.label))
+    b.addEventListener('click', () => {
+      setField(p, 'pictures', s.id)
+      rerender()
+    })
+    styles.append(b)
+  }
+
   const settings = h('div', 'settings',
     h('label', '', h('span', '', 'Beginnt bei'), level),
     h('label', '', h('span', '', 'Pro Runde'), pairs),
+    h('div', 'setting', h('span', '', 'Bilder'), styles),
   )
 
   const seen = Object.keys(p.learning.words).length
@@ -167,7 +180,7 @@ function profilePanel(p: Profile, rerender: () => void) {
     : ''
 
   panel.append(
-    h('div', 'panel-head', h('div', 'panel-avatar', avatarFace(p.avatar)), h('div', 'panel-name', name, nameHint)),
+    h('div', 'panel-head', h('div', 'panel-avatar', avatarFace(p.avatar, p.pictures)), h('div', 'panel-name', name, nameHint)),
     twinHint, avatars, settings, stats, boxRow, actions,
   )
   return panel
