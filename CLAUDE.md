@@ -18,3 +18,7 @@ See README.md for what the app is, how to run it and how the learning logic work
   (`/leserina/`) and the repo name must never change, and `sadilek.github.io` must never get a custom
   domain: installed apps would lose their data (README, "Publishing and updating").
 - The repository is public: children's names (`audio/name-*`, gitignored) never go into it.
+- Automated browser runs (checks, demo recordings) stay silent on the owner's Mac: stub
+  `speechSynthesis.speak` in the page before driving the app. `src/sound.ts` speaks words without a
+  clip through the system voice (name clips are never in the repo), and Chrome's `--mute-audio`
+  does not silence that. Close the test browser when testing is done.
