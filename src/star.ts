@@ -88,23 +88,31 @@ export class Star {
         'stroke-dasharray': '3 3', 'stroke-linejoin': 'round',
       }))
     }
+    // The seams between arms go on top of every arm: each arm's thick outline would otherwise
+    // cover the seams drawn before it, at the centre and along its sides. The group's opacity
+    // keeps the centre, where all seams overlap, as light as the seams themselves.
+    const seams = el('g', { stroke: '#b86a10', opacity: 0.55, 'stroke-width': 1.3, 'stroke-linecap': 'round' })
     for (let k = 0; k < filled; k++) {
       const g = el('g', {})
       const [tx, ty] = pts[2 * k]
       g.append(
         el('polygon', { points: arm(k), fill: 'url(#ls-gold)', stroke: 'url(#ls-gold)', 'stroke-width': 3.2, 'stroke-linejoin': 'round' }),
-        // The seams between arms, and a glint along the arm.
-        el('line', { x1: 0, y1: 0, x2: f(notch(k)[0]), y2: f(notch(k)[1]), stroke: '#b86a10', 'stroke-opacity': 0.55, 'stroke-width': 1.3, 'stroke-linecap': 'round' }),
+        // A glint along the arm.
         el('line', { x1: f(tx * 0.41), y1: f(ty * 0.41), x2: f(tx * 0.78), y2: f(ty * 0.78), stroke: '#fff6d0', 'stroke-opacity': 0.7, 'stroke-width': 2.4, 'stroke-linecap': 'round' }),
       )
+      const seam = el('line', { x1: 0, y1: 0, x2: f(notch(k)[0]), y2: f(notch(k)[1]) })
       this.layer.append(g)
+      seams.append(seam)
       if (animate && k === filled - 1) {
-        g.animate(
-          [{ transform: 'scale(0.2)', opacity: 0.2 }, { transform: 'scale(1.12)', opacity: 1, offset: 0.7 }, { transform: 'scale(1)' }],
-          { duration: 450, easing: 'cubic-bezier(.3,1.4,.5,1)' },
-        )
+        for (const e of [g, seam]) {
+          e.animate(
+            [{ transform: 'scale(0.2)', opacity: 0.2 }, { transform: 'scale(1.12)', opacity: 1, offset: 0.7 }, { transform: 'scale(1)' }],
+            { duration: 450, easing: 'cubic-bezier(.3,1.4,.5,1)' },
+          )
+        }
       }
     }
+    this.layer.append(seams)
   }
 }
 
