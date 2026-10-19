@@ -16,9 +16,15 @@ WORDS = [
     ("Eichhörnchen", "a red squirrel with a bushy tail"),
 ]
 
+import re
+
 _UMLAUTS = str.maketrans({"ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss"})
 
 
 def slug(word: str) -> str:
-    """ASCII id of a word, as the app expects it in pictures/<id>.png (Eichhörnchen -> eichhoernchen)."""
-    return word.lower().translate(_UMLAUTS)
+    """ASCII id of a word, as the app expects it in pictures/<id>.png (Eichhörnchen -> eichhoernchen).
+
+    The same as src/slug.ts and slug() in scripts/render_audio.py.
+    """
+    s = word.strip().lower().translate(_UMLAUTS)
+    return re.sub(r"[^a-z0-9]", "-", s).strip("-")
