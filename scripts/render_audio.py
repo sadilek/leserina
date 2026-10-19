@@ -2,8 +2,10 @@
 """Render one spoken clip per word into audio/<id>.mp3, in the owner's cloned voice.
 
 The voice command takes text on stdin and writes a WAV to $DEMO_WAV. By default it is the
-local Qwen3-TTS clone in ~/dev/stimmzwilling (the same command Obeya's demos use); set
-LESERINA_TTS_CMD to use another one. Each word is spoken as a sentence ("Ball."), because
+owner's ElevenLabs voice (scripts/tts_elevenlabs.py, which needs ELEVENLABS_API_KEY or
+ELEVENLABS_KEY_FILE); set LESERINA_TTS_CMD to use another one, such as the local Qwen3-TTS clone
+the clips came from before: "uv run --quiet --project ~/dev/stimmzwilling python
+~/dev/stimmzwilling/scripts/demo_voice.py". Each word is spoken as a sentence ("Ball."), because
 single words come out with odd intonation more often. ffmpeg trims the silence around the
 clip, evens out the loudness and encodes it as MP3.
 
@@ -26,10 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "data" / "words-source.csv"
 AUDIO = ROOT / "audio"
-DEFAULT_CMD = (
-    "uv run --quiet --project ~/dev/stimmzwilling "
-    "python ~/dev/stimmzwilling/scripts/demo_voice.py"
-)
+DEFAULT_CMD = f"python3 {ROOT / 'scripts' / 'tts_elevenlabs.py'}"
 # Trim leading and trailing silence, then normalise loudness so all clips sound equally loud.
 FILTER = (
     "silenceremove=start_periods=1:start_duration=0.04:start_threshold=-45dB:start_silence=0.05,"

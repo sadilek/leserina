@@ -116,7 +116,7 @@ installed apps pick it up with the next update.
 
 ## The voice
 
-The clips in `audio/` are the owner's own voice, rendered through a voice clone. They are not
+The clips in `audio/` are the owner's own voice, rendered through a voice clone at ElevenLabs. They are not
 under the MIT license of the code: you may use them only with this app. To use another voice,
 render your own clips (see below) or delete them; without a clip, the device's own German voice
 reads the word.
@@ -128,8 +128,10 @@ reads the word.
   the script's docstring explains the score. To move a word, put a number in that row's optional
   `adjust` column (negative = earlier) and rerun.
 - `audio/<id>.mp3`: one clip per word, rendered by `npm run render-audio`
-  (`scripts/render_audio.py`). A separate voice-clone setup renders the clips: any command that
-  reads text on stdin and writes a WAV to `$DEMO_WAV`, set in `LESERINA_TTS_CMD`. `--only`
+  (`scripts/render_audio.py`). By default the owner's ElevenLabs voice speaks them
+  (`scripts/tts_elevenlabs.py`, with the key in `ELEVENLABS_API_KEY` or in the file named in
+  `ELEVENLABS_KEY_FILE`); any other command that reads text on stdin and writes a WAV to
+  `$DEMO_WAV` can, set in `LESERINA_TTS_CMD`. `--only`
   re-renders single words, `--names Lena,Max` renders the children's names for the start screen
   as `audio/name-<id>.mp3`. Those stay on the local machine (`.gitignore`), so children's names
   never reach the public repository; the published app reads other names with the device's
