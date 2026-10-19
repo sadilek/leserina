@@ -293,7 +293,9 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     card.style.opacity = ''
     pic.el.remove()
     wrd.el.remove()
-    burst(fx, cx + cw / 2, cy + ch / 2, 14, ['#ffd84d', '#ffffff', '#ff9fb2', '#9fe3ff'])
+    // From around the card's middle out past its edges, as big as the card is.
+    const r = Math.hypot(cw, ch) / 2
+    burst(fx, cx + cw / 2, cy + ch / 2, 24, ['#ffd84d', '#ffffff', '#ff9fb2', '#9fe3ff'], Math.max(1.6, r / 100), r * 0.4)
     star.set(round.matched.length, round.ids.length, true)
     void sound.sayWord(word.id, word.word)
     await wait(650)
@@ -460,8 +462,8 @@ function shuffle<T>(a: T[]): T[] {
   return a
 }
 
-/** Little stars flying out from a point. */
-function burst(layer: HTMLElement, x: number, y: number, n: number, colors: string[], spread = 1) {
+/** Little stars flying out from a point, or from a ring of radius `from` around it. */
+function burst(layer: HTMLElement, x: number, y: number, n: number, colors: string[], spread = 1, from = 0) {
   if (reducedMotion()) return
   for (let i = 0; i < n; i++) {
     const s = document.createElement('div')
@@ -473,11 +475,13 @@ function burst(layer: HTMLElement, x: number, y: number, n: number, colors: stri
     s.style.fontSize = `${14 + Math.random() * 18 * spread}px`
     layer.append(s)
     const a = (i / n) * 2 * Math.PI + Math.random() * 0.5
-    const d = (90 + Math.random() * 90) * spread
+    const d = from + (90 + Math.random() * 90) * spread
+    const move = (d: number) => `translate(calc(-50% + ${Math.cos(a) * d}px), calc(-50% + ${Math.sin(a) * d}px))`
     s.animate(
       [
-        { transform: 'translate(-50%,-50%) scale(.3)', opacity: 1 },
-        { transform: `translate(calc(-50% + ${Math.cos(a) * d}px), calc(-50% + ${Math.sin(a) * d}px)) scale(1) rotate(${Math.random() * 180}deg)`, opacity: 0 },
+        { transform: `${move(from)} scale(.3)`, opacity: 1 },
+        { opacity: 1, offset: 0.5 },
+        { transform: `${move(d)} scale(1) rotate(${Math.random() * 180}deg)`, opacity: 0 },
       ],
       { duration: 700 + Math.random() * 500 * spread, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' },
     ).finished.then(() => s.remove())
