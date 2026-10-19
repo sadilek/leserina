@@ -93,7 +93,7 @@ The server is a Cloudflare Worker in `worker/` with one Durable Object per famil
 EU, one row per device. It checks the code's format, the device id, that the body is a JSON
 object below 256 KB, and that a family has at most 10 devices (a wiped device comes back under a
 new id; its old document keeps counting). It answers only the published app and local dev
-servers (CORS). Its address is in `src/sync.ts`. Cloudflare's free plan allows 100,000 requests
+servers (CORS). It runs at https://leserina-sync.sadilek.workers.dev, set in `src/sync.ts`. Cloudflare's free plan allows 100,000 requests
 a day and 5 GB; past a limit, requests fail until the daily reset, nothing is billed, and the
 app syncs later.
 
