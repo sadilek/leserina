@@ -28,6 +28,15 @@ body {
   background: var(--felt);
 }
 
+/* iOS 26 lays out a home-screen app with the translucent status bar one status bar's height
+   short of the screen (WebKit bug 301108): the felt and the fixed #app stopped above the bottom
+   edge. A page at least as tall as the screen gets the full viewport; lvh caps it there. */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  html {
+    min-height: min(100lvh, calc(100% + env(safe-area-inset-top)));
+  }
+}
+
 body {
   -webkit-user-select: none;
   user-select: none;
@@ -486,8 +495,10 @@ input:focus-visible {
 
 .parents-btn {
   position: absolute;
-  right: calc(18px + env(safe-area-inset-right));
-  bottom: calc(18px + env(safe-area-inset-bottom));
+  /* The home indicator sits in the middle of the bottom edge, so the corner needs no more than
+     its inset, as far from the bottom as from the side. */
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
   width: 54px;
   height: 54px;
   color: rgba(255, 255, 255, 0.35);
