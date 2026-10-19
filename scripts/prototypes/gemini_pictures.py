@@ -400,6 +400,10 @@ passed along.</p>
 </table>"""
 
 
+TAB_LABELS = {"gemini-nano-banana-2.1": "Nano Banana 2.1",
+              "gemini-3.1-flash-image": "Nano Banana 2"}
+
+
 def sheet(args):
     dest = Path(args.dest).expanduser()
     if (dest / "img").exists():
@@ -411,7 +415,7 @@ def sheet(args):
     for i, out in enumerate(runs):
         checked = " checked" if i == 0 else ""
         tabs.append(f'<input type="radio" name="run" id="t{i}"{checked}>'
-                    f'<label for="t{i}">{html.escape(out.name)}</label>')
+                    f'<label for="t{i}">{html.escape(TAB_LABELS.get(out.name, out.name))}</label>')
         panels.append(f'<section id="p{i}">{section(out, dest)}</section>')
         css.append(f"#t{i}:checked ~ main #p{i} {{ display: block; }}")
     page = f"""<!doctype html>
