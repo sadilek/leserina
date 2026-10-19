@@ -1,5 +1,9 @@
 # Leserina
 
+<p align="center">
+  <img src="docs/screenshots/round.webp" alt="A round on a tablet: four pictures (egg, cow, bear, door) and four words on a green mat; the word Kuh is being dragged onto the cow" width="800">
+</p>
+
 A reading game for young children, made by a parent for their own kids and published as is.
 It runs in the browser and installs as a full-screen app on a tablet or phone:
 **https://sadilek.github.io/leserina/**. The words and the interface are German.
@@ -8,6 +12,24 @@ Pictures and words lie scattered on a mat; the child drags a word onto its pictu
 onto its word). Each pair fills an arm of a gold star, and a full star goes into the child's
 jar of night sky, where the stars collected so far form a constellation. Tapping a picture or a word reads the word aloud, in a parent's own voice. Words
 start easy and get harder per child, and the ones a child gets wrong come back, as with flashcards.
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/screenshots/start.webp" alt="The start screen: two children, Lena with a fox and Max with an owl"></td>
+    <td width="33%"><img src="docs/screenshots/star.webp" alt="A full star bursts with light after the fourth pair; the pairs sit on the shelf below"></td>
+    <td width="33%"><img src="docs/screenshots/jar.webp" alt="The opened jar: 24 stars on a dark blue night sky, joined into a constellation"></td>
+  </tr>
+  <tr>
+    <td align="center">Each child picks their own animal.</td>
+    <td align="center">Four pairs make a full star.</td>
+    <td align="center">The stars collect in the jar.</td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/screenshots/phone.webp" alt="A round on a phone held upright, with clay pictures: cat, apple, tent and cup" width="220"><br>
+  <em>On a phone, with the other picture style, round 3D clay.</em>
+</p>
 
 Everything runs on the device: no account, no tracking. Progress lives in the browser's local
 storage. Optionally, a family's devices (say an iPad and a phone) share it through a small server,
@@ -156,6 +178,8 @@ reads the word.
   counts them all.
 - `src/store.ts`: profiles, stars, learning state and the unfinished rounds in `localStorage`;
   `src/merge.ts`, `src/sync.ts`, `src/familycode.ts` and `worker/`: syncing between devices.
+- `docs/screenshots/`: the pictures in this README, taken from `npm run dev` in a headless
+  Chrome (iPad landscape 1180×820 and phone 393×852) with two made-up children, Lena and Max.
 - `mockups/`: static design drafts for themes (space, under the sea, dinosaurs, flower garden,
   building site), not part of the app and not in the published site. With `npm run dev`
   running, open http://localhost:5180/leserina/mockups/.
