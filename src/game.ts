@@ -2,7 +2,7 @@
 import wordList from '../words.json'
 import { pictureFace } from './assets'
 import { fullStar, Jar, openJar, Star } from './star'
-import { place } from './layout'
+import { apart, place } from './layout'
 import { composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
 import { onSync, recordRound, save, type Profile, type SavedRound } from './store'
@@ -14,6 +14,8 @@ const wordById = new Map(words.map((w) => [w.id, w]))
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 const ms = (t: number) => (reducedMotion() ? Math.min(t, 120) : t)
 const wait = (t: number) => new Promise((r) => setTimeout(r, ms(t)))
+/** Height of a card's solid edge in px: the first shadow of `.item` in style.css. */
+const EDGE = 5
 
 type Kind = 'p' | 'w'
 interface Item {
@@ -106,24 +108,30 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     layout(false)
   }
 
-  /** Size the cards for the mat, then place them: saved positions if they still fit, else fresh. */
+  /**
+   * Size the cards for the mat, then place them: saved positions if the cards still lie apart
+   * there (the mat may have another size than when they were saved), else fresh.
+   */
   function layout(fresh: boolean) {
     const r = mat.getBoundingClientRect()
     if (!r.width || !r.height) return
     const n = Math.max(round.ids.length, 4)
-    const pic = Math.round(Math.max(96, Math.min(210, Math.sqrt((0.3 * r.width * r.height) / (1.55 * n)))))
+    let pic = Math.round(Math.max(96, Math.min(210, Math.sqrt((0.3 * r.width * r.height) / (1.55 * n)))))
     screen.style.setProperty('--pic', `${pic}px`)
-    const sizes = () => items.map((it) => ({ w: it.el.offsetWidth, h: it.el.offsetHeight }))
+    // A card's solid edge (its first shadow) shows below it, so it counts to its height.
+    const sizes = () => items.map((it) => ({ w: it.el.offsetWidth, h: it.el.offsetHeight + EDGE }))
     const saved = items.map((it) => round.pos[`${it.kind}:${it.id}`])
     if (!fresh && saved.every(Boolean)) {
       items.forEach((it, i) => setPos(it, saved[i][0] * r.width, saved[i][1] * r.height, false))
-      return
+      const s = sizes()
+      if (apart(items.map((it, i) => ({ x: it.el.offsetLeft, y: it.el.offsetTop, ...s[i] })))) return
     }
     const area = { w: r.width, h: r.height }
     let placed = place(sizes(), area)
-    if (placed.scale < 1) {
+    while (placed.scale < 1 && pic > 24) {
       // Too little room (a phone on its side): smaller cards, laid out again at their real size.
-      screen.style.setProperty('--pic', `${Math.floor(pic * placed.scale)}px`)
+      pic = Math.min(pic - 1, Math.floor(pic * placed.scale))
+      screen.style.setProperty('--pic', `${pic}px`)
       placed = place(sizes(), area)
     }
     items.forEach((it, i) => setPos(it, placed.points[i].x, placed.points[i].y))
@@ -422,11 +430,13 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   addEventListener('resize', onResize)
 
   const valid = (r: SavedRound | null) => r && r.ids.length > 0 && r.ids.every((id) => wordById.has(id))
+  // Words are measured for the layout: in the fallback font they would come out narrower.
+  const fontReady = document.fonts.load('1em Andika').catch(() => {})
   if (valid(profile.current)) {
     round = profile.current!
-    requestAnimationFrame(build)
+    void fontReady.then(() => requestAnimationFrame(build))
   } else {
-    requestAnimationFrame(newRound)
+    void fontReady.then(() => requestAnimationFrame(newRound))
   }
 }
 

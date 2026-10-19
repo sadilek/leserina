@@ -12,6 +12,11 @@ export interface Point {
 const overlaps = (a: Point & Size, b: Point & Size, gap: number) =>
   a.x < b.x + b.w + gap && b.x < a.x + a.w + gap && a.y < b.y + b.h + gap && b.y < a.y + a.h + gap
 
+/** True if no two boxes overlap or come closer than gap. */
+export function apart(boxes: (Point & Size)[], gap = 0) {
+  return boxes.every((a, i) => boxes.every((b, j) => j <= i || !overlaps(a, b, gap)))
+}
+
 export interface Placement {
   points: Point[]
   /** 1 if the boxes fit as they are; below 1 if they fit only scaled down by this factor. */

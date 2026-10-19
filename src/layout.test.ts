@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { place, type Size } from './layout'
+import { apart, place, type Size } from './layout'
 
 function rng(seed: number) {
   return () => ((seed = (seed * 1103515245 + 12345) % 2 ** 31) / 2 ** 31)
@@ -50,5 +50,18 @@ describe('place', () => {
     for (let seed = 1; seed < 30; seed++) expectApart(round(96), area, seed)
     // Even cards far too big for it end up apart, just smaller.
     for (let seed = 1; seed < 5; seed++) expect(expectApart(round(180), area, seed)).toBeLessThan(1)
+  })
+})
+
+describe('apart', () => {
+  const a = { x: 0, y: 0, w: 100, h: 50 }
+  it('lets boxes touch but not overlap', () => {
+    expect(apart([a, { x: 100, y: 0, w: 100, h: 50 }, { x: 0, y: 50, w: 100, h: 50 }])).toBe(true)
+    expect(apart([a, { x: 60, y: 45, w: 100, h: 100 }])).toBe(false)
+  })
+
+  it('keeps the gap if asked to', () => {
+    expect(apart([a, { x: 110, y: 0, w: 10, h: 10 }], 8)).toBe(true)
+    expect(apart([a, { x: 105, y: 0, w: 10, h: 10 }], 8)).toBe(false)
   })
 })
