@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import {
-  applyResult, boxes, composeRound, emptyState, LearningState, MAX_NEW_PER_ROUND,
+  applyResult, boxes, composeRound, emptyState, goOn, LearningState, MAX_NEW_PER_ROUND,
   MAX_WORKING_SET, Outcome, RoundResult, Word,
 } from './scheduler'
 
@@ -153,5 +153,29 @@ describe('applyResult', () => {
     s = applyResult(s, { ball: 'right' })
     s = applyResult(s, { ball: 'wrong' })
     expect(s.words.ball).toMatchObject({ box: 1, due: s.round + 1, wrong: 1, seen: 3 })
+  })
+})
+
+describe('goOn', () => {
+  const saved = (ids: string[], more: { matched?: string[]; wrong?: string[]; help?: string[] } = {}) =>
+    ({ ids, matched: [], wrong: [], help: [], ...more })
+  const first = composeRound(emptyState(), words, 4)
+  // Another device played that round, all right: the next round has other words.
+  const right: RoundResult = Object.fromEntries(first.map((id) => [id, 'right']))
+  const later = composeRound(applyResult(emptyState(), right), words, 4)
+
+  it('goes on with an untouched round whose words are still the next ones, in any order', () => {
+    expect(goOn(saved(first), [...first].reverse())).toBe(true)
+  })
+
+  it('deals anew when an untouched round no longer has the next words', () => {
+    expect(later).not.toEqual(first)
+    expect(goOn(saved(first), later)).toBe(false)
+  })
+
+  it('goes on with a started round whatever the next words are', () => {
+    expect(goOn(saved(first, { matched: [first[0]] }), later)).toBe(true)
+    expect(goOn(saved(first, { wrong: [first[1]] }), later)).toBe(true)
+    expect(goOn(saved(first, { help: [first[2]] }), later)).toBe(true)
   })
 })

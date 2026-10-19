@@ -3,7 +3,7 @@ import wordList from '../words.json'
 import { pictureFace } from './assets'
 import { fullStar, Jar, openJar, Star } from './star'
 import { apart, place } from './layout'
-import { composeRound, type Outcome, type RoundResult, type Word } from './scheduler'
+import { composeRound, goOn, type Outcome, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
 import { onSync, recordRound, save, type Profile, type SavedRound } from './store'
 import { sync } from './sync'
@@ -434,11 +434,12 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   }
   addEventListener('resize', onResize)
 
-  const valid = (r: SavedRound | null) => r && r.ids.length > 0 && r.ids.every((id) => wordById.has(id))
   // Words are measured for the layout: in the fallback font they would come out narrower.
   const fontReady = document.fonts.load('1em Andika').catch(() => {})
-  if (valid(profile.current)) {
-    round = profile.current!
+  const saved = profile.current
+  const next = () => composeRound(profile.learning, words, profile.pairs, profile.startLevel)
+  if (saved?.ids.length && saved.ids.every((id) => wordById.has(id)) && goOn(saved, next())) {
+    round = saved
     void fontReady.then(() => requestAnimationFrame(build))
   } else {
     void fontReady.then(() => requestAnimationFrame(newRound))

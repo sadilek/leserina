@@ -107,6 +107,20 @@ export function composeRound(state: LearningState, words: Word[], n: number, sta
   return picked
 }
 
+/**
+ * Whether to go on with a saved round rather than deal `next`, the words a new round would get
+ * now. A round the child has not started (no pair made, no wrong drop, no word heard) gives way
+ * when those are other words: a sync brought rounds played on another device, or the parents
+ * changed the settings. A started round is always finished.
+ */
+export function goOn(
+  saved: { ids: string[]; matched: string[]; wrong: string[]; help: string[] },
+  next: string[],
+): boolean {
+  const untouched = !saved.matched.length && !saved.wrong.length && !saved.help.length
+  return !untouched || [...saved.ids].sort().join() === [...next].sort().join()
+}
+
 /** The learning state after a round with these outcomes. */
 export function applyResult(state: LearningState, result: RoundResult): LearningState {
   const r = state.round + 1

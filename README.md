@@ -110,7 +110,9 @@ How it works (`src/merge.ts`, with tests that play on two devices offline and th
   the latest change wins. Stars and rounds: each device counts its own, the total is the sum.
   Word states: the latest wins per word; a word may come up a round early after devices played
   apart, but none is lost. A reset starts a new count on every device; a deleted profile stays
-  deleted. The unfinished round stays on its device.
+  deleted. The unfinished round stays on its device. One the child has not started yet (no pair,
+  no wrong drop, no word heard) is dealt anew when it next opens if the words due have changed
+  since, for example after rounds on another device; a round on screen never changes.
 - Two devices that each had a profile for the same child before connecting show both; the
   parents' corner points this out, and the unwanted one is deleted there.
 
