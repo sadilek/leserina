@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import {
-  applyResult, boxes, composeRound, emptyState, goOn, LearningState, MAX_NEW_PER_ROUND,
-  MAX_WORKING_SET, Outcome, RoundResult, Word,
+  applyResult, boxes, composeRound, emptyState, goOn, LearningState, LOOK_ALIKE_FROM, looksAlike,
+  MAX_NEW_PER_ROUND, MAX_WORKING_SET, Outcome, REVIEW_BOX, RoundResult, Word, WordState,
 } from './scheduler'
 
 const words = wordList as Word[]
@@ -73,6 +73,99 @@ describe('composeRound', () => {
   it('respects the start level', () => {
     const round = composeRound(emptyState(), words, N, 3)
     expect(round.every((id) => levelOf(id) >= 3)).toBe(true)
+  })
+})
+
+describe('look-alike words', () => {
+  const word = (id: string) => words.find((w) => w.id === id)!
+  const hasPair = (round: string[]) =>
+    round.some((a, i) => round.slice(i + 1).some((b) => looksAlike(word(a), word(b))))
+  const at = (box: number, due: number): WordState => ({ box, due, seen: 3, wrong: 0 })
+  /** Round 21's state with `solid` words in box 3 that are not due. */
+  const known = (solid: number, more: Record<string, WordState>): LearningState => {
+    const far = words.slice(-solid).map((w) => [w.id, at(3, 30)])
+    return { round: 20, words: { ...Object.fromEntries(far), ...more } }
+  }
+
+  it('look alike by their first letter', () => {
+    expect(looksAlike(word('maus'), word('mama'))).toBe(true)
+    expect(looksAlike(word('hose'), word('hase'))).toBe(true)
+    expect(looksAlike(word('ufo'), word('uhr'))).toBe(true)
+    expect(looksAlike(word('ohr'), word('uhr'))).toBe(false)
+    expect(looksAlike(word('hund'), word('ente'))).toBe(false)
+  })
+
+  it(`swaps in a known look-alike only from ${LOOK_ALIKE_FROM} words in box 3 or higher`, () => {
+    // Ei is due, Zelt and Katze are the next new words from level 3, Uhr fills the round.
+    // Below the threshold rounds stay as they were, even though Eule (level 3) would pair with Ei.
+    const more = { ei: at(2, 21), uhr: at(1, 22) }
+    const few = composeRound(known(LOOK_ALIKE_FROM - 1, more), words, 4, 3)
+    expect(few).toEqual(['ei', 'zelt', 'katze', 'uhr'])
+    expect(hasPair(few)).toBe(false)
+    // Zahnbürste, known and not due, starts like Zelt and takes the place of Uhr.
+    const enough = composeRound(known(LOOK_ALIKE_FROM, more), words, 4, 3)
+    expect(enough).toEqual(['ei', 'zelt', 'katze', 'zahnbuerste'])
+  })
+
+  it('takes a due word that is due as long and is as far along instead of another', () => {
+    const due = { ei: at(1, 21), kuh: at(1, 21), sonne: at(1, 21), banane: at(1, 21), schere: at(1, 21) }
+    const few = composeRound(known(LOOK_ALIKE_FROM - 1, due), words, 4)
+    expect(few).toEqual(['ei', 'kuh', 'sonne', 'banane'])
+    expect(hasPair(few)).toBe(false)
+    // Schere starts like Sonne and takes the place of Banane, the last of the tied words.
+    expect(composeRound(known(LOOK_ALIKE_FROM, due), words, 4)).toEqual(['ei', 'kuh', 'sonne', 'schere'])
+  })
+
+  it('never pushes out a more urgent due word for a look-alike', () => {
+    // Schere is due too and starts like Sonne, but Banane, from a lower box, goes first.
+    const due = { ei: at(1, 18), kuh: at(1, 19), sonne: at(1, 20), banane: at(1, 21), schere: at(2, 21) }
+    const round = composeRound(known(LOOK_ALIKE_FROM + 5, due), words, 4)
+    expect(round).toEqual(['ei', 'kuh', 'sonne', 'banane'])
+  })
+
+  it('lets a new word give way to a later new word of the same level', () => {
+    // Uhr and Ei are due, Zelt and Katze are the next new words from level 3.
+    const due = { uhr: at(2, 20), ei: at(2, 21) }
+    expect(composeRound(known(LOOK_ALIKE_FROM - 1, due), words, 4, 3)).toEqual(['uhr', 'ei', 'zelt', 'katze'])
+    // Eule, further down level 3, starts like Ei.
+    expect(composeRound(known(LOOK_ALIKE_FROM, due), words, 4, 3)).toEqual(['uhr', 'ei', 'zelt', 'eule'])
+  })
+
+  it('simulated child: due words and new words keep their turn, most later rounds have a pair', () => {
+    const r = rng(3)
+    const n = 4
+    let state = emptyState()
+    let ruled = 0, paired = 0
+    for (let i = 0; i < 200; i++) {
+      const next = state.round + 1
+      const ids = Object.keys(state.words)
+      const due = ids.filter((id) => state.words[id].due <= next)
+      const dueLow = due.filter((id) => state.words[id].box < REVIEW_BOX)
+      const fresh = words.filter((w) => !(w.id in state.words)).map((w) => w.id)
+      const round = composeRound(state, words, n)
+
+      expect(new Set(round).size).toBe(n)
+      if (dueLow.length <= n) expect(round).toEqual(expect.arrayContaining(dueLow))
+      else expect(dueLow).toEqual(expect.arrayContaining(round))
+      if (round.some((id) => id in state.words && !due.includes(id))) {
+        expect(round).toEqual(expect.arrayContaining(due))
+      }
+      // New words come level by level; within a level, any order.
+      const added = round.filter((id) => !(id in state.words))
+      const levels = (ids: string[]) => ids.map(levelOf).sort()
+      expect(levels(added)).toEqual(levels(fresh.slice(0, added.length)))
+
+      if (ids.filter((id) => state.words[id].box >= 3).length >= LOOK_ALIKE_FROM) {
+        ruled++
+        if (hasPair(round)) paired++
+      }
+      const result: RoundResult = {}
+      for (const id of round) result[id] = (['wrong', 'help', 'right', 'right', 'right'] as Outcome[])[Math.floor(r() * 5)]
+      state = applyResult(state, result)
+    }
+    expect(ruled).toBeGreaterThan(100)
+    // Without the rule, about a third of these rounds have two words with the same first letter.
+    expect(paired / ruled).toBeGreaterThan(0.5)
   })
 })
 

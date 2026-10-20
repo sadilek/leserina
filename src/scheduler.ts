@@ -45,6 +45,8 @@ export const MAX_WORKING_SET = 8
 export const MAX_NEW_PER_ROUND = 2
 /** Due words in this box or higher are reviews of nearly mastered words; new words go first. */
 export const REVIEW_BOX = 4
+/** From this many words in box 3 or higher, rounds look for two words with the same first letter. */
+export const LOOK_ALIKE_FROM = 10
 
 export function emptyState(): LearningState {
   return { round: 0, words: {} }
@@ -61,6 +63,11 @@ export function interval(box: number): number {
  * very start, when the child has seen nothing), more new words fill them.
  * Due words in boxes 4-5 wait behind the new words: otherwise a child who gets everything right
  * spends most rounds on reviews of words they know, and new words almost stop coming.
+ * Once the child knows LOOK_ALIKE_FROM words fairly well (box 3+), the round gets two words with
+ * the same first letter where it can, so that the first letter alone does not give the answer
+ * away. To get them, a not-yet-due word gives way to another not-yet-due word, a due word to one
+ * due in the same round from the same box, or a new word to a later new word of the same level;
+ * due words are never pushed out, and new words still come level by level.
  */
 export function composeRound(state: LearningState, words: Word[], n: number, startLevel = 1): string[] {
   const r = state.round + 1
@@ -104,7 +111,37 @@ export function composeRound(state: LearningState, words: Word[], n: number, sta
   fresh.forEach(take)
   // A start level above the list's last level, or a tiny list: fall back to anything.
   words.forEach((w) => take(w.id))
+
+  const solid = known.filter((id) => state.words[id].box >= 3).length
+  if (solid >= LOOK_ALIKE_FROM) {
+    const byId = new Map(words.map((w) => [w.id, w]))
+    const alike = (a: string, b: string) => looksAlike(byId.get(a)!, byId.get(b)!)
+    const hasPair = picked.some((a, i) => picked.slice(i + 1).some((b) => alike(a, b)))
+    // Words that may take a picked word's place without changing what the round is for.
+    const standIns = (id: string): string[] => {
+      const s = state.words[id]
+      if (!s) return fresh.filter((f) => byId.get(f)!.level === byId.get(id)!.level)
+      if (s.due > r) return notDue
+      return due.filter((d) => state.words[d].due === s.due && state.words[d].box === s.box)
+    }
+    // The least urgent words give way first.
+    for (let i = picked.length - 1; i >= 0 && !hasPair; i--) {
+      const others = picked.filter((_, j) => j !== i)
+      const partner = standIns(picked[i]).find(
+        (c) => !picked.includes(c) && others.some((o) => alike(c, o)),
+      )
+      if (partner) {
+        picked[i] = partner
+        break
+      }
+    }
+  }
   return picked
+}
+
+/** Whether two words start with the same letter, the cue children most like to guess from. */
+export function looksAlike(a: Word, b: Word): boolean {
+  return [...a.word.toLowerCase()][0] === [...b.word.toLowerCase()][0]
 }
 
 /**

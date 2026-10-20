@@ -203,6 +203,13 @@ not-yet-due words from the lowest boxes. Reviews of nearly known words wait behi
 so that a child who gets everything right keeps getting new words. Words below the child's start
 level are never introduced.
 
+Once a child has 10 words in box 3 or higher, a round tries to have two words with the same first
+letter (Maus and Mama), so that the child cannot find a card by its first letter alone and has to
+read on. To get such a pair, a not-yet-due word gives way to another known word, a due word to one
+due in the same round from the same box, or a new word to a later new word of the same level. Due
+words are never pushed out, and new words still come level by level. Without this, about a third
+of rounds have such a pair by chance; with it, about two thirds.
+
 What research says about games like this one (from what age they help, and whether they can get in
 the way of learning to read and spell later): `docs/literature-review-early-reading.md`.
 
