@@ -12,6 +12,8 @@ Pictures and words lie scattered on a mat; the child drags a word onto its pictu
 onto its word). Each pair fills an arm of a gold star, and a full star goes into the child's
 jar of night sky, where the stars collected so far form a constellation. Tapping a picture or a word reads the word aloud, in a parent's own voice; a pair just made is sounded out first, letter by letter ("Mmm–au–sss … Maus"). Words
 start easy and get harder per child, and the ones a child gets wrong come back, as with flashcards.
+For children who know their letters, every second round can be one of laying words instead: a
+picture, an empty field per sound, and the word's letters on tiles to drag into place.
 
 <table>
   <tr>
@@ -173,7 +175,8 @@ reads the word.
   a picture, the word's emoji stands in. See `pictures/README.md`.
 - `src/scheduler.ts`: the learning logic, a Leitner box system counted in rounds, as pure
   functions with tests that simulate children (`src/scheduler.test.ts`).
-- `src/game.ts`: the game screen; `src/layout.ts`: scattering the cards on the mat;
+- `src/game.ts`: the game screen; `src/lay.ts`: the mat of a lay round (see "Laying words");
+  `src/layout.ts`: scattering the cards on the mat;
   `src/start.ts`: picking a child; `src/parents.ts`: the parents' corner (hold the lock at the
   bottom right of the start screen).
 - `src/star.ts`: the round's star (one arm per pair) and the jar. Each star in the jar has a fixed
@@ -213,11 +216,52 @@ section 4): matching alone teaches word shapes.
   ElevenLabs' own timestamp, which often lags by 0.1-0.25 s, where the spectrum changes most.
   The game lights each grapheme 80 ms before that: a letter lit as its sound starts looks late.
   A word whose graphemes change needs its clip rendered again; the tests fail until it is, and
-  the game says such a word without sounding it out.
+  the game says such a word without sounding it out. Then `uv run scripts/cut_tiles.py` finds the
+  tiles' sounds in the new clip (see "Laying words").
 - Checking them: `uv run scripts/check_stretched.py` ranks the clips by how far a phoneme
   recogniser hears them from the sounds they should have, and flags clips that run too long (a
   voice that read "www" as an abbreviation once spelled it out, dashes included). It only hints
   where to listen first; an ear decides.
+
+## Laying words
+
+"Wörter legen" in the parents' corner (off by default, per child) makes every second round a lay
+round, mostly for older children who know all their letters: building words from letters helps
+reading new words most (`docs/literature-review-early-reading.md`, section 4; de Rose et al. 1996).
+Which rounds are lay rounds goes by the number of rounds played, so a family's devices agree.
+
+A lay round has as many words as "Pro Runde" says, picked by the same scheduler as any round
+(see "The learning logic"), one at a time: the picture, below it an empty field per grapheme, and
+below that a tile per grapheme, shuffled, with no extra letters. A grapheme is one tile, as it is
+one lit-up unit when a word is sounded out: sch, au, ie, ck, ll, the ah of "Zahn", the er of
+"Tiger". The child drags each tile onto its field; it plays its sound as it lands and settles in.
+A tile dropped on a wrong field springs back. Tiles with the same letters fit either field (the
+two a of "Mama"), a capital only the first. Tapping a tile plays its sound, tapping the picture
+says the word; neither counts as help. A word laid without a wrong tile goes one box up; one
+with a wrong tile goes back to box 1. Once laid, the word joins its picture as a pair, is sounded
+out (or just said, with "Laute vorsprechen" off) and goes to the shelf, and the star gets an arm.
+A round on screen keeps its kind when the setting changes, unless no word of it is done yet.
+
+Where spelling and sound part, the tile shows the letter and plays the sound: the d of "Hund"
+plays a t. That comes from where the tiles' sounds come from: each tile plays its own piece of
+its word's stretched clip (see "Sounding out"), cut out at run time with short fades.
+
+- Where each piece lies: `uv run scripts/cut_tiles.py` writes `src/tiles.json`. It starts from
+  each grapheme's start in `src/stretched.json`, puts a cut in the pause the dash between two
+  sounds often leaves, keeps the loudest run of each piece and keeps 30 ms off a seam where two
+  sounds run into each other. A stop (b, d, g, p, t, k) starts at its burst and lasts 130 ms. The
+  script's docstring has the details.
+- Where a cut fails: a piece shorter than 0.1 s (not a stop), mostly because its start lies late,
+  or one whose spectrum lies far from the other pieces of its sound, borrows the piece of another
+  word with the same sound code. 19 of the 610 tiles do (several r and the final e of "Schere",
+  "Spinne" and "Badewanne"); the script lists them. Single sounds rendered by ElevenLabs were the
+  planned way out, but borrowing needs none of their workarounds (alone, b and t come out as
+  "Be" and "Te") and keeps the voice of the clips.
+- Checking them: "Alle Wörter anhören" in the parents' corner plays each word's tiles one by one
+  in "Plättchen" mode. The cuts were checked against spectrograms, not by ear; the borrowed ones
+  are the first to listen to. A clip rendered again needs `cut_tiles.py` again; the tests fail
+  until it has run (`src/tiles.json` keeps a hash of each clip). Without a piece, the device's
+  voice reads the tile's letters.
 
 ## The learning logic
 

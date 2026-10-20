@@ -27,11 +27,14 @@ function button(label: string, cls: string, onClick: () => void) {
   return b
 }
 
+/** How a word chip plays: its clip, sounded out first, or its tiles one by one. */
+type Play = 'word' | 'sounded' | 'tiles'
+
 /**
- * A word that plays its clip when tapped, or sounds it out first; marked when no clip has been
- * rendered for it.
+ * A word that plays its clip when tapped, sounds it out first, or plays its tiles' sounds; marked
+ * when no clip has been rendered for it.
  */
-function wordChip(id: string, sounded = false) {
+function wordChip(id: string, play: Play | (() => Play) = 'word') {
   const w = wordById.get(id)
   const chip = h('button', 'chip', w?.word ?? id)
   if (!clipUrl(id)) {
@@ -40,7 +43,11 @@ function wordChip(id: string, sounded = false) {
   }
   chip.addEventListener('click', () => {
     sound.unlock()
-    if (w) void (sounded ? soundOut(w, chip) : sound.sayWord(w.id, w.word))
+    if (!w) return
+    const how = typeof play === 'function' ? play() : play
+    if (how === 'sounded') void soundOut(w, chip)
+    else if (how === 'tiles') void playTiles(w, chip)
+    else void sound.sayWord(w.id, w.word)
   })
   return chip
 }
@@ -145,12 +152,25 @@ function profilePanel(p: Profile, rerender: () => void) {
     sounds.append(b)
   }
 
+  // Every second round, each word is laid from its letters, one tile per sound.
+  const lay = h('div', 'style-pick plain')
+  for (const [on, label] of [[true, 'An'], [false, 'Aus']] as const) {
+    lay.append(button(label, on === p.layWords ? 'on' : '', () => {
+      setField(p, 'layWords', on)
+      rerender()
+    }))
+  }
+
   const settings = h('div', 'settings',
     h('label', '', h('span', '', 'Beginnt bei'), level),
     h('label', '', h('span', '', 'Pro Runde'), pairs),
     h('div', 'setting', h('span', '', 'Bilder'), styles),
     h('div', 'setting', h('span', '', 'Laute vorsprechen'), sounds),
+    h('div', 'setting', h('span', '', 'Wörter legen'), lay),
   )
+  const layHint = p.layWords
+    ? h('p', 'hint', 'Jede zweite Runde legt das Kind die Wörter aus Buchstaben: zu jedem Bild ein Plättchen pro Laut.')
+    : ''
 
   const seen = Object.keys(p.learning.words).length
   const stats = h('p', 'stats',
@@ -196,23 +216,41 @@ function profilePanel(p: Profile, rerender: () => void) {
 
   panel.append(
     h('div', 'panel-head', h('div', 'panel-avatar', avatarFace(p.avatar, p.pictures)), h('div', 'panel-name', name, nameHint)),
-    twinHint, avatars, settings, stats, boxRow, actions,
+    twinHint, avatars, settings, layHint, stats, boxRow, actions,
   )
   return panel
 }
 
-/** Every word by level, to listen through the clips once. */
+/** A word's tiles one by one, each grapheme lit while its sound plays. */
+function playTiles(w: Word, el: HTMLElement) {
+  const spans = w.sounds.map(([g]) => h('span', 'grapheme', g))
+  el.replaceChildren(...spans)
+  return sound.playTiles(w, (i) => spans.forEach((s, j) => (s.className = `grapheme${j === i ? ' lit' : ''}`)))
+}
+
+/** Every word by level, to listen through the clips once: sounded out, or as tiles. */
 function listenSection() {
   const missing = words.filter((w) => !clipUrl(w.id)).length
-  const section = h('section', 'panel listen',
-    h('h2', '', 'Alle Wörter anhören'),
-    h('p', 'hint', missing
-      ? `${missing} Wörter haben noch keine Aufnahme (gestrichelt); dort liest das Gerät vor.`
-      : 'Tippe ein Wort an: Erst kommen seine Laute, dann das ganze Wort.'),
-  )
+  let play: Play = 'sounded'
+  const hint = h('p', 'hint')
+  const mode = h('div', 'style-pick plain')
+  const modes = [['sounded', 'Gedehnt'], ['tiles', 'Plättchen']] as const
+  const show = () => {
+    mode.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', modes[i][0] === play))
+    hint.textContent = (missing ? `${missing} Wörter haben noch keine Aufnahme (gestrichelt); dort liest das Gerät vor. ` : '') +
+      (play === 'sounded'
+        ? 'Tippe ein Wort an: Erst kommen seine Laute, dann das ganze Wort.'
+        : 'Tippe ein Wort an: Jedes Plättchen spielt seinen Laut, wie beim Wörterlegen.')
+  }
+  for (const [m, label] of modes) mode.append(button(label, '', () => {
+    play = m
+    show()
+  }))
+  show()
+  const section = h('section', 'panel listen', h('h2', '', 'Alle Wörter anhören'), mode, hint)
   for (let l = 1; l <= 5; l++) {
     const chips = h('div', 'chips')
-    for (const w of words.filter((x) => x.level === l)) chips.append(wordChip(w.id, true))
+    for (const w of words.filter((x) => x.level === l)) chips.append(wordChip(w.id, () => play))
     section.append(h('h3', '', `Stufe ${l}`), chips)
   }
   return section

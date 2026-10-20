@@ -2,8 +2,9 @@
 import wordList from '../words.json'
 import { pictureFace } from './assets'
 import { fullStar, Jar, openJar, Star } from './star'
-import { apart, place } from './layout'
-import { composeRound, goOn, type Outcome, type RoundResult, type Word } from './scheduler'
+import { apart, place, shuffle } from './layout'
+import { layMat } from './lay'
+import { composeRound, goOn, outcome, roundKind, type RoundResult, type Word } from './scheduler'
 import * as sound from './sound'
 import { onSync, recordRound, save, type Profile, type SavedRound } from './store'
 import { sync } from './sync'
@@ -83,10 +84,12 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   })
 
   const commit = () => save()
+  const lay = layMat({ screen, mat, profile, round: () => round, commit, ms, pairUp })
 
   function newRound() {
     const ids = composeRound(profile.learning, words, profile.pairs, profile.startLevel)
     round = { ids, matched: [], wrong: [], help: [], pos: {} }
+    if (roundKind(profile.learning, profile.layWords) === 'lay') round.kind = 'lay'
     profile.current = round
     commit()
     build()
@@ -99,6 +102,10 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     sound.preload(round.ids)
     star.set(round.matched.length, round.ids.length)
     for (const id of round.matched) shelfCards.append(shelfCard(id))
+    if (round.kind === 'lay') {
+      sound.preloadTiles(round.ids.map((id) => wordById.get(id)!))
+      return lay.build()
+    }
     const open = round.ids.filter((id) => !round.matched.includes(id))
     items = []
     // Pictures and words are shuffled independently; their order on the mat is random anyway.
@@ -251,22 +258,33 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     )
   }
 
-  async function match(dragged: Item, still: Item) {
+  function match(dragged: Item, still: Item) {
     const id = dragged.id
-    const word = wordById.get(id)!
     if (round.matched.length === round.ids.length - 1) round.forced = id
-    round.matched.push(id)
     delete round.pos[`p:${id}`]
     delete round.pos[`w:${id}`]
     items = items.filter((i) => i.id !== id)
+    const [pic, wrd] = dragged.kind === 'p' ? [dragged, still] : [still, dragged]
+    pic.el.style.pointerEvents = wrd.el.style.pointerEvents = 'none'
+    // Above the other cards, the dropped one still on top: a word slides out from under a picture.
+    still.el.style.zIndex = String(++z)
+    dragged.el.style.zIndex = String(++z)
+    void pairUp(wordById.get(id)!, pic.el, wrd.el)
+  }
+
+  /**
+   * A word matched or laid: it joins its picture as a pair, is said and goes to the shelf, and the
+   * star gets an arm. Resolves when the pair is on the shelf, true if it was the round's last.
+   */
+  async function pairUp(word: Word, pic: HTMLElement, wrd: HTMLElement) {
+    const id = word.id
+    round.matched.push(id)
     const done = round.matched.length === round.ids.length
     if (done) finishRound()
     else commit()
 
     // The pair forms around the picture, which stays where it is (where it lay, or where it was
     // dropped): the word glides over from where it is, and the card fades in around both.
-    const [pic, wrd] = dragged.kind === 'p' ? [dragged, still] : [still, dragged]
-    pic.el.style.pointerEvents = wrd.el.style.pointerEvents = 'none'
     sound.jingle()
     // Centres only: a card just let go still shrinks back from its lift, about its centre.
     const centre = (r: DOMRect) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
@@ -280,27 +298,24 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     fx.append(card)
     const cardPic = card.querySelector<HTMLElement>('.pair-pic')!
     const cardWord = card.querySelector<HTMLElement>('.pair-word')!
-    const p = centre(pic.el.getBoundingClientRect()), q = centre(cardPic.getBoundingClientRect())
+    const p = centre(pic.getBoundingClientRect()), q = centre(cardPic.getBoundingClientRect())
     const cw = card.offsetWidth, ch = card.offsetHeight
     const cx = Math.max(8, Math.min(innerWidth - cw - 8, p.x - q.x))
     const cy = Math.max(8, Math.min(innerHeight - ch - 8, p.y - q.y))
     card.style.left = `${cx}px`
     card.style.top = `${cy}px`
-    const from = centre(wrd.el.getBoundingClientRect()), to = centre(cardWord.getBoundingClientRect())
+    const from = centre(wrd.getBoundingClientRect()), to = centre(cardWord.getBoundingClientRect())
     const dx = to.x - from.x
-    const dy = to.y + lift(cardWord) - from.y - lift(wrd.el)
-    // Above the other cards, the dropped one still on top: a word slides out from under a picture.
-    still.el.style.zIndex = String(++z)
-    dragged.el.style.zIndex = String(++z)
-    wrd.el.animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], {
+    const dy = to.y + lift(cardWord) - from.y - lift(wrd)
+    wrd.animate([{ transform: 'none' }, { transform: `translate(${dx}px, ${dy}px)` }], {
       duration: ms(560), easing: 'cubic-bezier(.45,0,.25,1)', fill: 'forwards',
     })
     const fade = { duration: ms(200), delay: ms(450), easing: 'ease-in-out', fill: 'forwards' } as const
-    wrd.el.animate([{ opacity: 1 }, { opacity: 0 }], fade)
+    wrd.animate([{ opacity: 1 }, { opacity: 0 }], fade)
     await card.animate([{ opacity: 0 }, { opacity: 1 }], fade).finished
     card.style.opacity = ''
-    pic.el.remove()
-    wrd.el.remove()
+    pic.remove()
+    wrd.remove()
     // From around the card's middle out past its edges, as big as the card is.
     const r = Math.hypot(cw, ch) / 2
     burst(fx, cx + cw / 2, cy + ch / 2, 24, ['#ffd84d', '#ffffff', '#ff9fb2', '#9fe3ff'], Math.max(1.6, r / 100), r * 0.4)
@@ -322,6 +337,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     slot.style.visibility = ''
     card.remove()
     if (done) await celebrate()
+    return done
   }
 
   function shelfCard(id: string) {
@@ -435,7 +451,9 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     clearTimeout(resizeTimer)
     resizeTimer = window.setTimeout(() => {
       if (!screen.isConnected) return removeEventListener('resize', onResize)
-      if (!finishing) layout(true)
+      if (finishing) return
+      if (round.kind === 'lay') lay.layout()
+      else layout(true)
     }, 150)
   }
   addEventListener('resize', onResize)
@@ -444,19 +462,14 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   const fontReady = document.fonts.load('1em Andika').catch(() => {})
   const saved = profile.current
   const next = () => composeRound(profile.learning, words, profile.pairs, profile.startLevel)
-  if (saved?.ids.length && saved.ids.every((id) => wordById.has(id)) && goOn(saved, next())) {
+  // An untouched round of the other kind gives way too: the parents switched laying words.
+  const sameKind = (r: SavedRound) => r.matched.length > 0 || (r.kind ?? 'match') === roundKind(profile.learning, profile.layWords)
+  if (saved?.ids.length && saved.ids.every((id) => wordById.has(id)) && goOn(saved, next()) && sameKind(saved)) {
     round = saved
     void fontReady.then(() => requestAnimationFrame(build))
   } else {
     void fontReady.then(() => requestAnimationFrame(newRound))
   }
-}
-
-export function outcome(round: SavedRound, id: string): Outcome {
-  if (round.wrong.includes(id)) return 'wrong'
-  if (round.help.includes(id)) return 'help'
-  if (round.forced === id) return 'forced'
-  return 'right'
 }
 
 /** Sound a word out on the element showing it: each grapheme lights up while its sound plays,
@@ -485,14 +498,6 @@ function morph(el: HTMLElement, like: Element, props: string[], timing: Keyframe
   }
   for (const p of Object.keys(extra)) a[p] = from.getPropertyValue(css(p))
   return el.animate([a, b], timing)
-}
-
-function shuffle<T>(a: T[]): T[] {
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
 }
 
 /** Little stars flying out from a point, or from a ring of radius `from` around it. */

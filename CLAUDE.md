@@ -9,7 +9,8 @@ See README.md for what the app is, how to run it and how the learning logic work
   skip documents they cannot read).
 - A word's graphemes (`sounds` in `words.json`, from `scripts/phonics.py` and the CSV column
   `sounds`) must match its stretched clip: after changing them, or adding a word, run
-  `uv run scripts/render_stretched.py` (README, "Sounding out"); the tests check it.
+  `uv run scripts/render_stretched.py` (README, "Sounding out"), then `uv run scripts/cut_tiles.py`
+  for the tiles' sounds (README, "Laying words"); the tests check both.
 - File names for clips and pictures use the word's ASCII `id` (Bär → `baer`); `src/slug.ts` and
   `slug()` in `scripts/render_audio.py` must stay identical.
 - `words.json` is generated: edit `data/words-source.csv` or `scripts/score_words.py`, then run

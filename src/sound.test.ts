@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import type { Word } from './scheduler'
-import { litAt, stretch } from './sound'
+import { litAt, stretch, tileCut } from './sound'
 import stretched from './stretched.json'
+import tiles from './tiles.json'
 
 const words = wordList as Word[]
 const times = stretched as Record<string, { graphemes: string; text: string; marks: number[] }>
@@ -57,6 +58,54 @@ describe('stretched clips', () => {
   it('have no clip for a word whose graphemes changed since', () => {
     const hund = words.find((w) => w.id === 'hund')!
     expect(stretch({ ...hund, sounds: [['Hu', 'hu'], ['n', 'n'], ['d', 't']] })).toBeUndefined()
+  })
+})
+
+describe('tile sounds', () => {
+  const entries = tiles as unknown as Record<string, { graphemes: string; text: string; clip: string; cuts: (number | string)[][] }>
+  // The clips as data URLs, to hash them as scripts/cut_tiles.py does.
+  const clips = import.meta.glob('../audio/stretched/*.mp3', { eager: true, query: '?inline', import: 'default' }) as Record<string, string>
+  const hash = async (id: string) => {
+    const data = clips[`../audio/stretched/${id}.mp3`].split(',')[1]
+    const bytes = Uint8Array.from(atob(data), (c) => c.charCodeAt(0))
+    const digest = new Uint8Array(await crypto.subtle.digest('SHA-1', bytes))
+    return [...digest].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 10)
+  }
+
+  it('are cut from the clips as they are now', async () => {
+    // A failure here means: run scripts/cut_tiles.py (see its docstring).
+    for (const w of words) {
+      const t = entries[w.id]
+      expect(t, w.id).toBeDefined()
+      expect(t.graphemes, w.id).toBe(times[w.id].graphemes)
+      expect(t.text, w.id).toBe(times[w.id].text)
+      expect(t.clip, w.id).toBe(await hash(w.id))
+    }
+  })
+
+  it('give every grapheme a piece of a clip, borrowed only from another word', () => {
+    for (const w of words) {
+      expect(entries[w.id].cuts.length, w.id).toBe(w.sounds.length)
+      w.sounds.forEach((_, k) => {
+        const [from, to, other] = entries[w.id].cuts[k]
+        expect(to as number, `${w.id} ${k}`).toBeGreaterThan(from as number)
+        expect(from as number, `${w.id} ${k}`).toBeGreaterThanOrEqual(0)
+        if (other !== undefined) expect(entries[other as string], `${w.id} ${k}`).toBeDefined()
+        expect(tileCut(w, k), `${w.id} ${k}`).toBeDefined()
+      })
+    }
+  })
+
+  it('play the sound a grapheme has in its word: the d of Hund as its t', () => {
+    const hund = words.find((w) => w.id === 'hund')!
+    const d = tileCut(hund, 3)!
+    expect(d.url).toContain('hund')
+    expect(d.from).toBeGreaterThan(tileCut(hund, 2)!.from)
+  })
+
+  it('have no piece for a word whose graphemes changed since', () => {
+    const hund = words.find((w) => w.id === 'hund')!
+    expect(tileCut({ ...hund, sounds: [['Hu', 'hu'], ['n', 'n'], ['d', 't']] }, 0)).toBeUndefined()
   })
 })
 

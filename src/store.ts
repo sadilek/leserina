@@ -4,13 +4,16 @@
 // only exchanges documents, and the app works the same without it.
 import * as merge from './merge'
 import type { DeviceDoc, Field, Fields, ProfileView } from './merge'
-import type { LearningState, RoundResult } from './scheduler'
+import type { LearningState, RoundKind, RoundResult } from './scheduler'
 
 /** A round in progress, kept when the app is closed so its slices are not lost. */
 export interface SavedRound {
+  /** A round of laying words from tiles (`src/lay.ts`); else one of matching pictures and words. */
+  kind?: RoundKind
   ids: string[]
+  /** Words matched, or in a lay round laid. */
   matched: string[]
-  /** Words dropped on a wrong partner at least once. */
+  /** Words dropped on a wrong partner at least once; in a lay round, words with a tile dropped on a wrong field. */
   wrong: string[]
   /** Words the child tapped (and so heard) before matching them. */
   help: string[]
@@ -39,7 +42,7 @@ interface Data {
   current: Record<string, SavedRound>
 }
 
-interface V1Profile extends Omit<Fields, 'pictures' | 'soundOut'> {
+interface V1Profile extends Omit<Fields, 'pictures' | 'soundOut' | 'layWords'> {
   id: string
   coins: number
   learning: LearningState

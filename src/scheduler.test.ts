@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import {
   applyResult, boxes, composeRound, emptyState, goOn, LearningState, LOOK_ALIKE_FROM, looksAlike,
-  MAX_NEW_PER_ROUND, MAX_WORKING_SET, Outcome, REVIEW_BOX, RoundResult, Word, WordState,
+  MAX_NEW_PER_ROUND, MAX_WORKING_SET, outcome, Outcome, REVIEW_BOX, RoundResult, roundKind, Word, WordState,
 } from './scheduler'
 
 const words = wordList as Word[]
@@ -272,5 +272,25 @@ describe('goOn', () => {
 
   it('goes on once a pair is made, whatever the next words are', () => {
     expect(goOn(saved(first, { matched: [first[0]] }), later)).toBe(true)
+  })
+})
+
+describe('lay rounds', () => {
+  const after = (round: number): LearningState => ({ round, words: {} })
+
+  it('come every second round when laying words is on, never when it is off', () => {
+    expect([0, 1, 2, 3, 4, 5].map((r) => roundKind(after(r), true))).toEqual(['match', 'lay', 'match', 'lay', 'match', 'lay'])
+    expect([0, 1, 2, 3].map((r) => roundKind(after(r), false))).toEqual(['match', 'match', 'match', 'match'])
+  })
+
+  it('move a word laid without a wrong tile up a box, and one with a wrong tile back to box 1', () => {
+    const s: WordState = { box: 3, due: 5, seen: 3, wrong: 0 }
+    const state: LearningState = { round: 4, words: { hund: { ...s }, maus: { ...s } } }
+    const round = { ids: ['hund', 'maus'], wrong: ['maus'], help: [] }
+    const result: RoundResult = Object.fromEntries(round.ids.map((id) => [id, outcome(round, id)]))
+    expect(result).toEqual({ hund: 'right', maus: 'wrong' })
+    const next = applyResult(state, result)
+    expect(next.words.hund.box).toBe(4)
+    expect(next.words.maus.box).toBe(1)
   })
 })

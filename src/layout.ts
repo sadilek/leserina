@@ -97,3 +97,12 @@ function rows(sizes: Size[], area: Size, gap: number): Placement {
   })
   return { points: out, scale: k }
 }
+
+/** Shuffles the array in place and returns it. */
+export function shuffle<T>(a: T[], rand: () => number = Math.random): T[] {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}

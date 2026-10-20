@@ -238,6 +238,54 @@ input:focus-visible {
   box-shadow: 0 7px 0 var(--gold-dark), 0 14px 30px rgba(0, 0, 0, 0.25);
 }
 
+/* A lay round: the picture, a row of empty fields below it, and the tiles, each one grapheme on
+   a slip of the same paper as the word cards. A field is exactly as big as its tile. */
+.tile {
+  font-size: var(--tile, 48px);
+  line-height: 1.15;
+  padding: 0.06em 0.2em 0.1em;
+  min-width: 1.2em;
+  text-align: center;
+  white-space: nowrap;
+  border-radius: 0.16em;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16), 0 8px 16px rgba(0, 0, 0, 0.14);
+}
+
+.lay-strip {
+  position: absolute;
+  display: flex;
+  gap: calc(var(--tile) * 0.16);
+}
+
+.lay-field {
+  flex: none;
+  border-radius: calc(var(--tile) * 0.16);
+  background: rgba(0, 0, 0, 0.12);
+  outline: 3px dashed rgba(255, 255, 255, 0.45);
+  outline-offset: -3px;
+  transition: background 0.12s, outline-color 0.12s;
+}
+
+.lay-field.over {
+  background: rgba(255, 255, 255, 0.18);
+  outline-color: var(--gold);
+}
+
+.lay-field.filled {
+  background: none;
+  outline: none;
+}
+
+.lay-field .tile {
+  position: relative;
+  cursor: pointer;
+}
+
+/* Laid: the tiles close up into one slip, as a word card. */
+.lay-strip.laid .tile {
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.16);
+}
+
 /* The shelf is a wooden board; matched pairs stand on it. */
 .shelf {
   flex: none;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import {
-  createProfile, deleteProfile, emptyDoc, fold, fromV1, merge, recordRound, resetProfile, setField,
+  createProfile, deleteProfile, emptyDoc, fold, fromV1, merge, readable, recordRound, resetProfile, setField,
   type DeviceDoc, type Fields, type ProfileView,
 } from './merge'
 import { applyResult, composeRound, emptyState, type Outcome, type RoundResult, type Word } from './scheduler'
@@ -32,7 +32,7 @@ class Device {
     return this.profiles().find((p) => p.name === name)
   }
   add(id: string, name: string, fields: Partial<Fields> = {}) {
-    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, ...fields }, this.now())
+    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, layWords: false, ...fields }, this.now())
   }
   set<K extends keyof Fields>(name: string, k: K, v: Fields[K]) {
     const p = this.profile(name)!
@@ -137,6 +137,7 @@ describe('two devices', () => {
     ipad.set('Lena', 'pairs', 6)
     pixel.set('Lena', 'avatar', 'owl')
     pixel.set('Lena', 'pictures', 'clay')
+    pixel.set('Lena', 'layWords', true)
     ipad.set('Lena', 'soundOut', false)
     pixel.set('Lena', 'name', 'Lena B.')
     ipad.set('Lena', 'startLevel', 2)
@@ -144,7 +145,7 @@ describe('two devices', () => {
     pixel.sync(server)
     ipad.sync(server)
     for (const d of [ipad, pixel]) {
-      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2, pictures: 'clay', soundOut: false }])
+      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2, pictures: 'clay', soundOut: false, layWords: true }])
     }
   })
 
@@ -170,6 +171,26 @@ describe('two devices', () => {
     ipad.sync(server)
     old.sync(server)
     expect(old.profile('Lena')!.soundOut).toBe(false)
+  })
+
+  it('lay no words for profiles from apps before laying words, and keep the switch past them', () => {
+    const server: Server = {}
+    const old = new Device('old'), ipad = new Device('ipad')
+    old.add('lena', 'Lena')
+    delete old.own.profiles.lena.layWords
+    old.sync(server)
+    ipad.sync(server)
+    expect(ipad.profile('Lena')!.layWords).toBe(false)
+    ipad.set('Lena', 'layWords', true)
+    ipad.sync(server)
+    // The old app does not know the field: it reads the document all the same, and writes its own
+    // without it, which leaves the switch on.
+    old.sync(server)
+    expect(readable(JSON.parse(server.ipad))).toBe(true)
+    old.set('Lena', 'pairs', 6)
+    old.sync(server)
+    ipad.sync(server)
+    expect(ipad.profile('Lena')).toMatchObject({ pairs: 6, layWords: true })
   })
 
   it('hold a reset against coins and words from before it', () => {
@@ -291,7 +312,7 @@ describe('fromV1', () => {
     ]
     const ipad = new Device('ipad')
     ipad.own = JSON.parse(JSON.stringify(fromV1(v1, clock)))
-    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour', soundOut: true })))
+    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour', soundOut: true, layWords: false })))
 
     // The pixel had its own children before; joining keeps both, and Lena's coins carry on.
     const server: Server = {}

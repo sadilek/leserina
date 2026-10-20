@@ -26,7 +26,8 @@ clip rendered again; this script does so by default, and the tests fail until it
     ELEVENLABS_KEY_FILE="$KF" uv run scripts/render_stretched.py             # missing or outdated
     ELEVENLABS_KEY_FILE="$KF" uv run scripts/render_stretched.py --only hut  # these again
 
-Then `uv run scripts/check_stretched.py` lists the clips to listen to first.
+Then `uv run scripts/check_stretched.py` lists the clips to listen to first, and
+`uv run scripts/cut_tiles.py` finds the tiles' sounds in the new clips.
 """
 
 from __future__ import annotations

@@ -2,6 +2,7 @@
 import { clipUrl, nameClipUrl, stretchedClipUrl } from './assets'
 import type { Word } from './scheduler'
 import stretched from './stretched.json'
+import tiles from './tiles.json'
 
 let ctx: AudioContext | null = null
 const buffers = new Map<string, Promise<AudioBuffer | null>>()
@@ -125,6 +126,86 @@ export async function soundOut(word: Word, light: (i: number) => void) {
   await new Promise((r) => setTimeout(r, PAUSE))
   if (token !== sounding) return
   return sayWord(word.id, word.word)
+}
+
+type Cut = [number, number] | [number, number, string]
+type Tiles = { graphemes: string; text: string; clip: string; cuts: Cut[] }
+const TILES = tiles as unknown as Record<string, Tiles>
+/** Fades (s) at the start and end of a tile's piece, so the cut makes no click. */
+const FADE_IN = 0.008
+const FADE_OUT = 0.025
+
+/** Where the k-th grapheme's sound lies: in which word's stretched clip, from when to when (s). */
+export function tileCut(word: Word, k: number) {
+  const t = TILES[word.id]
+  const s = STRETCHED[word.id]
+  // Cut from a clip rendered for other graphemes, or rendered again since, it would be another sound.
+  if (!t || !s || t.text !== s.text || t.graphemes !== word.sounds.map(([g]) => g).join('|')) return
+  const [from, to, other] = t.cuts[k] ?? []
+  const url = stretchedClipUrl(other ?? word.id)
+  if (from === undefined || to === undefined || !url) return
+  return { url, from, to }
+}
+
+/** The clips the tiles of these words cut their sounds from, fetched ahead of time. */
+export function preloadTiles(words: Word[]) {
+  for (const w of words) w.sounds.forEach((_, k) => {
+    const c = tileCut(w, k)
+    if (c) void load(c.url)
+  })
+}
+
+/**
+ * Play the sound of a word's k-th grapheme, as a tile: its piece of the word's stretched clip.
+ * Resolves when it has played. Without a piece, the device's voice reads the grapheme.
+ */
+export async function playTile(word: Word, k: number) {
+  const c = tileCut(word, k)
+  const audio = unlock()
+  const token = ++sounding
+  speaking?.stop()
+  speaking = null
+  const buffer = c ? await load(c.url) : null
+  if (token !== sounding) return
+  if (!c || !buffer) {
+    speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(word.sounds[k][0].toLowerCase())
+    u.lang = 'de-DE'
+    u.rate = 0.85
+    speechSynthesis.speak(u)
+    return
+  }
+  const length = Math.max(0.02, Math.min(c.to, buffer.duration) - c.from)
+  const at = audio.currentTime + 0.01
+  const gain = audio.createGain()
+  gain.gain.setValueAtTime(0, at)
+  gain.gain.linearRampToValueAtTime(1, at + FADE_IN)
+  gain.gain.setValueAtTime(1, at + Math.max(FADE_IN, length - FADE_OUT))
+  gain.gain.linearRampToValueAtTime(0, at + length)
+  gain.connect(audio.destination)
+  const src = audio.createBufferSource()
+  src.buffer = buffer
+  src.connect(gain)
+  src.start(at, c.from, length)
+  speaking = src
+  await new Promise((r) => (src.onended = r))
+}
+
+/**
+ * Play a word's tiles one after the other, calling `light(i)` as the i-th starts and `light(-1)`
+ * at the end, to listen through the pieces (parents' corner).
+ */
+export async function playTiles(word: Word, light: (i: number) => void) {
+  for (let k = 0; k < word.sounds.length; k++) {
+    light(k)
+    const played = playTile(word, k)
+    const mine = sounding
+    await played
+    await new Promise((r) => setTimeout(r, 300))
+    // Something else was played meanwhile.
+    if (sounding !== mine) break
+  }
+  light(-1)
 }
 
 export const sayName = (nameSlug: string, text: string) => playClip(nameClipUrl(nameSlug), text)

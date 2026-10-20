@@ -40,6 +40,28 @@ export type Outcome =
 
 export type RoundResult = Record<string, Outcome>
 
+/**
+ * How the child did with a word in a round, from what happened in it: the words dropped wrong at
+ * least once, those heard first and the forced last pair. A lay round knows only wrong tiles.
+ */
+export function outcome(round: { wrong: string[]; help: string[]; forced?: string }, id: string): Outcome {
+  if (round.wrong.includes(id)) return 'wrong'
+  if (round.help.includes(id)) return 'help'
+  if (round.forced === id) return 'forced'
+  return 'right'
+}
+
+/** Matching pictures and words, or laying each word from tiles, one per grapheme. */
+export type RoundKind = 'match' | 'lay'
+
+/**
+ * What the next round is: with laying words on, every second one is a lay round. Counted by the
+ * rounds played, so the devices of a family agree.
+ */
+export function roundKind(state: LearningState, layWords: boolean): RoundKind {
+  return layWords && (state.round + 1) % 2 === 0 ? 'lay' : 'match'
+}
+
 /** Rounds until a word in box 1..5 is due again. */
 export const INTERVALS = [1, 2, 4, 8, 16]
 export const MAX_BOX = 5
