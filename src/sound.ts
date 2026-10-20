@@ -1,5 +1,6 @@
 // Spoken words come from pre-rendered clips; the jingles are synthesised with Web Audio.
 import { clipUrl, nameClipUrl } from './assets'
+import stretched from './stretched.json'
 
 let ctx: AudioContext | null = null
 const buffers = new Map<string, Promise<AudioBuffer | null>>()
@@ -34,6 +35,7 @@ export function preload(ids: string[]) {
 
 async function playClip(url: string | undefined, fallbackText: string) {
   const audio = unlock()
+  sounding++
   speaking?.stop()
   speaking = null
   const buffer = url ? await load(url) : null
@@ -54,6 +56,54 @@ async function playClip(url: string | undefined, fallbackText: string) {
 }
 
 export const sayWord = (id: string, text: string) => playClip(clipUrl(id), text)
+// Prototype A2: a few words read stretched, sound by sound, in one clip, with the time each
+// grapheme's sound starts (scripts/prototypes/stretched). `?dehnen=<variant>` picks another spelling.
+type Stretch = { text: string; marks: [string, number][]; end: number }
+const STRETCHED = stretched as unknown as Record<string, { default: string; variants: Record<string, Stretch> }>
+const variantParam = new URLSearchParams(location.search).get('dehnen')
+let sounding = 0
+
+function stretchOf(id: string) {
+  const s = STRETCHED[id]
+  if (!s) return
+  const v = variantParam && s.variants[variantParam] ? variantParam : s.default
+  return { url: clipUrl(`stretch-${id}.${v}`), ...s.variants[v] }
+}
+
+/** The word's graphemes ("M", "au", "s"), if it can be sounded out. */
+export const graphemes = (id: string) => stretchOf(id)?.marks.map(([g]) => g)
+
+/**
+ * Sound a word out: its stretched clip, calling `light(i)` as the i-th grapheme's sound starts and
+ * `light(-1)` when it is over, then the whole word. Resolves when the whole word starts.
+ */
+export async function soundOut(id: string, text: string, light: (i: number) => void) {
+  const s = stretchOf(id)
+  const wordUrl = clipUrl(id)
+  if (!s?.url) return sayWord(id, text)
+  const audio = unlock()
+  speaking?.stop()
+  speaking = null
+  const token = ++sounding
+  const [buffer] = await Promise.all([load(s.url), wordUrl && load(wordUrl)])
+  if (token !== sounding || !buffer) return
+  const src = audio.createBufferSource()
+  src.buffer = buffer
+  src.connect(audio.destination)
+  const lead = 0.05
+  src.start(audio.currentTime + lead)
+  speaking = src
+  const delay = lead + (audio.outputLatency || 0)
+  const timers = s.marks.map(([, t], i) => setTimeout(() => light(i), (delay + t) * 1000))
+  await new Promise((r) => (src.onended = r))
+  timers.forEach(clearTimeout)
+  light(-1)
+  if (token !== sounding) return
+  await new Promise((r) => setTimeout(r, 250))
+  if (token !== sounding) return
+  return sayWord(id, text)
+}
+
 export const sayName = (nameSlug: string, text: string) => playClip(nameClipUrl(nameSlug), text)
 
 /** One bell-like note: a sine with a few decaying partials. */

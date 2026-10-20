@@ -948,3 +948,16 @@ input:focus-visible {
   text-align: center;
   margin-top: 8px;
 }
+
+/* Prototype A2: the grapheme whose sound plays, and the ones already said. */
+.pair-word span {
+  border-radius: 0.15em;
+  transition: color 0.12s;
+}
+.pair-word span.lit {
+  color: #e08a00;
+  background: linear-gradient(transparent 14%, #ffe9a8 14%, #ffe9a8 90%, transparent 90%);
+}
+.pair-word span.said {
+  color: #bbb;
+}
