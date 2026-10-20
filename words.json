@@ -11,6 +11,20 @@
   "aoa": 1.9,
   "aoaSource": "estimate",
   "perMillion": 995.2,
+  "sounds": [
+   [
+    "O",
+    "o:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -26,6 +40,20 @@
   "aoa": 1.9,
   "aoaSource": "estimate",
   "perMillion": 1392.7,
+  "sounds": [
+   [
+    "O",
+    "o:"
+   ],
+   [
+    "p",
+    "p"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -41,6 +69,20 @@
   "aoa": 2.15,
   "aoaSource": "birchenough",
   "perMillion": 679.0,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "tt",
+    "t"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -56,6 +98,24 @@
   "aoa": 1.84,
   "aoaSource": "birchenough",
   "perMillion": 2710.0,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -71,6 +131,24 @@
   "aoa": 1.67,
   "aoaSource": "birchenough",
   "perMillion": 2013.7,
+  "sounds": [
+   [
+    "P",
+    "p"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "p",
+    "p"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -86,6 +164,20 @@
   "aoa": 2.7,
   "aoaSource": "birchenough",
   "perMillion": 1900.5,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "au",
+    "au"
+   ],
+   [
+    "s",
+    "s"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -101,6 +193,20 @@
   "aoa": 2.47,
   "aoaSource": "birchenough",
   "perMillion": 319.2,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ll",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -116,6 +222,24 @@
   "aoa": 2.18,
   "aoaSource": "birchenough",
   "perMillion": 568.7,
+  "sounds": [
+   [
+    "N",
+    "n"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -131,6 +255,20 @@
   "aoa": 2.83,
   "aoaSource": "birchenough",
   "perMillion": 478.8,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "au",
+    "au"
+   ],
+   [
+    "s",
+    "s"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -146,6 +284,20 @@
   "aoa": 2.85,
   "aoaSource": "birchenough",
   "perMillion": 475.9,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "au",
+    "au"
+   ],
+   [
+    "m",
+    "m"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -161,6 +313,20 @@
   "aoa": 2.69,
   "aoaSource": "birchenough",
   "perMillion": 1056.2,
+  "sounds": [
+   [
+    "Au",
+    "au"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -176,6 +342,24 @@
   "aoa": 2.29,
   "aoaSource": "birchenough",
   "perMillion": 165.4,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -191,6 +375,24 @@
   "aoa": 2.79,
   "aoaSource": "birchenough",
   "perMillion": 354.0,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -206,6 +408,20 @@
   "aoa": 4.0,
   "aoaSource": "birchenough",
   "perMillion": 208.9,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "t",
+    "t"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -221,6 +437,24 @@
   "aoa": 2.8,
   "aoaSource": "birchenough",
   "perMillion": 365.6,
+  "sounds": [
+   [
+    "I",
+    "i:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -236,6 +470,20 @@
   "aoa": 4.0,
   "aoaSource": "birchenough",
   "perMillion": 107.4,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "s",
+    "s"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -251,6 +499,20 @@
   "aoa": 2.92,
   "aoaSource": "birchenough",
   "perMillion": 310.5,
+  "sounds": [
+   [
+    "Au",
+    "au"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "o",
+    "o:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -266,6 +528,20 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 34.8,
+  "sounds": [
+   [
+    "A",
+    "a"
+   ],
+   [
+    "ff",
+    "f"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -281,6 +557,24 @@
   "aoa": 3.48,
   "aoaSource": "birchenough",
   "perMillion": 101.6,
+  "sounds": [
+   [
+    "E",
+    "e:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -296,6 +590,24 @@
   "aoa": 3.57,
   "aoaSource": "birchenough",
   "perMillion": 92.8,
+  "sounds": [
+   [
+    "S",
+    "z"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -311,6 +623,24 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 81.2,
+  "sounds": [
+   [
+    "D",
+    "d"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "o",
+    "o:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -326,6 +656,24 @@
   "aoa": 3.6,
   "aoaSource": "birchenough",
   "perMillion": 31.9,
+  "sounds": [
+   [
+    "R",
+    "r"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -341,6 +689,24 @@
   "aoa": 4.0,
   "aoaSource": "estimate",
   "perMillion": 0.9,
+  "sounds": [
+   [
+    "L",
+    "l"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 1
  },
@@ -356,6 +722,20 @@
   "aoa": 3.04,
   "aoaSource": "birchenough",
   "perMillion": 620.9,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "ä",
+    "ä:"
+   ],
+   [
+    "r",
+    "r"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -371,6 +751,20 @@
   "aoa": 3.12,
   "aoaSource": "birchenough",
   "perMillion": 757.3,
+  "sounds": [
+   [
+    "T",
+    "t"
+   ],
+   [
+    "ü",
+    "ü:"
+   ],
+   [
+    "r",
+    "r"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -386,6 +780,12 @@
   "aoa": 2.65,
   "aoaSource": "birchenough",
   "perMillion": 272.7,
+  "sounds": [
+   [
+    "Ei",
+    "ei"
+   ]
+  ],
   "why": [
    "ei"
   ],
@@ -403,6 +803,16 @@
   "aoa": 2.5,
   "aoaSource": "birchenough",
   "perMillion": 130.6,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "uh",
+    "u:"
+   ]
+  ],
   "why": [
    "lengthening h"
   ],
@@ -420,6 +830,20 @@
   "aoa": 2.93,
   "aoaSource": "birchenough",
   "perMillion": 345.3,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "ß",
+    "s"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -435,6 +859,16 @@
   "aoa": 2.4,
   "aoaSource": "estimate",
   "perMillion": 452.6,
+  "sounds": [
+   [
+    "Oh",
+    "o:"
+   ],
+   [
+    "r",
+    "r"
+   ]
+  ],
   "why": [
    "lengthening h",
    "1 cluster"
@@ -453,6 +887,16 @@
   "aoa": 2.95,
   "aoaSource": "birchenough",
   "perMillion": 237.9,
+  "sounds": [
+   [
+    "Ei",
+    "ei"
+   ],
+   [
+    "s",
+    "s"
+   ]
+  ],
   "why": [
    "ei"
   ],
@@ -470,6 +914,20 @@
   "aoa": 2.71,
   "aoaSource": "birchenough",
   "perMillion": 339.5,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "ei",
+    "ei"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "ei"
   ],
@@ -487,6 +945,24 @@
   "aoa": 2.83,
   "aoaSource": "birchenough",
   "perMillion": 133.5,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "t",
+    "t"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -504,6 +980,24 @@
   "aoa": 2.3,
   "aoaSource": "estimate",
   "perMillion": 905.3,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "final devoicing",
    "1 cluster"
@@ -522,6 +1016,24 @@
   "aoa": 2.33,
   "aoaSource": "birchenough",
   "perMillion": 972.0,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "final devoicing",
    "1 cluster"
@@ -540,6 +1052,24 @@
   "aoa": 2.58,
   "aoaSource": "birchenough",
   "perMillion": 438.1,
+  "sounds": [
+   [
+    "S",
+    "z"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "nn",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -555,6 +1085,24 @@
   "aoa": 2.26,
   "aoaSource": "birchenough",
   "perMillion": 298.9,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "final devoicing",
    "1 cluster"
@@ -573,6 +1121,20 @@
   "aoa": 3.25,
   "aoaSource": "birchenough",
   "perMillion": 46.4,
+  "sounds": [
+   [
+    "Z",
+    "ts"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "g",
+    "k"
+   ]
+  ],
   "why": [
    "final devoicing"
   ],
@@ -590,6 +1152,20 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 841.4,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "ch",
+    "ch"
+   ]
+  ],
   "why": [
    "ch"
   ],
@@ -607,6 +1183,16 @@
   "aoa": 3.21,
   "aoaSource": "birchenough",
   "perMillion": 235.0,
+  "sounds": [
+   [
+    "Uh",
+    "u:"
+   ],
+   [
+    "r",
+    "r"
+   ]
+  ],
   "why": [
    "lengthening h",
    "1 cluster"
@@ -625,6 +1211,20 @@
   "aoa": 2.88,
   "aoaSource": "birchenough",
   "perMillion": 502.0,
+  "sounds": [
+   [
+    "Z",
+    "ts"
+   ],
+   [
+    "ah",
+    "a:"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "lengthening h",
    "1 cluster"
@@ -643,6 +1243,20 @@
   "aoa": 4.67,
   "aoaSource": "birchenough",
   "perMillion": 37.7,
+  "sounds": [
+   [
+    "W",
+    "w"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -658,6 +1272,24 @@
   "aoa": 3.67,
   "aoaSource": "birchenough",
   "perMillion": 110.3,
+  "sounds": [
+   [
+    "P",
+    "p"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "z",
+    "ts"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -675,6 +1307,24 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 87.0,
+  "sounds": [
+   [
+    "E",
+    "e"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -692,6 +1342,24 @@
   "aoa": 2.71,
   "aoaSource": "birchenough",
   "perMillion": 98.7,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "final devoicing",
    "1 cluster"
@@ -710,6 +1378,20 @@
   "aoa": 2.5,
   "aoaSource": "birchenough",
   "perMillion": 92.8,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "f",
+    "f"
+   ]
+  ],
   "why": [
    "sch"
   ],
@@ -727,6 +1409,20 @@
   "aoa": 2.76,
   "aoaSource": "birchenough",
   "perMillion": 243.7,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "sch",
+    "sch"
+   ]
+  ],
   "why": [
    "sch"
   ],
@@ -744,6 +1440,20 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 139.3,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "uh",
+    "u:"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "lengthening h",
    "1 cluster"
@@ -762,6 +1472,24 @@
   "aoa": 3.21,
   "aoaSource": "birchenough",
   "perMillion": 81.2,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "ä",
+    "ä:"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -777,6 +1505,24 @@
   "aoa": 3.0,
   "aoaSource": "estimate",
   "perMillion": 29.0,
+  "sounds": [
+   [
+    "L",
+    "l"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "ll",
+    "l"
+   ],
+   [
+    "i",
+    "i:"
+   ]
+  ],
   "why": [],
   "level": 2
  },
@@ -792,6 +1538,24 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "Z",
+    "ts"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "t",
+    "t"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -809,6 +1573,24 @@
   "aoa": 2.87,
   "aoaSource": "birchenough",
   "perMillion": 519.4,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "tz",
+    "ts"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "tz"
   ],
@@ -826,6 +1608,24 @@
   "aoa": 2.71,
   "aoaSource": "birchenough",
   "perMillion": 220.5,
+  "sounds": [
+   [
+    "A",
+    "a"
+   ],
+   [
+    "pf",
+    "pf"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "pf"
   ],
@@ -843,6 +1643,24 @@
   "aoa": 3.24,
   "aoaSource": "birchenough",
   "perMillion": 23.2,
+  "sounds": [
+   [
+    "T",
+    "t"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ss",
+    "s"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -858,6 +1676,24 @@
   "aoa": 3.36,
   "aoaSource": "birchenough",
   "perMillion": 26.1,
+  "sounds": [
+   [
+    "L",
+    "l"
+   ],
+   [
+    "ö",
+    "ö:"
+   ],
+   [
+    "w",
+    "w"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -873,6 +1709,28 @@
   "aoa": 3.13,
   "aoaSource": "birchenough",
   "perMillion": 127.7,
+  "sounds": [
+   [
+    "W",
+    "w"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -890,6 +1748,20 @@
   "aoa": 3.28,
   "aoaSource": "birchenough",
   "perMillion": 31.9,
+  "sounds": [
+   [
+    "Eu",
+    "eu"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "eu"
   ],
@@ -907,6 +1779,24 @@
   "aoa": 2.78,
   "aoaSource": "birchenough",
   "perMillion": 98.7,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "ch",
+    "ch"
+   ]
+  ],
   "why": [
    "ch",
    "1 cluster"
@@ -925,6 +1815,28 @@
   "aoa": 2.79,
   "aoaSource": "birchenough",
   "perMillion": 66.7,
+  "sounds": [
+   [
+    "L",
+    "l"
+   ],
+   [
+    "ö",
+    "ö"
+   ],
+   [
+    "ff",
+    "f"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -940,6 +1852,24 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 37.7,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "ie",
+    "i:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "ie"
   ],
@@ -957,6 +1887,20 @@
   "aoa": 3.19,
   "aoaSource": "birchenough",
   "perMillion": 301.8,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "ff",
+    "f"
+   ]
+  ],
   "why": [
    "sch"
   ],
@@ -974,6 +1918,28 @@
   "aoa": 3.14,
   "aoaSource": "birchenough",
   "perMillion": 226.3,
+  "sounds": [
+   [
+    "V",
+    "f"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "v spoken f"
   ],
@@ -991,6 +1957,20 @@
   "aoa": 3.42,
   "aoaSource": "birchenough",
   "perMillion": 30.0,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "chs",
+    "ks"
+   ]
+  ],
   "why": [
    "chs"
   ],
@@ -1008,6 +1988,16 @@
   "aoa": 2.93,
   "aoaSource": "birchenough",
   "perMillion": 217.6,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "uh",
+    "u:"
+   ]
+  ],
   "why": [
    "sch",
    "lengthening h"
@@ -1026,6 +2016,24 @@
   "aoa": 4.0,
   "aoaSource": "birchenough",
   "perMillion": 58.0,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "g",
+    "k"
+   ]
+  ],
   "why": [
    "final devoicing",
    "1 cluster"
@@ -1044,6 +2052,24 @@
   "aoa": 4.28,
   "aoaSource": "birchenough",
   "perMillion": 191.5,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "z",
+    "ts"
+   ]
+  ],
   "why": [
    "-er spoken as a vowel",
    "1 cluster"
@@ -1062,6 +2088,24 @@
   "aoa": 2.77,
   "aoaSource": "birchenough",
   "perMillion": 72.5,
+  "sounds": [
+   [
+    "J",
+    "j"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ck",
+    "k"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "ck"
   ],
@@ -1079,6 +2123,28 @@
   "aoa": 3.91,
   "aoaSource": "birchenough",
   "perMillion": 98.7,
+  "sounds": [
+   [
+    "G",
+    "g"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1096,6 +2162,28 @@
   "aoa": 4.44,
   "aoaSource": "birchenough",
   "perMillion": 29.0,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -1111,6 +2199,24 @@
   "aoa": 3.88,
   "aoaSource": "birchenough",
   "perMillion": 200.2,
+  "sounds": [
+   [
+    "T",
+    "t"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "-er spoken as a vowel"
   ],
@@ -1128,6 +2234,28 @@
   "aoa": 4.0,
   "aoaSource": "birchenough",
   "perMillion": 60.9,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1145,6 +2273,20 @@
   "aoa": 3.0,
   "aoaSource": "birchenough",
   "perMillion": 243.7,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "eu",
+    "eu"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "eu",
    "-er spoken as a vowel"
@@ -1163,6 +2305,20 @@
   "aoa": 5.5,
   "aoaSource": "estimate",
   "perMillion": 5.3,
+  "sounds": [
+   [
+    "U",
+    "u:"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "o",
+    "o:"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -1178,6 +2334,32 @@
   "aoa": 3.38,
   "aoaSource": "birchenough",
   "perMillion": 31.9,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 3
  },
@@ -1193,6 +2375,28 @@
   "aoa": 3.6,
   "aoaSource": "birchenough",
   "perMillion": 75.4,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "ll",
+    "l"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1210,6 +2414,28 @@
   "aoa": 3.02,
   "aoaSource": "birchenough",
   "perMillion": 89.9,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "ch",
+    "ch"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "ch"
   ],
@@ -1227,6 +2453,28 @@
   "aoa": 3.65,
   "aoaSource": "birchenough",
   "perMillion": 2.9,
+  "sounds": [
+   [
+    "Z",
+    "ts"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1244,6 +2492,24 @@
   "aoa": 4.61,
   "aoaSource": "birchenough",
   "perMillion": 11.6,
+  "sounds": [
+   [
+    "P",
+    "p"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "zz",
+    "ts"
+   ],
+   [
+    "a",
+    "a:"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1259,6 +2525,28 @@
   "aoa": 3.42,
   "aoaSource": "birchenough",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "z",
+    "ts"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "-er spoken as a vowel",
    "1 cluster"
@@ -1277,6 +2565,32 @@
   "aoa": 3.88,
   "aoaSource": "birchenough",
   "perMillion": 66.7,
+  "sounds": [
+   [
+    "T",
+    "t"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1292,6 +2606,24 @@
   "aoa": 2.86,
   "aoaSource": "birchenough",
   "perMillion": 252.4,
+  "sounds": [
+   [
+    "S",
+    "sch"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "uh",
+    "u:"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "sp/st spoken schp/scht",
    "lengthening h",
@@ -1311,6 +2643,24 @@
   "aoa": 3.63,
   "aoaSource": "birchenough",
   "perMillion": 197.3,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "sch",
+    "sch"
+   ]
+  ],
   "why": [
    "sch",
    "1 cluster"
@@ -1329,6 +2679,24 @@
   "aoa": 2.82,
   "aoaSource": "birchenough",
   "perMillion": 313.4,
+  "sounds": [
+   [
+    "Pf",
+    "pf"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "pf",
    "final devoicing",
@@ -1349,6 +2717,32 @@
   "aoa": 3.11,
   "aoaSource": "birchenough",
   "perMillion": 11.6,
+  "sounds": [
+   [
+    "T",
+    "t"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "mm",
+    "m"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1366,6 +2760,24 @@
   "aoa": 3.38,
   "aoaSource": "birchenough",
   "perMillion": 37.7,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "sch"
   ],
@@ -1383,6 +2795,28 @@
   "aoa": 3.44,
   "aoaSource": "birchenough",
   "perMillion": 78.3,
+  "sounds": [
+   [
+    "S",
+    "sch"
+   ],
+   [
+    "p",
+    "p"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "nn",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "sp/st spoken schp/scht",
    "1 cluster"
@@ -1401,6 +2835,28 @@
   "aoa": 3.29,
   "aoaSource": "birchenough",
   "perMillion": 150.9,
+  "sounds": [
+   [
+    "S",
+    "sch"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "sp/st spoken schp/scht",
    "-er spoken as a vowel",
@@ -1420,6 +2876,32 @@
   "aoa": 3.79,
   "aoaSource": "birchenough",
   "perMillion": 26.1,
+  "sounds": [
+   [
+    "G",
+    "sch"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ff",
+    "f"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1435,6 +2917,32 @@
   "aoa": 2.84,
   "aoaSource": "birchenough",
   "perMillion": 481.7,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "s",
+    "s"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "-er spoken as a vowel",
    "2 cluster"
@@ -1453,6 +2961,24 @@
   "aoa": 2.81,
   "aoaSource": "birchenough",
   "perMillion": 142.2,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "w",
+    "w"
+   ],
+   [
+    "ei",
+    "ei"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "sch",
    "ei",
@@ -1472,6 +2998,32 @@
   "aoa": 4.87,
   "aoaSource": "birchenough",
   "perMillion": 14.5,
+  "sounds": [
+   [
+    "R",
+    "r"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1487,6 +3039,28 @@
   "aoa": 4.35,
   "aoaSource": "birchenough",
   "perMillion": 249.5,
+  "sounds": [
+   [
+    "D",
+    "d"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ch",
+    "ch"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "ch",
    "1 cluster"
@@ -1505,6 +3079,36 @@
   "aoa": 4.17,
   "aoaSource": "birchenough",
   "perMillion": 98.7,
+  "sounds": [
+   [
+    "E",
+    "e:"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "t",
+    "t"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1522,6 +3126,32 @@
   "aoa": 4.8,
   "aoaSource": "birchenough",
   "perMillion": 2.9,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1537,6 +3167,36 @@
   "aoa": 4.0,
   "aoaSource": "birchenough",
   "perMillion": 98.7,
+  "sounds": [
+   [
+    "P",
+    "p"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "n",
+    "ng"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "ng"
   ],
@@ -1554,6 +3214,32 @@
   "aoa": 3.24,
   "aoaSource": "birchenough",
   "perMillion": 191.5,
+  "sounds": [
+   [
+    "G",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "sch",
+    "sch"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "n",
+    "ng"
+   ],
+   [
+    "k",
+    "k"
+   ]
+  ],
   "why": [
    "sch",
    "1 cluster"
@@ -1572,6 +3258,40 @@
   "aoa": 3.2,
   "aoaSource": "estimate",
   "perMillion": 145.1,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "ff",
+    "f"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1589,6 +3309,40 @@
   "aoa": 3.0,
   "aoaSource": "estimate",
   "perMillion": 58.0,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "d",
+    "d"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "w",
+    "w"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "nn",
+    "n"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [],
   "level": 4
  },
@@ -1604,6 +3358,32 @@
   "aoa": 5.63,
   "aoaSource": "birchenough",
   "perMillion": 31.9,
+  "sounds": [
+   [
+    "B",
+    "b"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "z",
+    "ts"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1621,6 +3401,28 @@
   "aoa": 3.8,
   "aoaSource": "birchenough",
   "perMillion": 258.2,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "ah",
+    "a:"
+   ],
+   [
+    "rr",
+    "r"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "final devoicing",
    "lengthening h",
@@ -1640,6 +3442,40 @@
   "aoa": 4.0,
   "aoaSource": "estimate",
   "perMillion": 470.0,
+  "sounds": [
+   [
+    "G",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "s",
+    "sch"
+   ],
+   [
+    "p",
+    "p"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "s",
+    "s"
+   ],
+   [
+    "t",
+    "t"
+   ]
+  ],
   "why": [
    "3 cluster"
   ],
@@ -1657,6 +3493,40 @@
   "aoa": 4.21,
   "aoaSource": "birchenough",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "d",
+    "d"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1674,6 +3544,32 @@
   "aoa": 3.67,
   "aoaSource": "birchenough",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "S",
+    "sch"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "ie",
+    "i:"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "ie",
    "sp/st spoken schp/scht",
@@ -1693,6 +3589,44 @@
   "aoa": 2.97,
   "aoaSource": "birchenough",
   "perMillion": 374.3,
+  "sounds": [
+   [
+    "P",
+    "p"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "z",
+    "ts"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "ss",
+    "s"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "2 cluster"
   ],
@@ -1710,6 +3644,32 @@
   "aoa": 4.5,
   "aoaSource": "estimate",
   "perMillion": 116.1,
+  "sounds": [
+   [
+    "Ei",
+    "ei"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "h",
+    "h"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "ei",
    "2 cluster"
@@ -1728,6 +3688,28 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 81.2,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ng",
+    "ng"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "sch",
    "ng",
@@ -1747,6 +3729,28 @@
   "aoa": 2.81,
   "aoaSource": "birchenough",
   "perMillion": 37.7,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "ck",
+    "k"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "sch",
    "ck",
@@ -1766,6 +3770,44 @@
   "aoa": 3.0,
   "aoaSource": "estimate",
   "perMillion": 69.6,
+  "sounds": [
+   [
+    "L",
+    "l"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ll",
+    "l"
+   ],
+   [
+    "o",
+    "o"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "2 cluster"
   ],
@@ -1783,6 +3825,32 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 208.9,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "ü",
+    "ü"
+   ],
+   [
+    "ss",
+    "s"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "l",
+    "l"
+   ]
+  ],
   "why": [
    "sch",
    "1 cluster"
@@ -1801,6 +3869,36 @@
   "aoa": 3.47,
   "aoaSource": "birchenough",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "E",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "d",
+    "t"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "ee",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "double vowel",
    "2 cluster"
@@ -1819,6 +3917,36 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "s",
+    "z"
+   ],
+   [
+    "eh",
+    "e:"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "-er spoken as a vowel",
    "2 cluster"
@@ -1837,6 +3965,36 @@
   "aoa": 4.2,
   "aoaSource": "birchenough",
   "perMillion": 75.4,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "g",
+    "k"
+   ],
+   [
+    "z",
+    "ts"
+   ],
+   [
+    "eu",
+    "eu"
+   ],
+   [
+    "g",
+    "k"
+   ]
+  ],
   "why": [
    "eu",
    "final devoicing",
@@ -1856,6 +4014,32 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 87.0,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "ee",
+    "e:"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "nn",
+    "n"
+   ]
+  ],
   "why": [
    "sch",
    "double vowel",
@@ -1875,6 +4059,48 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 8.7,
+  "sounds": [
+   [
+    "R",
+    "r"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "o",
+    "o:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "1 cluster"
   ],
@@ -1892,6 +4118,32 @@
   "aoa": 4.5,
   "aoaSource": "birchenough",
   "perMillion": 101.6,
+  "sounds": [
+   [
+    "R",
+    "r"
+   ],
+   [
+    "u",
+    "u"
+   ],
+   [
+    "ck",
+    "k"
+   ],
+   [
+    "s",
+    "s"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "ck",
+    "k"
+   ]
+  ],
   "why": [
    "ck",
    "ck",
@@ -1911,6 +4163,36 @@
   "aoa": 5.89,
   "aoaSource": "birchenough",
   "perMillion": 17.4,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "ä",
+    "ä"
+   ],
+   [
+    "n",
+    "ng"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "u",
+    "u:"
+   ]
+  ],
   "why": [
    "ng"
   ],
@@ -1928,6 +4210,32 @@
   "aoa": 3.2,
   "aoaSource": "estimate",
   "perMillion": 11.6,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "d",
+    "t"
+   ],
+   [
+    "sch",
+    "sch"
+   ],
+   [
+    "uh",
+    "u:"
+   ]
+  ],
   "why": [
    "sch",
    "lengthening h",
@@ -1947,6 +4255,36 @@
   "aoa": 4.2,
   "aoaSource": "estimate",
   "perMillion": 26.1,
+  "sounds": [
+   [
+    "N",
+    "n"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "pf",
+    "pf"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "d",
+    "t"
+   ]
+  ],
   "why": [
    "pf",
    "final devoicing",
@@ -1967,6 +4305,44 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 26.1,
+  "sounds": [
+   [
+    "R",
+    "r"
+   ],
+   [
+    "e",
+    "e:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "sch",
+    "sch"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "m",
+    "m"
+   ]
+  ],
   "why": [
    "sch",
    "2 cluster"
@@ -1985,6 +4361,44 @@
   "aoa": 3.0,
   "aoaSource": "estimate",
   "perMillion": 29.0,
+  "sounds": [
+   [
+    "Z",
+    "ts"
+   ],
+   [
+    "ah",
+    "a:"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "ü",
+    "ü"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "s",
+    "s"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "lengthening h",
    "4 cluster"
@@ -2003,6 +4417,56 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 6.8,
+  "sounds": [
+   [
+    "K",
+    "k"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "a",
+    "a"
+   ],
+   [
+    "n",
+    "ng"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "w",
+    "w"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "g",
+    "g"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "3 cluster"
   ],
@@ -2020,6 +4484,44 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 40.6,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "d",
+    "t"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "ö",
+    "ö:"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ]
+  ],
   "why": [
    "sch",
    "3 cluster"
@@ -2038,6 +4540,48 @@
   "aoa": 3.5,
   "aoaSource": "estimate",
   "perMillion": 26.1,
+  "sounds": [
+   [
+    "M",
+    "m"
+   ],
+   [
+    "a",
+    "a:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "i",
+    "i:"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "k",
+    "k"
+   ],
+   [
+    "ä",
+    "ä:"
+   ],
+   [
+    "f",
+    "f"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "ie",
    "-er spoken as a vowel",
@@ -2057,6 +4601,40 @@
   "aoa": 4.73,
   "aoaSource": "birchenough",
   "perMillion": 8.7,
+  "sounds": [
+   [
+    "H",
+    "h"
+   ],
+   [
+    "u",
+    "u:"
+   ],
+   [
+    "b",
+    "p"
+   ],
+   [
+    "sch",
+    "sch"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "au",
+    "au"
+   ],
+   [
+    "b",
+    "b"
+   ],
+   [
+    "er",
+    "ɐ"
+   ]
+  ],
   "why": [
    "sch",
    "-er spoken as a vowel",
@@ -2076,6 +4654,44 @@
   "aoa": 3.3,
   "aoaSource": "estimate",
   "perMillion": 81.2,
+  "sounds": [
+   [
+    "Sch",
+    "sch"
+   ],
+   [
+    "m",
+    "m"
+   ],
+   [
+    "e",
+    "e"
+   ],
+   [
+    "tt",
+    "t"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "l",
+    "l"
+   ],
+   [
+    "i",
+    "i"
+   ],
+   [
+    "ng",
+    "ng"
+   ]
+  ],
   "why": [
    "sch",
    "ng",
@@ -2097,6 +4713,44 @@
   "aoa": 3.2,
   "aoaSource": "estimate",
   "perMillion": 5.8,
+  "sounds": [
+   [
+    "F",
+    "f"
+   ],
+   [
+    "eu",
+    "eu"
+   ],
+   [
+    "er",
+    "ɐ"
+   ],
+   [
+    "w",
+    "w"
+   ],
+   [
+    "eh",
+    "e:"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "au",
+    "au"
+   ],
+   [
+    "t",
+    "t"
+   ],
+   [
+    "o",
+    "o:"
+   ]
+  ],
   "why": [
    "eu",
    "lengthening h",
@@ -2117,6 +4771,44 @@
   "aoa": 3.8,
   "aoaSource": "estimate",
   "perMillion": 52.2,
+  "sounds": [
+   [
+    "Ei",
+    "ei"
+   ],
+   [
+    "ch",
+    "ch"
+   ],
+   [
+    "h",
+    "h"
+   ],
+   [
+    "ö",
+    "ö"
+   ],
+   [
+    "r",
+    "r"
+   ],
+   [
+    "n",
+    "n"
+   ],
+   [
+    "ch",
+    "ch"
+   ],
+   [
+    "e",
+    "ə"
+   ],
+   [
+    "n",
+    "n"
+   ]
+  ],
   "why": [
    "ch",
    "ch",

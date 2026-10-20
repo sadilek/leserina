@@ -7,6 +7,9 @@ See README.md for what the app is, how to run it and how the learning logic work
 - Synced documents (`src/merge.ts`) are read by every installed app of a family, old versions
   included: change their shape only so that older apps still read them, or bump `v` (older apps
   skip documents they cannot read).
+- A word's graphemes (`sounds` in `words.json`, from `scripts/phonics.py` and the CSV column
+  `sounds`) must match its stretched clip: after changing them, or adding a word, run
+  `uv run scripts/render_stretched.py` (README, "Sounding out"); the tests check it.
 - File names for clips and pictures use the word's ASCII `id` (Bär → `baer`); `src/slug.ts` and
   `slug()` in `scripts/render_audio.py` must stay identical.
 - `words.json` is generated: edit `data/words-source.csv` or `scripts/score_words.py`, then run
@@ -23,8 +26,8 @@ See README.md for what the app is, how to run it and how the learning logic work
 - This file never points to paths outside the repository (other projects, the owner's machine):
   they break for anyone who clones it. Local secrets such as API key files go into the gitignored
   `.secrets/` and are named here by that path.
-- Rendering audio with ElevenLabs (`scripts/render_audio.py`, `scripts/tts_elevenlabs.py`) reads
-  the key from `.secrets/elevenlabs.key` in the main checkout (a worktree has none of its own): `ELEVENLABS_KEY_FILE="$(git rev-parse --path-format=absolute --git-common-dir)/../.secrets/elevenlabs.key"`.
+- Rendering audio with ElevenLabs (`scripts/render_audio.py`, `scripts/render_stretched.py`,
+  `scripts/tts_elevenlabs.py`) reads the key from `.secrets/elevenlabs.key` in the main checkout (a worktree has none of its own): `ELEVENLABS_KEY_FILE="$(git rev-parse --path-format=absolute --git-common-dir)/../.secrets/elevenlabs.key"`.
   The key itself never goes into the repository.
 - Automated browser runs stay silent on the owner's Mac. Obeya's browser and demo skills already
   silence `speechSynthesis`; any other browser tool needs it stubbed in the page, because

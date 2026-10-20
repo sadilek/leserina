@@ -2,6 +2,7 @@
 import wordList from '../words.json'
 import { avatarFace, clipUrl, nameClipUrl, pictureFace, PICTURE_STYLES } from './assets'
 import { AVATARS } from './avatars'
+import { soundOut } from './game'
 import { boxes, type Word } from './scheduler'
 import { slug } from './slug'
 import * as sound from './sound'
@@ -26,8 +27,11 @@ function button(label: string, cls: string, onClick: () => void) {
   return b
 }
 
-/** A word that plays its clip when tapped; marked when no clip has been rendered for it. */
-function wordChip(id: string) {
+/**
+ * A word that plays its clip when tapped, or sounds it out first; marked when no clip has been
+ * rendered for it.
+ */
+function wordChip(id: string, sounded = false) {
   const w = wordById.get(id)
   const chip = h('button', 'chip', w?.word ?? id)
   if (!clipUrl(id)) {
@@ -36,7 +40,7 @@ function wordChip(id: string) {
   }
   chip.addEventListener('click', () => {
     sound.unlock()
-    if (w) void sound.sayWord(w.id, w.word)
+    if (w) void (sounded ? soundOut(w, chip) : sound.sayWord(w.id, w.word))
   })
   return chip
 }
@@ -131,10 +135,21 @@ function profilePanel(p: Profile, rerender: () => void) {
     styles.append(b)
   }
 
+  // After a match: "Mmm–au–sss … Maus", each letter lighting up with its sound, or just "Maus".
+  const sounds = h('div', 'style-pick plain')
+  for (const [on, label] of [[true, 'An'], [false, 'Aus']] as const) {
+    const b = button(label, on === p.soundOut ? 'on' : '', () => {
+      setField(p, 'soundOut', on)
+      rerender()
+    })
+    sounds.append(b)
+  }
+
   const settings = h('div', 'settings',
     h('label', '', h('span', '', 'Beginnt bei'), level),
     h('label', '', h('span', '', 'Pro Runde'), pairs),
     h('div', 'setting', h('span', '', 'Bilder'), styles),
+    h('div', 'setting', h('span', '', 'Laute vorsprechen'), sounds),
   )
 
   const seen = Object.keys(p.learning.words).length
@@ -193,11 +208,11 @@ function listenSection() {
     h('h2', '', 'Alle Wörter anhören'),
     h('p', 'hint', missing
       ? `${missing} Wörter haben noch keine Aufnahme (gestrichelt); dort liest das Gerät vor.`
-      : 'Tippe ein Wort an, um die Aufnahme zu hören.'),
+      : 'Tippe ein Wort an: Erst kommen seine Laute, dann das ganze Wort.'),
   )
   for (let l = 1; l <= 5; l++) {
     const chips = h('div', 'chips')
-    for (const w of words.filter((x) => x.level === l)) chips.append(wordChip(w.id))
+    for (const w of words.filter((x) => x.level === l)) chips.append(wordChip(w.id, true))
     section.append(h('h3', '', `Stufe ${l}`), chips)
   }
   return section

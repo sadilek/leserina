@@ -671,6 +671,10 @@ input:focus-visible {
   color: var(--ink);
 }
 
+.style-pick.plain button {
+  padding: 10px 18px;
+}
+
 .style-pick button.on {
   border-color: var(--felt);
   box-shadow: 0 0 0 2.5px var(--felt);
@@ -949,14 +953,15 @@ input:focus-visible {
   margin-top: 8px;
 }
 
-/* Prototype A2: the grapheme whose sound plays, and the ones already said. */
-.pair-word span {
+/* A word sounded out: the grapheme whose sound plays, and those said before it. They change at
+   once, without a transition: a letter fading in looks late. */
+.grapheme {
   border-radius: 0.15em;
 }
-.pair-word span.lit {
+.grapheme.lit {
   color: #e08a00;
   background: linear-gradient(transparent 14%, #ffe9a8 14%, #ffe9a8 90%, transparent 90%);
 }
-.pair-word span.said {
+.grapheme.said {
   color: #bbb;
 }

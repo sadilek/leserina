@@ -11,11 +11,11 @@ export const PICTURE_STYLES = [
 const pictureFiles = import.meta.glob('../pictures/*/*.{png,webp,jpg,jpeg}', {
   eager: true, query: '?url', import: 'default',
 }) as Record<string, string>
-const audioFiles = import.meta.glob('../audio/*.mp3', {
+const audioFiles = import.meta.glob(['../audio/*.mp3', '../audio/stretched/*.mp3'], {
   eager: true, query: '?url', import: 'default',
 }) as Record<string, string>
 
-/** Keyed by the file name without extension, and for pictures by "<style>/<name>". */
+/** Keyed by the file name without extension, below audio/ or pictures/: "hund", "stretched/hund", "clay/hund". */
 const byName = (files: Record<string, string>) =>
   new Map(Object.entries(files).map(([path, url]) => [path.replace(/^.*?\/(audio|pictures)\/|\.[^.]+$/g, ''), url]))
 
@@ -31,6 +31,8 @@ export function pictureUrl(id: string, style: string) {
   }
 }
 export const clipUrl = (id: string) => clips.get(id)
+/** The word read stretched, sound by sound (`scripts/render_stretched.py`). */
+export const stretchedClipUrl = (id: string) => clips.get(`stretched/${id}`)
 /** A child's name clip; a name that is also a word (Mama, Papa) uses the word's clip. */
 export const nameClipUrl = (nameSlug: string) => clips.get(`name-${nameSlug}`) ?? clips.get(nameSlug)
 

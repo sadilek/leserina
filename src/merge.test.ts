@@ -32,7 +32,7 @@ class Device {
     return this.profiles().find((p) => p.name === name)
   }
   add(id: string, name: string, fields: Partial<Fields> = {}) {
-    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', ...fields }, this.now())
+    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, ...fields }, this.now())
   }
   set<K extends keyof Fields>(name: string, k: K, v: Fields[K]) {
     const p = this.profile(name)!
@@ -137,13 +137,14 @@ describe('two devices', () => {
     ipad.set('Lena', 'pairs', 6)
     pixel.set('Lena', 'avatar', 'owl')
     pixel.set('Lena', 'pictures', 'clay')
+    ipad.set('Lena', 'soundOut', false)
     pixel.set('Lena', 'name', 'Lena B.')
     ipad.set('Lena', 'startLevel', 2)
     ipad.sync(server)
     pixel.sync(server)
     ipad.sync(server)
     for (const d of [ipad, pixel]) {
-      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2, pictures: 'clay' }])
+      expect(d.profiles()).toMatchObject([{ name: 'Lena B.', avatar: 'owl', pairs: 6, startLevel: 2, pictures: 'clay', soundOut: false }])
     }
   })
 
@@ -155,6 +156,20 @@ describe('two devices', () => {
     old.sync(server)
     ipad.sync(server)
     expect(ipad.profile('Lena')!.pictures).toBe('watercolour')
+  })
+
+  it('sound words out for profiles from apps before sounding out, until it is switched off', () => {
+    const server: Server = {}
+    const old = new Device('old'), ipad = new Device('ipad')
+    old.add('lena', 'Lena')
+    delete old.own.profiles.lena.soundOut
+    old.sync(server)
+    ipad.sync(server)
+    expect(ipad.profile('Lena')!.soundOut).toBe(true)
+    ipad.set('Lena', 'soundOut', false)
+    ipad.sync(server)
+    old.sync(server)
+    expect(old.profile('Lena')!.soundOut).toBe(false)
   })
 
   it('hold a reset against coins and words from before it', () => {
@@ -276,7 +291,7 @@ describe('fromV1', () => {
     ]
     const ipad = new Device('ipad')
     ipad.own = JSON.parse(JSON.stringify(fromV1(v1, clock)))
-    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour' })))
+    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour', soundOut: true })))
 
     // The pixel had its own children before; joining keeps both, and Lena's coins carry on.
     const server: Server = {}

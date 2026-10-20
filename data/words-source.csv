@@ -1,127 +1,127 @@
-id,word,emoji,syllables,aoa,aoa_source,childlex_per_million,childlex_source,note
-oma,Oma,👵,2,1.90,estimate,995.2,childlex,not in norms; set just above Mama (1.84)
-opa,Opa,👴,2,1.90,estimate,1392.7,childlex,not in norms; set just above Papa (1.67)
-mama,Mama,👩,2,1.84,birchenough,2710.0,childlex,
-papa,Papa,👨,2,1.67,birchenough,2013.7,childlex,
-ball,Ball,⚽,1,2.47,birchenough,319.2,childlex,emoji is a football
-auto,Auto,🚗,2,2.92,birchenough,310.5,childlex,
-sofa,Sofa,🛋️,2,3.57,birchenough,92.8,childlex,
-hut,Hut,🎩,1,4.00,birchenough,208.9,childlex,
-eis,Eis,🍦,1,2.95,birchenough,237.9,childlex,childLex lemma Eis also covers ice
-ei,Ei,🥚,1,2.65,birchenough,272.7,childlex,
-igel,Igel,🦔,2,2.80,birchenough,365.6,childlex,
-esel,Esel,🫏,2,3.48,birchenough,101.6,childlex,emoji needs Unicode 15 (2022)
-rose,Rose,🌹,2,3.60,birchenough,31.9,childlex,may be confused with Blume
-nase,Nase,👃,2,2.18,birchenough,568.7,childlex,
-hose,Hose,👖,2,2.29,birchenough,165.4,childlex,
-tomate,Tomate,🍅,3,3.88,birchenough,66.7,childlex,
-banane,Banane,🍌,3,3.38,birchenough,31.9,childlex,
-maus,Maus,🐭,1,2.83,birchenough,478.8,childlex,
-uhr,Uhr,⏰,1,3.21,birchenough,235.0,childlex,
-mond,Mond,🌙,1,2.71,birchenough,98.7,childlex,
-hand,Hand,✋,1,2.33,birchenough,972.0,childlex,
-bus,Bus,🚌,1,4.00,birchenough,107.4,childlex,
-kuh,Kuh,🐄,1,2.50,birchenough,130.6,childlex,
-ente,Ente,🦆,2,3.00,birchenough,87.0,childlex,
-brot,Brot,🍞,1,2.83,birchenough,133.5,childlex,
-hase,Hase,🐰,2,2.79,birchenough,354.0,childlex,
-lama,Lama,🦙,2,4.00,estimate,0.9,childlex,not in norms; absent from 6-8 subcorpus; value is all ages (6-12)
-wal,Wal,🐳,1,4.67,birchenough,37.7,childlex,
-kamel,Kamel,🐪,2,4.44,birchenough,29.0,childlex,
-melone,Melone,🍉,3,4.80,birchenough,2.9,childlex,
-rakete,Rakete,🚀,3,4.87,birchenough,14.5,childlex,
-mund,Mund,👄,1,2.26,birchenough,298.9,childlex,
-ohr,Ohr,👂,1,2.40,estimate,452.6,childlex,"not in norms; Nase 2.18, Mund 2.26, Auge 2.69"
-haus,Haus,🏠,1,2.70,birchenough,1900.5,childlex,
-baum,Baum,🌳,1,2.85,birchenough,475.9,childlex,
-dino,Dino,🦕,2,3.80,estimate,81.2,childlex,not in norms
-loewe,Löwe,🦁,2,3.36,birchenough,26.1,childlex,
-tiger,Tiger,🐯,2,3.88,birchenough,200.2,childlex,
-ufo,Ufo,🛸,2,5.50,estimate,5.3,childlex,not in norms; rarer in toddler talk; absent from 6-8 subcorpus; value is all ages (6-12)
-lolli,Lolli,🍭,2,3.00,estimate,29.0,childlex,not in norms; Lutscher 3.08
-zebra,Zebra,🦓,2,3.65,birchenough,2.9,childlex,
-pilz,Pilz,🍄,1,3.67,birchenough,110.3,childlex,
-hund,Hund,🐶,1,2.30,estimate,905.3,childlex,"not in norms; Katze 2.87, Ball 2.47"
-vogel,Vogel,🐦,2,3.14,birchenough,226.3,childlex,
-sonne,Sonne,☀️,2,2.58,birchenough,438.1,childlex,
-fisch,Fisch,🐟,1,2.76,birchenough,243.7,childlex,
-katze,Katze,🐱,2,2.87,birchenough,519.4,childlex,
-apfel,Apfel,🍎,2,2.71,birchenough,220.5,childlex,
-bett,Bett,🛏️,1,2.15,birchenough,679.0,childlex,
-buch,Buch,📖,1,3.00,birchenough,841.4,childlex,
-fuss,Fuß,🦶,1,2.93,birchenough,345.3,childlex,
-bein,Bein,🦵,1,2.71,birchenough,339.5,childlex,
-zahn,Zahn,🦷,1,2.88,birchenough,502.0,childlex,
-auge,Auge,👁️,2,2.69,birchenough,1056.2,childlex,
-zug,Zug,🚂,1,3.25,birchenough,46.4,childlex,emoji is a steam locomotive
-affe,Affe,🐒,2,3.00,birchenough,34.8,childlex,
-baer,Bär,🐻,1,3.04,birchenough,620.9,childlex,
-stern,Stern,⭐,1,3.29,birchenough,150.9,childlex,
-wolke,Wolke,☁️,2,3.13,birchenough,127.7,childlex,
-feuer,Feuer,🔥,2,3.00,birchenough,243.7,childlex,
-herz,Herz,❤️,1,4.28,birchenough,191.5,childlex,
-kerze,Kerze,🕯️,2,3.42,birchenough,40.6,childlex,
-krone,Krone,👑,2,4.00,birchenough,60.9,childlex,
-kaese,Käse,🧀,2,3.21,birchenough,81.2,childlex,
-milch,Milch,🥛,1,2.78,birchenough,98.7,childlex,
-kuchen,Kuchen,🍰,2,3.02,birchenough,89.9,childlex,emoji is a slice of cream cake (Torte)
-pizza,Pizza,🍕,2,4.61,birchenough,11.6,childlex,
-tuer,Tür,🚪,1,3.12,birchenough,757.3,childlex,"childLex lemma is ""Türe"""
-fenster,Fenster,🪟,2,2.84,birchenough,481.7,childlex,
-burg,Burg,🏰,1,4.00,birchenough,58.0,childlex,
-zelt,Zelt,⛺,1,3.80,estimate,40.6,childlex,not in norms
-elefant,Elefant,🐘,3,4.17,birchenough,98.7,childlex,
-giraffe,Giraffe,🦒,3,3.79,birchenough,26.1,childlex,
-eule,Eule,🦉,2,3.28,birchenough,31.9,childlex,
-biene,Biene,🐝,2,3.00,birchenough,37.7,childlex,
-huhn,Huhn,🐔,1,3.00,birchenough,139.3,childlex,
-tasse,Tasse,☕,2,3.24,birchenough,23.2,childlex,emoji shows a hot drink; may be read as Kaffee
-loeffel,Löffel,🥄,2,2.79,birchenough,66.7,childlex,
-brille,Brille,👓,2,3.60,birchenough,75.4,childlex,
-gurke,Gurke,🥒,2,3.91,birchenough,98.7,childlex,
-jacke,Jacke,🧥,2,2.77,birchenough,72.5,childlex,emoji is a long coat (Mantel)
-trommel,Trommel,🥁,2,3.11,birchenough,11.6,childlex,
-pinguin,Pinguin,🐧,3,4.00,birchenough,98.7,childlex,
-schuh,Schuh,👟,1,2.93,birchenough,217.6,childlex,
-schmetterling,Schmetterling,🦋,3,3.30,estimate,81.2,childlex,not in norms
-eichhoernchen,Eichhörnchen,🐿️,3,3.80,estimate,52.2,childlex,not in norms; emoji is a chipmunk
-schildkroete,Schildkröte,🐢,3,3.80,estimate,40.6,childlex,not in norms
-marienkaefer,Marienkäfer,🐞,5,3.50,estimate,26.1,childlex,not in norms; Käfer 3.50; often spoken with 4 syllables (Ma-rien-kä-fer)
-flugzeug,Flugzeug,✈️,2,4.20,birchenough,75.4,childlex,
-hubschrauber,Hubschrauber,🚁,3,4.73,birchenough,8.7,childlex,
-schiff,Schiff,🚢,1,3.19,birchenough,301.8,childlex,
-fahrrad,Fahrrad,🚲,2,3.80,birchenough,258.2,childlex,
-feuerwehrauto,Feuerwehrauto,🚒,5,3.20,estimate,5.8,childlex,not in norms
-krankenwagen,Krankenwagen,🚑,4,3.80,estimate,6.8,childlex,not in norms; absent from 6-8 subcorpus; value is all ages (6-12)
-zahnbuerste,Zahnbürste,🪥,3,3.00,estimate,29.0,childlex,not in norms; Bürste 3.24
-badewanne,Badewanne,🛁,4,3.00,estimate,58.0,childlex,not in norms; Wanne 3.84
-schluessel,Schlüssel,🔑,2,3.30,estimate,208.9,childlex,not in norms
-schere,Schere,✂️,2,3.38,birchenough,37.7,childlex,
-geschenk,Geschenk,🎁,2,3.24,birchenough,191.5,childlex,
-luftballon,Luftballon,🎈,3,3.00,estimate,69.6,childlex,not in norms; Ballon 3.74 (rarer form)
-fernseher,Fernseher,📺,3,3.30,estimate,40.6,childlex,not in norms; Fernsehen 4.59
-regenschirm,Regenschirm,☂️,3,3.30,estimate,26.1,childlex,"not in norms; Regen 2.91, Schirm 4.33"
-regenbogen,Regenbogen,🌈,4,3.80,estimate,8.7,childlex,not in norms
-schneemann,Schneemann,⛄,2,3.30,estimate,87.0,childlex,not in norms; Schnee 3.12
-handschuh,Handschuh,🧤,2,3.20,estimate,11.6,childlex,not in norms
-stiefel,Stiefel,👢,2,3.67,birchenough,40.6,childlex,
-rucksack,Rucksack,🎒,2,4.50,birchenough,101.6,childlex,
-erdbeere,Erdbeere,🍓,3,3.47,birchenough,40.6,childlex,
-kartoffel,Kartoffel,🥔,3,3.20,estimate,145.1,childlex,not in norms; Kartoffelpüree 3.84
-brezel,Brezel,🥨,2,5.63,birchenough,31.9,childlex,
-prinzessin,Prinzessin,👸,3,2.97,birchenough,374.3,childlex,
-frosch,Frosch,🐸,1,3.63,birchenough,197.3,childlex,
-schwein,Schwein,🐷,1,2.81,birchenough,142.2,childlex,
-schnecke,Schnecke,🐌,2,2.81,birchenough,37.7,childlex,
-spinne,Spinne,🕷️,2,3.44,birchenough,78.3,childlex,
-schlange,Schlange,🐍,2,3.30,estimate,81.2,childlex,not in norms
-krokodil,Krokodil,🐊,3,4.21,birchenough,40.6,childlex,
-kaenguru,Känguru,🦘,3,5.89,birchenough,17.4,childlex,
-nilpferd,Nilpferd,🦛,2,4.20,estimate,26.1,childlex,not in norms
-drache,Drache,🐉,2,4.35,birchenough,249.5,childlex,
-einhorn,Einhorn,🦄,2,4.50,estimate,116.1,childlex,not in norms
-gespenst,Gespenst,👻,2,4.00,estimate,470.0,childlex,not in norms; Hexe 4.00
-pferd,Pferd,🐴,1,2.82,birchenough,313.4,childlex,
-stuhl,Stuhl,🪑,1,2.86,birchenough,252.4,childlex,
-schaf,Schaf,🐑,1,2.50,birchenough,92.8,childlex,
-fuchs,Fuchs,🦊,1,3.42,birchenough,30.0,estimate,singular tagged as proper name and removed in cleaned childLex; plural Füchse only 5.7/M all ages
+id,word,emoji,syllables,aoa,aoa_source,childlex_per_million,childlex_source,note,sounds
+oma,Oma,👵,2,1.90,estimate,995.2,childlex,not in norms; set just above Mama (1.84),
+opa,Opa,👴,2,1.90,estimate,1392.7,childlex,not in norms; set just above Papa (1.67),
+mama,Mama,👩,2,1.84,birchenough,2710.0,childlex,,
+papa,Papa,👨,2,1.67,birchenough,2013.7,childlex,,
+ball,Ball,⚽,1,2.47,birchenough,319.2,childlex,emoji is a football,
+auto,Auto,🚗,2,2.92,birchenough,310.5,childlex,,
+sofa,Sofa,🛋️,2,3.57,birchenough,92.8,childlex,,
+hut,Hut,🎩,1,4.00,birchenough,208.9,childlex,,
+eis,Eis,🍦,1,2.95,birchenough,237.9,childlex,childLex lemma Eis also covers ice,
+ei,Ei,🥚,1,2.65,birchenough,272.7,childlex,,
+igel,Igel,🦔,2,2.80,birchenough,365.6,childlex,,
+esel,Esel,🫏,2,3.48,birchenough,101.6,childlex,emoji needs Unicode 15 (2022),
+rose,Rose,🌹,2,3.60,birchenough,31.9,childlex,may be confused with Blume,
+nase,Nase,👃,2,2.18,birchenough,568.7,childlex,,
+hose,Hose,👖,2,2.29,birchenough,165.4,childlex,,
+tomate,Tomate,🍅,3,3.88,birchenough,66.7,childlex,,
+banane,Banane,🍌,3,3.38,birchenough,31.9,childlex,,
+maus,Maus,🐭,1,2.83,birchenough,478.8,childlex,,
+uhr,Uhr,⏰,1,3.21,birchenough,235.0,childlex,,
+mond,Mond,🌙,1,2.71,birchenough,98.7,childlex,,M|o=o:|n|d
+hand,Hand,✋,1,2.33,birchenough,972.0,childlex,,
+bus,Bus,🚌,1,4.00,birchenough,107.4,childlex,,B|u|s
+kuh,Kuh,🐄,1,2.50,birchenough,130.6,childlex,,
+ente,Ente,🦆,2,3.00,birchenough,87.0,childlex,,
+brot,Brot,🍞,1,2.83,birchenough,133.5,childlex,,
+hase,Hase,🐰,2,2.79,birchenough,354.0,childlex,,
+lama,Lama,🦙,2,4.00,estimate,0.9,childlex,not in norms; absent from 6-8 subcorpus; value is all ages (6-12),
+wal,Wal,🐳,1,4.67,birchenough,37.7,childlex,,
+kamel,Kamel,🐪,2,4.44,birchenough,29.0,childlex,,K|a|m|e=e:|l
+melone,Melone,🍉,3,4.80,birchenough,2.9,childlex,,
+rakete,Rakete,🚀,3,4.87,birchenough,14.5,childlex,,
+mund,Mund,👄,1,2.26,birchenough,298.9,childlex,,
+ohr,Ohr,👂,1,2.40,estimate,452.6,childlex,"not in norms; Nase 2.18, Mund 2.26, Auge 2.69",
+haus,Haus,🏠,1,2.70,birchenough,1900.5,childlex,,
+baum,Baum,🌳,1,2.85,birchenough,475.9,childlex,,
+dino,Dino,🦕,2,3.80,estimate,81.2,childlex,not in norms,
+loewe,Löwe,🦁,2,3.36,birchenough,26.1,childlex,,
+tiger,Tiger,🐯,2,3.88,birchenough,200.2,childlex,,
+ufo,Ufo,🛸,2,5.50,estimate,5.3,childlex,not in norms; rarer in toddler talk; absent from 6-8 subcorpus; value is all ages (6-12),
+lolli,Lolli,🍭,2,3.00,estimate,29.0,childlex,not in norms; Lutscher 3.08,
+zebra,Zebra,🦓,2,3.65,birchenough,2.9,childlex,,
+pilz,Pilz,🍄,1,3.67,birchenough,110.3,childlex,,
+hund,Hund,🐶,1,2.30,estimate,905.3,childlex,"not in norms; Katze 2.87, Ball 2.47",
+vogel,Vogel,🐦,2,3.14,birchenough,226.3,childlex,,
+sonne,Sonne,☀️,2,2.58,birchenough,438.1,childlex,,
+fisch,Fisch,🐟,1,2.76,birchenough,243.7,childlex,,
+katze,Katze,🐱,2,2.87,birchenough,519.4,childlex,,
+apfel,Apfel,🍎,2,2.71,birchenough,220.5,childlex,,
+bett,Bett,🛏️,1,2.15,birchenough,679.0,childlex,,
+buch,Buch,📖,1,3.00,birchenough,841.4,childlex,,B|u=u:|ch
+fuss,Fuß,🦶,1,2.93,birchenough,345.3,childlex,,
+bein,Bein,🦵,1,2.71,birchenough,339.5,childlex,,
+zahn,Zahn,🦷,1,2.88,birchenough,502.0,childlex,,
+auge,Auge,👁️,2,2.69,birchenough,1056.2,childlex,,
+zug,Zug,🚂,1,3.25,birchenough,46.4,childlex,emoji is a steam locomotive,
+affe,Affe,🐒,2,3.00,birchenough,34.8,childlex,,
+baer,Bär,🐻,1,3.04,birchenough,620.9,childlex,,
+stern,Stern,⭐,1,3.29,birchenough,150.9,childlex,,
+wolke,Wolke,☁️,2,3.13,birchenough,127.7,childlex,,
+feuer,Feuer,🔥,2,3.00,birchenough,243.7,childlex,,
+herz,Herz,❤️,1,4.28,birchenough,191.5,childlex,,
+kerze,Kerze,🕯️,2,3.42,birchenough,40.6,childlex,,
+krone,Krone,👑,2,4.00,birchenough,60.9,childlex,,
+kaese,Käse,🧀,2,3.21,birchenough,81.2,childlex,,
+milch,Milch,🥛,1,2.78,birchenough,98.7,childlex,,
+kuchen,Kuchen,🍰,2,3.02,birchenough,89.9,childlex,emoji is a slice of cream cake (Torte),K|u=u:|ch|e|n
+pizza,Pizza,🍕,2,4.61,birchenough,11.6,childlex,,
+tuer,Tür,🚪,1,3.12,birchenough,757.3,childlex,"childLex lemma is ""Türe""",
+fenster,Fenster,🪟,2,2.84,birchenough,481.7,childlex,,
+burg,Burg,🏰,1,4.00,birchenough,58.0,childlex,,
+zelt,Zelt,⛺,1,3.80,estimate,40.6,childlex,not in norms,
+elefant,Elefant,🐘,3,4.17,birchenough,98.7,childlex,,E|l|e=ə|f|a|n|t
+giraffe,Giraffe,🦒,3,3.79,birchenough,26.1,childlex,,G=sch|i|r|a|ff|e
+eule,Eule,🦉,2,3.28,birchenough,31.9,childlex,,
+biene,Biene,🐝,2,3.00,birchenough,37.7,childlex,,
+huhn,Huhn,🐔,1,3.00,birchenough,139.3,childlex,,
+tasse,Tasse,☕,2,3.24,birchenough,23.2,childlex,emoji shows a hot drink; may be read as Kaffee,
+loeffel,Löffel,🥄,2,2.79,birchenough,66.7,childlex,,
+brille,Brille,👓,2,3.60,birchenough,75.4,childlex,,
+gurke,Gurke,🥒,2,3.91,birchenough,98.7,childlex,,
+jacke,Jacke,🧥,2,2.77,birchenough,72.5,childlex,emoji is a long coat (Mantel),
+trommel,Trommel,🥁,2,3.11,birchenough,11.6,childlex,,
+pinguin,Pinguin,🐧,3,4.00,birchenough,98.7,childlex,,P|i|n=ng|g|u|i|n
+schuh,Schuh,👟,1,2.93,birchenough,217.6,childlex,,
+schmetterling,Schmetterling,🦋,3,3.30,estimate,81.2,childlex,not in norms,
+eichhoernchen,Eichhörnchen,🐿️,3,3.80,estimate,52.2,childlex,not in norms; emoji is a chipmunk,
+schildkroete,Schildkröte,🐢,3,3.80,estimate,40.6,childlex,not in norms,
+marienkaefer,Marienkäfer,🐞,5,3.50,estimate,26.1,childlex,not in norms; Käfer 3.50; often spoken with 4 syllables (Ma-rien-kä-fer),M|a|r|i|e|n=n|k|ä|f|er
+flugzeug,Flugzeug,✈️,2,4.20,birchenough,75.4,childlex,,F|l|u=u:|g|z|eu|g
+hubschrauber,Hubschrauber,🚁,3,4.73,birchenough,8.7,childlex,,H|u=u:|b|sch|r|au|b|er
+schiff,Schiff,🚢,1,3.19,birchenough,301.8,childlex,,
+fahrrad,Fahrrad,🚲,2,3.80,birchenough,258.2,childlex,,
+feuerwehrauto,Feuerwehrauto,🚒,5,3.20,estimate,5.8,childlex,not in norms,F|eu|er=ɐ|w|eh|r|au|t|o
+krankenwagen,Krankenwagen,🚑,4,3.80,estimate,6.8,childlex,not in norms; absent from 6-8 subcorpus; value is all ages (6-12),
+zahnbuerste,Zahnbürste,🪥,3,3.00,estimate,29.0,childlex,not in norms; Bürste 3.24,
+badewanne,Badewanne,🛁,4,3.00,estimate,58.0,childlex,not in norms; Wanne 3.84,B|a|d|e=ə|w|a|nn|e
+schluessel,Schlüssel,🔑,2,3.30,estimate,208.9,childlex,not in norms,
+schere,Schere,✂️,2,3.38,birchenough,37.7,childlex,,
+geschenk,Geschenk,🎁,2,3.24,birchenough,191.5,childlex,,
+luftballon,Luftballon,🎈,3,3.00,estimate,69.6,childlex,not in norms; Ballon 3.74 (rarer form),L|u|f|t|b|a|ll|o=o|n
+fernseher,Fernseher,📺,3,3.30,estimate,40.6,childlex,not in norms; Fernsehen 4.59,F|e|r|n|s|eh|er
+regenschirm,Regenschirm,☂️,3,3.30,estimate,26.1,childlex,"not in norms; Regen 2.91, Schirm 4.33",
+regenbogen,Regenbogen,🌈,4,3.80,estimate,8.7,childlex,not in norms,
+schneemann,Schneemann,⛄,2,3.30,estimate,87.0,childlex,not in norms; Schnee 3.12,
+handschuh,Handschuh,🧤,2,3.20,estimate,11.6,childlex,not in norms,
+stiefel,Stiefel,👢,2,3.67,birchenough,40.6,childlex,,
+rucksack,Rucksack,🎒,2,4.50,birchenough,101.6,childlex,,
+erdbeere,Erdbeere,🍓,3,3.47,birchenough,40.6,childlex,,E=e:|r|d|b|ee|r|e
+kartoffel,Kartoffel,🥔,3,3.20,estimate,145.1,childlex,not in norms; Kartoffelpüree 3.84,
+brezel,Brezel,🥨,2,5.63,birchenough,31.9,childlex,,
+prinzessin,Prinzessin,👸,3,2.97,birchenough,374.3,childlex,,P|r|i|n|z|e|ss|i=i|n
+frosch,Frosch,🐸,1,3.63,birchenough,197.3,childlex,,
+schwein,Schwein,🐷,1,2.81,birchenough,142.2,childlex,,
+schnecke,Schnecke,🐌,2,2.81,birchenough,37.7,childlex,,
+spinne,Spinne,🕷️,2,3.44,birchenough,78.3,childlex,,
+schlange,Schlange,🐍,2,3.30,estimate,81.2,childlex,not in norms,
+krokodil,Krokodil,🐊,3,4.21,birchenough,40.6,childlex,,
+kaenguru,Känguru,🦘,3,5.89,birchenough,17.4,childlex,,K|ä|n=ng|g|u|r|u
+nilpferd,Nilpferd,🦛,2,4.20,estimate,26.1,childlex,not in norms,N|i=i:|l|pf|e=e:|r|d
+drache,Drache,🐉,2,4.35,birchenough,249.5,childlex,,
+einhorn,Einhorn,🦄,2,4.50,estimate,116.1,childlex,not in norms,
+gespenst,Gespenst,👻,2,4.00,estimate,470.0,childlex,not in norms; Hexe 4.00,G|e|s=sch|p|e|n|s|t
+pferd,Pferd,🐴,1,2.82,birchenough,313.4,childlex,,Pf|e=e:|r|d
+stuhl,Stuhl,🪑,1,2.86,birchenough,252.4,childlex,,
+schaf,Schaf,🐑,1,2.50,birchenough,92.8,childlex,,
+fuchs,Fuchs,🦊,1,3.42,birchenough,30.0,estimate,singular tagged as proper name and removed in cleaned childLex; plural Füchse only 5.7/M all ages,

@@ -39,7 +39,7 @@ interface Data {
   current: Record<string, SavedRound>
 }
 
-interface V1Profile extends Omit<Fields, 'pictures'> {
+interface V1Profile extends Omit<Fields, 'pictures' | 'soundOut'> {
   id: string
   coins: number
   learning: LearningState

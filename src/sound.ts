@@ -1,10 +1,13 @@
 // Spoken words come from pre-rendered clips; the jingles are synthesised with Web Audio.
-import { clipUrl, nameClipUrl } from './assets'
+import { clipUrl, nameClipUrl, stretchedClipUrl } from './assets'
+import type { Word } from './scheduler'
 import stretched from './stretched.json'
 
 let ctx: AudioContext | null = null
 const buffers = new Map<string, Promise<AudioBuffer | null>>()
 let speaking: AudioBufferSourceNode | null = null
+/** Counts what is played; a word being sounded out stops when another one starts. */
+let sounding = 0
 
 /** iOS starts audio only inside a user gesture: call this from every pointerdown. */
 export function unlock(): AudioContext {
@@ -28,17 +31,17 @@ function load(url: string): Promise<AudioBuffer | null> {
 /** Fetch and decode clips ahead of time, so a tap plays without delay. */
 export function preload(ids: string[]) {
   for (const id of ids) {
-    const url = clipUrl(id)
-    if (url) void load(url)
+    for (const url of [clipUrl(id), stretchedClipUrl(id)]) if (url) void load(url)
   }
 }
 
 async function playClip(url: string | undefined, fallbackText: string) {
   const audio = unlock()
-  sounding++
+  const token = ++sounding
   speaking?.stop()
   speaking = null
   const buffer = url ? await load(url) : null
+  if (token !== sounding) return
   if (!buffer) {
     // No clip rendered for this text: the device's own German voice stands in.
     speechSynthesis.cancel()
@@ -56,55 +59,72 @@ async function playClip(url: string | undefined, fallbackText: string) {
 }
 
 export const sayWord = (id: string, text: string) => playClip(clipUrl(id), text)
-// Prototype A2: a few words read stretched, sound by sound, in one clip, with the time each
-// grapheme's sound starts (scripts/prototypes/stretched). `?dehnen=<variant>` picks another spelling.
-type Stretch = { text: string; marks: [string, number][]; end: number }
-const STRETCHED = stretched as unknown as Record<string, { default: string; variants: Record<string, Stretch> }>
-const variantParam = new URLSearchParams(location.search).get('dehnen')
-let sounding = 0
-const EARLY = 0.08
 
-function stretchOf(id: string) {
-  const s = STRETCHED[id]
-  if (!s) return
-  const v = variantParam && s.variants[variantParam] ? variantParam : s.default
-  return { url: clipUrl(`stretch-${id}.${v}`), ...s.variants[v] }
+type Stretch = { graphemes: string; text: string; marks: number[] }
+const STRETCHED = stretched as Record<string, Stretch>
+/** Each grapheme lights up this long (s) before its sound: lit as it starts, it looks late. */
+const EARLY = 0.08
+/** From scheduling the stretched clip to its start (s), so the first grapheme can light up early. */
+const LEAD = 0.05
+/** The pause (ms) between the sounds and the whole word. */
+const PAUSE = 250
+
+/** When each of the word's graphemes starts in its stretched clip; none if it has no clip for them. */
+export function stretch(word: Word) {
+  const s = STRETCHED[word.id]
+  const url = stretchedClipUrl(word.id)
+  // A clip rendered for other graphemes than the word has now would light up the wrong letters.
+  if (!s || !url || s.graphemes !== word.sounds.map(([g]) => g).join('|')) return
+  return { url, marks: s.marks }
 }
 
-/** The word's graphemes ("M", "au", "s"), if it can be sounded out. */
-export const graphemes = (id: string) => stretchOf(id)?.marks.map(([g]) => g)
+/** The index of the grapheme lit at time t (s) of the clip; -1 before the first. */
+export function litAt(marks: number[], t: number) {
+  let i = -1
+  while (i + 1 < marks.length && marks[i + 1] - EARLY <= t) i++
+  return i
+}
 
 /**
  * Sound a word out: its stretched clip, calling `light(i)` as the i-th grapheme's sound starts and
- * `light(-1)` when it is over, then the whole word. Resolves when the whole word starts.
+ * `light(-1)` when the sounds are over, then the whole word. Resolves when the whole word starts,
+ * or when something else is played instead. Without a stretched clip, says the whole word.
  */
-export async function soundOut(id: string, text: string, light: (i: number) => void) {
-  const s = stretchOf(id)
-  const wordUrl = clipUrl(id)
-  if (!s?.url) return sayWord(id, text)
+export async function soundOut(word: Word, light: (i: number) => void) {
+  const s = stretch(word)
+  if (!s) return sayWord(word.id, word.word)
   const audio = unlock()
+  const token = ++sounding
   speaking?.stop()
   speaking = null
-  const token = ++sounding
-  const [buffer] = await Promise.all([load(s.url), wordUrl && load(wordUrl)])
-  if (token !== sounding || !buffer) return
+  const wordUrl = clipUrl(word.id)
+  const [buffer] = await Promise.all([load(s.url), wordUrl ? load(wordUrl) : null])
+  if (token !== sounding) return
+  if (!buffer) return sayWord(word.id, word.word)
   const src = audio.createBufferSource()
   src.buffer = buffer
   src.connect(audio.destination)
-  const lead = 0.05
-  src.start(audio.currentTime + lead)
+  const at = audio.currentTime + LEAD
+  src.start(at)
   speaking = src
-  // A letter lighting up after its sound starts reads as late, one lighting up a little before
-  // it as in time: each lights up EARLY s before its timestamp (the first one with the clip).
-  const delay = lead + (audio.outputLatency || 0)
-  const timers = s.marks.map(([, t], i) => setTimeout(() => light(i), Math.max(0, delay + t - EARLY) * 1000))
-  await new Promise((r) => (src.onended = r))
-  timers.forEach(clearTimeout)
+  const ended = new Promise((r) => (src.onended = r))
+  // Follows the audio clock, so the letters keep up with the sound even if it starts late.
+  let shown = -1
+  let over = false
+  const frame = () => {
+    if (over) return
+    const i = litAt(s.marks, audio.currentTime - at - (audio.outputLatency || audio.baseLatency || 0))
+    if (i !== shown) light((shown = i))
+    requestAnimationFrame(frame)
+  }
+  frame()
+  await ended
+  over = true
   light(-1)
   if (token !== sounding) return
-  await new Promise((r) => setTimeout(r, 250))
+  await new Promise((r) => setTimeout(r, PAUSE))
   if (token !== sounding) return
-  return sayWord(id, text)
+  return sayWord(word.id, word.word)
 }
 
 export const sayName = (nameSlug: string, text: string) => playClip(nameClipUrl(nameSlug), text)

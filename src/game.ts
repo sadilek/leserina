@@ -13,7 +13,6 @@ const wordById = new Map(words.map((w) => [w.id, w]))
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 const ms = (t: number) => (reducedMotion() ? Math.min(t, 120) : t)
-let forcedRound = 0
 const wait = (t: number) => new Promise((r) => setTimeout(r, ms(t)))
 /** Height of a card's solid edge in px: the first shadow of `.item` in style.css. */
 const EDGE = 5
@@ -86,11 +85,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   const commit = () => save()
 
   function newRound() {
-    // Prototype A2: `?woerter=oma,mama|hut,bus` sets the words of the next rounds, for the demo.
-    const forced = new URLSearchParams(location.search).get('woerter')?.split('|')[forcedRound++]
-    const ids = forced
-      ? forced.split(',').filter((id) => wordById.has(id))
-      : composeRound(profile.learning, words, profile.pairs, profile.startLevel)
+    const ids = composeRound(profile.learning, words, profile.pairs, profile.startLevel)
     round = { ids, matched: [], wrong: [], help: [], pos: {} }
     profile.current = round
     commit()
@@ -310,7 +305,8 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     const r = Math.hypot(cw, ch) / 2
     burst(fx, cx + cw / 2, cy + ch / 2, 24, ['#ffd84d', '#ffffff', '#ff9fb2', '#9fe3ff'], Math.max(1.6, r / 100), r * 0.4)
     star.set(round.matched.length, round.ids.length, true)
-    await soundOut(word, cardWord)
+    // Sounded out, the word comes after its sounds; the pair waits for it before it flies.
+    await say(word, cardWord)
     await wait(650)
 
     // It flies onto the shelf and takes on the shape of the shelf's card on the way.
@@ -333,10 +329,15 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     const card = pairCard(word, profile.pictures, 'pair small')
     card.addEventListener('pointerdown', () => {
       sound.unlock()
-      void soundOut(word, card.querySelector<HTMLElement>('.pair-word')!)
+      void say(word, card.querySelector<HTMLElement>('.pair-word')!)
       card.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.1)' }, { transform: 'scale(1)' }], { duration: ms(260) })
     })
     return card
+  }
+
+  /** A pair's word: sounded out on its card, if the child's settings say so, else just spoken. */
+  function say(word: Word, el: HTMLElement) {
+    return profile.soundOut ? soundOut(word, el) : sound.sayWord(word.id, word.word)
   }
 
   /** The round is over: record it right away, so closing the app mid-celebration loses nothing. */
@@ -458,14 +459,14 @@ export function outcome(round: SavedRound, id: string): Outcome {
   return 'right'
 }
 
-/** Sound the word out on a pair card, each grapheme lighting up while its sound plays. */
-function soundOut(word: Word, el: HTMLElement) {
-  const parts = sound.graphemes(word.id)
-  if (!parts) return sound.sayWord(word.id, word.word)
-  const spans = parts.map((g) => h('span', '', g))
+/** Sound a word out on the element showing it: each grapheme lights up while its sound plays,
+ * those said before it turn grey, then the whole word is spoken. */
+export function soundOut(word: Word, el: HTMLElement) {
+  if (!sound.stretch(word)) return sound.sayWord(word.id, word.word)
+  const spans = word.sounds.map(([g]) => h('span', 'grapheme', g))
   el.replaceChildren(...spans)
-  return sound.soundOut(word.id, word.word, (i) =>
-    spans.forEach((s, j) => (s.className = i < 0 ? '' : j === i ? 'lit' : j < i ? 'said' : '')),
+  return sound.soundOut(word, (i) =>
+    spans.forEach((s, j) => (s.className = `grapheme${i < 0 ? '' : j === i ? ' lit' : j < i ? ' said' : ''}`)),
   )
 }
 

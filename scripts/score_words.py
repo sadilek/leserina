@@ -11,6 +11,9 @@ The score adds two parts, both "higher is harder":
   familiarity  how late children know the object: the age-of-acquisition rating
                (Birchenough et al. 2017) and the childLex frequency for ages 6-8.
 
+Each word also gets its graphemes and their sounds, for sounding it out (`scripts/phonics.py`,
+with corrections by hand in the CSV's column "sounds").
+
 Level 1 holds only phonetically regular words of 3-4 letters that very young children know.
 The other words are split into levels 2-5 of equal size by score. The optional column
 "adjust" in the CSV is added to the score, so a word can be moved by hand (negative = earlier).
@@ -25,6 +28,8 @@ import json
 import math
 import re
 from pathlib import Path
+
+from phonics import sounds
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "data" / "words-source.csv"
@@ -118,6 +123,7 @@ def main() -> None:
             "aoa": aoa,
             "aoaSource": row["aoa_source"],
             "perMillion": freq,
+            "sounds": [list(p) for p in sounds(row["word"], row.get("sounds") or "")],
             "why": r["graphemes"] + r["irregular"] + (["%d cluster" % r["clusters"]] if r["clusters"] else []),
             "_level1": r["regular"] and len(row["word"]) <= 4 and aoa <= 4.0,
         })

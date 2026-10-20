@@ -7,6 +7,9 @@ export interface Word {
   emoji: string
   score: number
   level: number
+  /** Its graphemes as written, each with the sound it stands for (`scripts/phonics.py`), as pairs:
+   * Hund is [H, h], [u, u], [n, n], [d, t]. */
+  sounds: string[][]
 }
 
 export interface WordState {
