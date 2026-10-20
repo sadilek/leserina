@@ -62,6 +62,7 @@ type Stretch = { text: string; marks: [string, number][]; end: number }
 const STRETCHED = stretched as unknown as Record<string, { default: string; variants: Record<string, Stretch> }>
 const variantParam = new URLSearchParams(location.search).get('dehnen')
 let sounding = 0
+const EARLY = 0.08
 
 function stretchOf(id: string) {
   const s = STRETCHED[id]
@@ -93,8 +94,10 @@ export async function soundOut(id: string, text: string, light: (i: number) => v
   const lead = 0.05
   src.start(audio.currentTime + lead)
   speaking = src
+  // A letter lighting up after its sound starts reads as late, one lighting up a little before
+  // it as in time: each lights up EARLY s before its timestamp (the first one with the clip).
   const delay = lead + (audio.outputLatency || 0)
-  const timers = s.marks.map(([, t], i) => setTimeout(() => light(i), (delay + t) * 1000))
+  const timers = s.marks.map(([, t], i) => setTimeout(() => light(i), Math.max(0, delay + t - EARLY) * 1000))
   await new Promise((r) => (src.onended = r))
   timers.forEach(clearTimeout)
   light(-1)

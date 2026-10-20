@@ -952,7 +952,6 @@ input:focus-visible {
 /* Prototype A2: the grapheme whose sound plays, and the ones already said. */
 .pair-word span {
   border-radius: 0.15em;
-  transition: color 0.12s;
 }
 .pair-word span.lit {
   color: #e08a00;
