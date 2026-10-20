@@ -203,6 +203,9 @@ not-yet-due words from the lowest boxes. Reviews of nearly known words wait behi
 so that a child who gets everything right keeps getting new words. Words below the child's start
 level are never introduced.
 
+What research says about games like this one (from what age they help, and whether they can get in
+the way of learning to read and spell later): `docs/literature-review-early-reading.md`.
+
 ## License
 
 The code is under the MIT license (`LICENSE`). The voice clips in `audio/` are not; see
