@@ -8,8 +8,10 @@ The recording page (record.html under `npm run dev`, see the README, "Recording 
 saves one take per sound of src/sound-list.json, with some silence around it: it keeps 0.3 s
 from before the key went down and after it came up. This script
 
-- cuts the silence at both ends: it keeps what lies above the take's noise floor (and no more
-  than 40 dB below its loudest 10 ms), plus 20 ms before and 50 ms after, with short fades;
+- cuts the silence at both ends: it keeps the run of sound around the take's loudest 10 ms, of
+  frames above its noise floor (and no more than 25 dB below the loudest), bridging dips of up
+  to 80 ms (the closure before a burst), plus 20 ms before and 50 ms after, with short fades.
+  The clicks of the space bar going down and up lie apart from the sound and are left out;
 - levels the sound to the word clips in audio/: their median loudness, measured over the frames
   within 30 dB of each clip's loudest (silence and pauses do not count), and no peak above -1 dBFS;
 - writes it as MP3, 44.1 kHz mono at 64 kbit/s like the word clips;
@@ -35,8 +37,9 @@ OUT = ROOT / "audio" / "sounds"
 RATE = 44100
 FRAME = 0.01  # s
 SPAN = 30  # dB below the loudest frame that still counts as sound when measuring loudness
-DEPTH = 40  # dB below the loudest frame that the cut may reach at most
+DEPTH = 25  # dB below the loudest frame that the cut may reach at most
 ABOVE_FLOOR = 10  # dB above the noise floor that counts as sound when cutting
+BRIDGE = 0.08  # s, the longest dip within a sound
 BEFORE, AFTER = 0.02, 0.05  # s kept before the first and after the last frame of sound
 FADE_IN, FADE_OUT = 0.005, 0.02  # s
 PEAK = -1.0  # dBFS
@@ -74,9 +77,12 @@ def trim(x: np.ndarray) -> np.ndarray:
     loud = np.flatnonzero(db > max(db.max() - DEPTH, floor + ABOVE_FLOOR))
     if not len(loud):
         return x[:0]
+    # The run of loud frames around the loudest, across dips of up to BRIDGE.
+    runs = np.split(loud, np.flatnonzero(np.diff(loud) > BRIDGE / FRAME + 1) + 1)
+    run = next(r for r in runs if r[0] <= np.argmax(db) <= r[-1])
     n = int(FRAME * RATE)
-    a = max(0, loud[0] * n - int(BEFORE * RATE))
-    b = min(len(x), (loud[-1] + 1) * n + int(AFTER * RATE))
+    a = max(0, run[0] * n - int(BEFORE * RATE))
+    b = min(len(x), (run[-1] + 1) * n + int(AFTER * RATE))
     y = x[a:b].copy()
     fi, fo = min(len(y), int(FADE_IN * RATE)), min(len(y), int(FADE_OUT * RATE))
     y[:fi] *= np.linspace(0, 1, fi)
