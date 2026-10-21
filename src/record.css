@@ -266,3 +266,27 @@ h1 {
 .chip.current {
   outline: 4px solid var(--gold);
 }
+
+/* On a wide screen the overview stands beside the card, so everything fits without scrolling. */
+@media (min-width: 1200px) {
+  #record {
+    max-width: 1340px;
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    column-gap: 36px;
+    align-content: start;
+  }
+
+  #record > * {
+    grid-column: 1;
+  }
+
+  #record > header {
+    grid-column: 1 / -1;
+  }
+
+  #record > .overview {
+    grid-column: 2;
+    grid-row: 2 / span 4;
+  }
+}
