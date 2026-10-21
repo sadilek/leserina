@@ -198,12 +198,17 @@ reads the word.
 After a match, and when a pair on the shelf is tapped, the game sounds the word out: it plays the
 word sound by sound, as in first grade ("gedehntes Sprechen": "Mmmaaauuusss"), with each grapheme
 lighting up on the card as its sound starts, then the whole word. The sounds are the owner's own,
-each recorded once (see "Recording the sounds"), and laid end to end: sounds that can be held
-(m, s, a) are cut to one length and fade into the next sound without a pause; after a stop
-(b, d, g, p, t, k) a short gap is left. A word is spoken as it sounds, not as it is written: Hund
-ends in a t. "Laute vorsprechen" in the parents' corner switches it off per child; then a pair
-just says its word. "Alle Wörter anhören" there sounds out every word ("Gedehnt"), to listen
-through them.
+each recorded once (see "Recording the sounds"). "Laute vorsprechen" in the parents' corner picks,
+per child, how they follow each other:
+
+- "Mit Pausen" (the default): one by one, each as on its tile, with a short pause between them.
+  The owner found it easier for a child to take in.
+- "Verbunden": laid end to end; sounds that can be held (m, s, a) are cut to one length and fade
+  into the next sound without a pause; after a stop (b, d, g, p, t, k) a short gap is left.
+- "Aus": a pair just says its word.
+
+A word is spoken as it sounds, not as it is written: Hund ends in a t. "Alle Wörter anhören" in
+the parents' corner sounds out every word either way, to listen through them.
 
 Linking letters to sounds is what makes reading last (`docs/literature-review-early-reading.md`,
 section 4): matching alone teaches word shapes.
@@ -215,8 +220,8 @@ section 4): matching alone teaches word shapes.
   `data/words-source.csv` spells them out by hand, e.g. `M|o=o:|n|d`. `npm run words` writes
   them into `words.json`.
 - Joining the sounds: `BLEND` in `src/sound.ts` holds the lengths, by ear: how long a held sound
-  or vowel plays, how long two sounds overlap, the gap after a stop, the pause before the whole
-  word. Each grapheme lights up as its clip starts. A word with a sound not recorded yet is said
+  or vowel plays, how long two sounds overlap, the gap after a stop, the pause between sounds
+  apart, the pause before the whole word. Each grapheme lights up as its clip starts. A word with a sound not recorded yet is said
   without sounding it out; the tests fail until every sound of the words has its clip.
 
 Joined single sounds do not run together as smoothly as stretched speech, and running them

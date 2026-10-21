@@ -350,7 +350,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
 
   /** A pair's word: sounded out on its card, if the child's settings say so, else just spoken. */
   function say(word: Word, el: HTMLElement) {
-    return profile.soundOut ? soundOut(word, el) : sound.sayWord(word.id, word.word)
+    return profile.soundOut ? soundOut(word, el, profile.soundApart) : sound.sayWord(word.id, word.word)
   }
 
   /** The round is over: record it right away, so closing the app mid-celebration loses nothing. */
@@ -469,14 +469,15 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   }
 }
 
-/** Sound a word out on the element showing it: each grapheme lights up while its sound plays,
- * those said before it turn grey, then the whole word is spoken. */
-export function soundOut(word: Word, el: HTMLElement) {
+/** Sound a word out on the element showing it, its sounds run together or apart: each grapheme
+ * lights up while its sound plays, those said before it turn grey, then the whole word is spoken. */
+export function soundOut(word: Word, el: HTMLElement, apart: boolean) {
   if (!sound.soundUrls(word)) return sound.sayWord(word.id, word.word)
   const spans = word.sounds.map(([g]) => h('span', 'grapheme', g))
   el.replaceChildren(...spans)
   return sound.soundOut(word, (i) =>
     spans.forEach((s, j) => (s.className = `grapheme${i < 0 ? '' : j === i ? ' lit' : j < i ? ' said' : ''}`)),
+    apart,
   )
 }
 

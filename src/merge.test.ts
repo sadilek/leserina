@@ -32,7 +32,7 @@ class Device {
     return this.profiles().find((p) => p.name === name)
   }
   add(id: string, name: string, fields: Partial<Fields> = {}) {
-    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, layWords: false, ...fields }, this.now())
+    createProfile(this.own, id, { name, avatar: 'fox', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, soundApart: true, layWords: false, ...fields }, this.now())
   }
   set<K extends keyof Fields>(name: string, k: K, v: Fields[K]) {
     const p = this.profile(name)!
@@ -171,6 +171,20 @@ describe('two devices', () => {
     ipad.sync(server)
     old.sync(server)
     expect(old.profile('Lena')!.soundOut).toBe(false)
+  })
+
+  it('sound words out apart for profiles from apps before the choice, until it is changed', () => {
+    const server: Server = {}
+    const old = new Device('old'), ipad = new Device('ipad')
+    old.add('lena', 'Lena')
+    delete old.own.profiles.lena.soundApart
+    old.sync(server)
+    ipad.sync(server)
+    expect(ipad.profile('Lena')!.soundApart).toBe(true)
+    ipad.set('Lena', 'soundApart', false)
+    ipad.sync(server)
+    old.sync(server)
+    expect(old.profile('Lena')!.soundApart).toBe(false)
   })
 
   it('lay no words for profiles from apps before laying words, and keep the switch past them', () => {
@@ -312,7 +326,7 @@ describe('fromV1', () => {
     ]
     const ipad = new Device('ipad')
     ipad.own = JSON.parse(JSON.stringify(fromV1(v1, clock)))
-    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour', soundOut: true, layWords: false })))
+    expect(ipad.profiles()).toMatchObject(v1.map((p) => ({ ...p, pictures: 'watercolour', soundOut: true, soundApart: true, layWords: false })))
 
     // The pixel had its own children before; joining keeps both, and Lena's coins carry on.
     const server: Server = {}

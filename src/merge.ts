@@ -14,7 +14,7 @@ export interface Stamped<T> {
   t: number
 }
 
-export type Field = 'name' | 'avatar' | 'startLevel' | 'pairs' | 'pictures' | 'soundOut' | 'layWords'
+export type Field = 'name' | 'avatar' | 'startLevel' | 'pairs' | 'pictures' | 'soundOut' | 'soundApart' | 'layWords'
 export interface Fields {
   name: string
   avatar: string
@@ -24,6 +24,8 @@ export interface Fields {
   pictures: string
   /** Whether a word is sounded out after a match (`src/sound.ts`). Apps from before it was added ignore it. */
   soundOut: boolean
+  /** Whether the sounds are sounded out one by one with a pause between them, rather than run together. Apps from before it was added ignore it. */
+  soundApart: boolean
   /** Whether every second round is one of laying words from tiles (`src/lay.ts`). Apps from before it was added ignore it. */
   layWords: boolean
 }
@@ -38,6 +40,7 @@ export interface ProfileDoc {
   pairs?: Stamped<number>
   pictures?: Stamped<string>
   soundOut?: Stamped<boolean>
+  soundApart?: Stamped<boolean>
   layWords?: Stamped<boolean>
   /** When the profile was deleted. */
   deleted?: number
@@ -66,8 +69,8 @@ export interface ProfileView extends Fields {
   latest: number
 }
 
-export const FIELDS: Field[] = ['name', 'avatar', 'startLevel', 'pairs', 'pictures', 'soundOut', 'layWords']
-export const DEFAULTS: Fields = { name: '', avatar: '', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, layWords: false }
+export const FIELDS: Field[] = ['name', 'avatar', 'startLevel', 'pairs', 'pictures', 'soundOut', 'soundApart', 'layWords']
+export const DEFAULTS: Fields = { name: '', avatar: '', startLevel: 1, pairs: 4, pictures: 'watercolour', soundOut: true, soundApart: true, layWords: false }
 
 export function emptyDoc(): DeviceDoc {
   return { v: 2, profiles: {} }
@@ -96,6 +99,7 @@ export function combine(docs: ProfileDoc[]): ProfileDoc {
     out.pairs = later(out.pairs, d.pairs)
     out.pictures = later(out.pictures, d.pictures)
     out.soundOut = later(out.soundOut, d.soundOut)
+    out.soundApart = later(out.soundApart, d.soundApart)
     out.layWords = later(out.layWords, d.layWords)
     if (d.epoch === out.epoch) {
       out.coins += d.coins
@@ -139,6 +143,7 @@ export function merge(docs: DeviceDoc[]): ProfileView[] {
       pairs: p.pairs?.v ?? DEFAULTS.pairs,
       pictures: p.pictures?.v ?? DEFAULTS.pictures,
       soundOut: p.soundOut?.v ?? DEFAULTS.soundOut,
+      soundApart: p.soundApart?.v ?? DEFAULTS.soundApart,
       layWords: p.layWords?.v ?? DEFAULTS.layWords,
       coins: p.coins,
       learning: { round, words },
@@ -205,7 +210,7 @@ export function deleteProfile(doc: DeviceDoc, id: string, now: number) {
 }
 
 /** A device's progress from before syncing (store v1) as its own document: all of it its share. */
-export function fromV1(profiles: (Omit<Fields, 'pictures' | 'soundOut' | 'layWords'> & { id: string; coins: number; learning: LearningState })[], now: number): DeviceDoc {
+export function fromV1(profiles: (Omit<Fields, 'pictures' | 'soundOut' | 'soundApart' | 'layWords'> & { id: string; coins: number; learning: LearningState })[], now: number): DeviceDoc {
   const doc = emptyDoc()
   profiles.forEach((p, i) => {
     createProfile(doc, p.id, { ...DEFAULTS, ...p }, now + i)

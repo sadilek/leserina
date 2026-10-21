@@ -74,7 +74,8 @@ export const sayWord = (id: string, text: string) => playClip(clipUrl(id), text)
 
 /**
  * How a word is sounded out from the sound clips (audio/sounds/, recorded by the owner), in
- * seconds. Tune these by ear.
+ * seconds: run together ("Mmmaaauuusss"), or one by one with a pause between them, as each child's
+ * settings say. Tune these by ear.
  */
 export const BLEND = {
   /** A held sound or vowel (m, s, a) plays this long at most, so all of them last alike. */
@@ -85,8 +86,10 @@ export const BLEND = {
   gap: 0.06,
   /** From the last sound to the whole word. */
   pause: 0.25,
-  /** A tile plays this much of its sound at most. */
+  /** A tile, or a sound sounded out one by one, plays this much of its sound at most. */
   tile: 0.8,
+  /** The pause between two sounds sounded out one by one. */
+  apart: 0.3,
 }
 /** Fades at a sound's edges where it joins no other sound, so the cut makes no click. */
 const EDGE_IN = 0.005
@@ -112,11 +115,18 @@ export interface Piece { at: number; length: number; fadeIn: number; fadeOut: nu
 
 /**
  * Lay a word's sounds end to end, given each clip's length: held sounds and vowels cut to the same
- * length, each sound fading into the next, except after a stop, which keeps a short gap.
+ * length, each sound fading into the next, except after a stop, which keeps a short gap. Apart,
+ * each sound plays as on its tile, with a pause after it.
  */
-export function blend(codes: string[], durations: number[]): Piece[] {
+export function blend(codes: string[], durations: number[], apart = false): Piece[] {
   const pieces: Piece[] = []
   let end = 0
+  if (apart) return durations.map((d, i) => {
+    const length = Math.min(d, BLEND.tile)
+    const at = i ? end + BLEND.apart : 0
+    end = at + length
+    return { at, length, fadeIn: Math.min(EDGE_IN, length / 2), fadeOut: Math.min(EDGE_OUT, length / 2) }
+  })
   codes.forEach((code, i) => {
     const length = SOUNDS.get(code)?.kind === 'stop' ? durations[i] : Math.min(durations[i], BLEND.held)
     const prev = pieces[i - 1]
@@ -158,12 +168,12 @@ function schedule(audio: AudioContext, buffer: AudioBuffer, at: number, p: Omit<
 const LEAD = 0.05
 
 /**
- * Sound a word out: its sound clips one after the other, calling `light(i)` as the i-th
+ * Sound a word out: its sound clips one after the other, run together or apart, calling `light(i)` as the i-th
  * grapheme's sound starts and `light(-1)` when the sounds are over, then the whole word. Resolves
  * when the whole word starts, or when something else is played instead. Without a clip for each
  * of its sounds, says the whole word.
  */
-export async function soundOut(word: Word, light: (i: number) => void) {
+export async function soundOut(word: Word, light: (i: number) => void, apart = false) {
   const urls = soundUrls(word)
   if (!urls) return sayWord(word.id, word.word)
   const audio = unlock()
@@ -172,7 +182,7 @@ export async function soundOut(word: Word, light: (i: number) => void) {
   const [sounds] = await Promise.all([Promise.all(urls.map(load)), wordUrl ? load(wordUrl) : null])
   if (token !== sounding) return
   if (sounds.some((b) => !b)) return sayWord(word.id, word.word)
-  const pieces = blend(word.sounds.map(([, c]) => c), sounds.map((b) => b!.duration))
+  const pieces = blend(word.sounds.map(([, c]) => c), sounds.map((b) => b!.duration), apart)
   const at = audio.currentTime + LEAD
   const ended = pieces.map((p, i) => schedule(audio, sounds[i]!, at + p.at, p))
   const marks = pieces.map((p) => p.at)

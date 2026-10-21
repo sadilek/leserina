@@ -27,8 +27,8 @@ function button(label: string, cls: string, onClick: () => void) {
   return b
 }
 
-/** How a word chip plays: its clip, sounded out first, or its tiles one by one. */
-type Play = 'word' | 'sounded' | 'tiles'
+/** How a word chip plays: its clip, sounded out first (its sounds apart or run together), or its tiles one by one. */
+type Play = 'word' | 'apart' | 'joined' | 'tiles'
 
 /**
  * A word that plays its clip when tapped, sounds it out first, or plays its tiles' sounds; marked
@@ -45,7 +45,7 @@ function wordChip(id: string, play: Play | (() => Play) = 'word') {
     sound.unlock()
     if (!w) return
     const how = typeof play === 'function' ? play() : play
-    if (how === 'sounded') void soundOut(w, chip)
+    if (how === 'apart' || how === 'joined') void soundOut(w, chip, how === 'apart')
     else if (how === 'tiles') void playTiles(w, chip)
     else void sound.sayWord(w.id, w.word)
   })
@@ -142,14 +142,16 @@ function profilePanel(p: Profile, rerender: () => void) {
     styles.append(b)
   }
 
-  // After a match: "Mmm–au–sss … Maus", each letter lighting up with its sound, or just "Maus".
+  // After a match: "M – au – s … Maus" or "Mmmaaauuusss … Maus", each letter lighting up with its
+  // sound, or just "Maus".
   const sounds = h('div', 'style-pick plain')
-  for (const [on, label] of [[true, 'An'], [false, 'Aus']] as const) {
-    const b = button(label, on === p.soundOut ? 'on' : '', () => {
-      setField(p, 'soundOut', on)
+  const how = !p.soundOut ? 'off' : p.soundApart ? 'apart' : 'joined'
+  for (const [m, label] of [['apart', 'Mit Pausen'], ['joined', 'Verbunden'], ['off', 'Aus']] as const) {
+    sounds.append(button(label, m === how ? 'on' : '', () => {
+      setField(p, 'soundOut', m !== 'off')
+      if (m !== 'off') setField(p, 'soundApart', m === 'apart')
       rerender()
-    })
-    sounds.append(b)
+    }))
   }
 
   // Every second round, each word is laid from its letters, one tile per sound.
@@ -228,21 +230,23 @@ function playTiles(w: Word, el: HTMLElement) {
   return sound.playTiles(w, (i) => spans.forEach((s, j) => (s.className = `grapheme${j === i ? ' lit' : ''}`)))
 }
 
-/** Every word by level, to listen through the clips once: sounded out, or as tiles. */
+/** Every word by level, to listen through the clips once: sounded out, apart or run together, or as tiles. */
 function listenSection() {
   const missing = words.filter((w) => !clipUrl(w.id)).length
   const unrecorded = [...new Set(words.flatMap((w) => w.sounds.map(([, c]) => c)))].filter((c) => !sound.soundUrl(c))
-  let play: Play = 'sounded'
+  let play: Play = 'apart'
   const hint = h('p', 'hint')
   const mode = h('div', 'style-pick plain')
-  const modes = [['sounded', 'Gedehnt'], ['tiles', 'Plättchen']] as const
+  const modes = [['apart', 'Mit Pausen'], ['joined', 'Verbunden'], ['tiles', 'Plättchen']] as const
   const show = () => {
     mode.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', modes[i][0] === play))
     hint.textContent = (missing ? `${missing} Wörter haben noch keine Aufnahme (gestrichelt); dort liest das Gerät vor. ` : '') +
       (unrecorded.length ? `Noch nicht aufgenommene Laute: ${unrecorded.join(', ')}. Wörter mit ihnen werden nicht lautiert, ihre Plättchen liest das Gerät. ` : '') +
-      (play === 'sounded'
-        ? 'Tippe ein Wort an: Erst kommen seine Laute, dann das ganze Wort.'
-        : 'Tippe ein Wort an: Jedes Plättchen spielt seinen Laut, wie beim Wörterlegen.')
+      (play === 'tiles'
+        ? 'Tippe ein Wort an: Jedes Plättchen spielt seinen Laut, wie beim Wörterlegen.'
+        : play === 'apart'
+          ? 'Tippe ein Wort an: Erst kommen seine Laute einzeln, mit einer Pause dazwischen, dann das ganze Wort.'
+          : 'Tippe ein Wort an: Erst kommen seine Laute ineinander übergehend, dann das ganze Wort.')
   }
   for (const [m, label] of modes) mode.append(button(label, '', () => {
     play = m

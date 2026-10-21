@@ -88,6 +88,15 @@ describe('blend', () => {
     expect(a.fadeOut).toBeCloseTo(h.fadeIn)
   })
 
+  it('plays the sounds apart as on their tiles, with a pause between them', () => {
+    const [m, au, s] = blend(['m', 'au', 's'], [1, 0.5, 1], true)
+    expect(m).toMatchObject({ at: 0, length: BLEND.tile })
+    expect(au.at).toBeCloseTo(BLEND.tile + BLEND.apart)
+    expect(au.length).toBe(0.5)
+    expect(s.at).toBeCloseTo(au.at + 0.5 + BLEND.apart)
+    expect(au.fadeIn).toBeLessThan(BLEND.fade)
+  })
+
   it('starts each sound after the one before it', () => {
     for (const w of words.slice(0, 50)) {
       const pieces = blend(w.sounds.map(([, c]) => c), w.sounds.map(() => 0.7))
