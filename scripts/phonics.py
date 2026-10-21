@@ -19,6 +19,10 @@ data/words-source.csv may spell its graphemes out in the column "sounds": units 
 "|", each either as written ("H") or with its sound ("d=t"). Units without a sound take the one
 the rules give them, in that segmentation.
 
+Every sound the words have, once each, makes the sound list (`sound_list`, written by
+`npm run words` into src/sound-list.json): the sounds to record for the recording page
+(record.html) and scripts/prepare_sounds.py.
+
     python3 scripts/phonics.py          # prints every word's sounds, overrides marked with *
 """
 
@@ -43,6 +47,44 @@ CODES = {
 # Vowel sounds after which ch is the ach sound ("Buch", "Drache", "Bauch"); after any other it is
 # the ich sound ("Milch", "Eichhörnchen").
 BACK = {"a", "o", "u", "au"}
+
+
+# The order of the sound list: the sounds that can be held, then the vowels, then the stops
+# (with the clusters that start with one). Each group from the easiest to the rarer ones.
+HELD = ["m", "n", "l", "f", "w", "s", "z", "sch", "ch", "x", "r", "ng", "j", "h"]
+VOWEL_CODES = [*(c for v in "aeiouäöü" for c in (v + ":", v)), "au", "ei", "eu", "ə", "ɐ"]
+STOP_CODES = ["b", "d", "g", "p", "t", "k", "ts", "pf", "ks", "kw"]
+# How each sound is usually written, to pick an example word that spells it so.
+SPELLING = {"z": "s", "x": "ch", "ə": "e", "ɐ": "er", "ts": "z", "ks": "x", "kw": "qu"}
+
+
+def file_name(code: str) -> str:
+    """A sound's file name, in ASCII: "a:" -> "a-lang", "ä" -> "ae", "ə" -> "schwa"."""
+    name = code.replace(":", "-lang").replace("ə", "schwa").replace("ɐ", "er")
+    return name.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue")
+
+
+def sound_list(words: list[dict]) -> list[dict]:
+    """Each sound the words have, with an example: the earliest word (words are sorted from easy
+    to hard) that spells it the usual way at its start; else anywhere, a full vowel preferably in
+    the first (mostly stressed) syllable; else spelled otherwise."""
+    best: dict[str, tuple] = {}
+    for n, w in enumerate(words):
+        first = next((k for k, (g, _) in enumerate(w["sounds"]) if is_vowel(g)), -1)
+        for at, (g, code) in enumerate(w["sounds"]):
+            key = (g.lower() != SPELLING.get(code, code.rstrip(":")), at > 0, code not in ("ə", "ɐ") and is_vowel(g) and at != first, n)
+            if code not in best or key < best[code][0]:
+                best[code] = (key, w, at)
+    out = []
+    for kind, codes in (("held", HELD), ("vowel", VOWEL_CODES), ("stop", STOP_CODES)):
+        for code in codes:
+            if code in best:
+                _, w, at = best.pop(code)
+                out.append({"code": code, "file": file_name(code), "kind": kind, "id": w["id"],
+                            "word": w["word"], "at": at, "grapheme": w["sounds"][at][0]})
+    if best:
+        raise ValueError(f"sounds missing from the sound list's order: {sorted(best)}")
+    return out
 
 
 def split(word: str) -> list[str]:

@@ -12,13 +12,14 @@ The score adds two parts, both "higher is harder":
                (Birchenough et al. 2017) and the childLex frequency for ages 6-8.
 
 Each word also gets its graphemes and their sounds, for sounding it out (`scripts/phonics.py`,
-with corrections by hand in the CSV's column "sounds").
+with corrections by hand in the CSV's column "sounds"), and src/sound-list.json lists each
+sound once, with an example word, for recording them (`sound_list` there).
 
 Level 1 holds only phonetically regular words of 3-4 letters that very young children know.
 The other words are split into levels 2-5 of equal size by score. The optional column
 "adjust" in the CSV is added to the score, so a word can be moved by hand (negative = earlier).
 
-    python3 scripts/score_words.py          # writes words.json
+    python3 scripts/score_words.py          # writes words.json and src/sound-list.json
 """
 
 from __future__ import annotations
@@ -29,11 +30,12 @@ import math
 import re
 from pathlib import Path
 
-from phonics import sounds
+from phonics import sound_list, sounds
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / "data" / "words-source.csv"
 TARGET = ROOT / "words.json"
+SOUND_LIST = ROOT / "src" / "sound-list.json"
 
 VOWELS = set("aeiouäöüy")
 # Graphemes of several letters that stand for one sound. Longest first.
@@ -137,6 +139,8 @@ def main() -> None:
     for w in words:
         del w["_level1"]
     TARGET.write_text(json.dumps(words, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    SOUND_LIST.write_text("[\n" + ",\n".join(json.dumps(s, ensure_ascii=False) for s in sound_list(words)) + "\n]\n",
+                          encoding="utf-8")
     for level in range(1, 6):
         print(level, " ".join(w["word"] for w in words if w["level"] == level))
 

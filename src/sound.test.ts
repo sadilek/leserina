@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import wordList from '../words.json'
 import type { Word } from './scheduler'
 import { litAt, stretch, tileCut } from './sound'
+import soundList from './sound-list.json'
 import stretched from './stretched.json'
 import tiles from './tiles.json'
 
@@ -32,6 +33,20 @@ describe('sounds of the words', () => {
     expect(show('schaf')).toBe('Sch|a=a:|f')
     expect(show('stern')).toBe('S=sch|t|e|r|n')
     expect(show('tiger')).toBe('T|i=i:|g|er=ɐ')
+  })
+})
+
+describe('the sound list', () => {
+  it('has each sound of the words once, with an example word that has it', () => {
+    // A failure here means: run npm run words.
+    const used = new Set(words.flatMap((w) => w.sounds.map(([, c]) => c)))
+    expect(soundList.map((s) => s.code).sort()).toEqual([...used].sort())
+    expect(new Set(soundList.map((s) => s.file)).size).toBe(soundList.length)
+    for (const s of soundList) {
+      expect(s.file, s.code).toMatch(/^[a-z-]+$/)
+      const w = words.find((x) => x.id === s.id)!
+      expect(w.sounds[s.at], s.code).toEqual([s.grapheme, s.code])
+    }
   })
 })
 
