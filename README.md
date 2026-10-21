@@ -142,7 +142,8 @@ installed apps pick it up with the next update.
 
 ## The voice
 
-The clips in `audio/` are the owner's own voice, rendered through a voice clone at ElevenLabs. They are not
+The clips in `audio/` are the owner's own voice: the words rendered through a voice clone at ElevenLabs,
+the sounds in `audio/sounds/` recorded. They are not
 under the MIT license of the code: you may use them only with this app. To use another voice,
 render your own clips (see below) or delete them; without a clip, the device's own German voice
 reads the word.
@@ -168,6 +169,8 @@ reads the word.
   with Whisper, such as the voice clone's) and lists those that may not say their word. Whisper
   itself cannot tell very short words (Ei, Ohr, Wal) apart, so a person has to listen to those.
   Without a clip, the device's own German voice reads the word.
+- `audio/sounds/<file>.mp3`: one clip per sound, for sounding words out and for the tiles,
+  recorded by the owner; see "Recording the sounds".
 - `pictures/<style>/<id>.webp`: one picture per word and per avatar, in two styles, soft
   watercolour (the default) and round 3D clay; each child's profile picks one in the parents'
   corner. Rendered by Nano Banana 2.1 through the Gemini API with `scripts/render_pictures.py`
@@ -193,12 +196,14 @@ reads the word.
 ## Sounding out
 
 After a match, and when a pair on the shelf is tapped, the game sounds the word out: it plays the
-word stretched, sound by sound, as in first grade ("gedehntes Sprechen": "Mmm–au–sss"), with each
-grapheme lighting up on the card as its sound starts, then the whole word. Sounds that can be held
-are held (m, s, a), stops stay short (b, t, k) and have no "e" after them, and a word is spoken as
-it sounds, not as it is written: Hund ends in a t. "Laute vorsprechen" in the parents' corner
-switches it off per child; then a pair just says its word, as before. "Alle Wörter anhören" there
-sounds out every word, to listen through the clips.
+word sound by sound, as in first grade ("gedehntes Sprechen": "Mmmaaauuusss"), with each grapheme
+lighting up on the card as its sound starts, then the whole word. The sounds are the owner's own,
+each recorded once (see "Recording the sounds"), and laid end to end: sounds that can be held
+(m, s, a) are cut to one length and fade into the next sound without a pause; after a stop
+(b, d, g, p, t, k) a short gap is left. A word is spoken as it sounds, not as it is written: Hund
+ends in a t. "Laute vorsprechen" in the parents' corner switches it off per child; then a pair
+just says its word. "Alle Wörter anhören" there sounds out every word ("Gedehnt"), to listen
+through them.
 
 Linking letters to sounds is what makes reading last (`docs/literature-review-early-reading.md`,
 section 4): matching alone teaches word shapes.
@@ -209,19 +214,15 @@ section 4): matching alone teaches word shapes.
   words break the rules (Mond, Bus, Giraffe, Flugzeug), the column `sounds` in
   `data/words-source.csv` spells them out by hand, e.g. `M|o=o:|n|d`. `npm run words` writes
   them into `words.json`.
-- The clips: `scripts/render_stretched.py` has ElevenLabs read each word in the owner's voice,
-  one piece per grapheme joined with dashes ("Mmm-auuu-sss"), into `audio/stretched/<id>.mp3`.
-  Within a word the voice says plain sounds, which it does not for single letters (alone, b and t
-  come out as "Be" and "Te"). When each grapheme starts goes into `src/stretched.json`: near
-  ElevenLabs' own timestamp, which often lags by 0.1-0.25 s, where the spectrum changes most.
-  The game lights each grapheme 80 ms before that: a letter lit as its sound starts looks late.
-  A word whose graphemes change needs its clip rendered again; the tests fail until it is, and
-  the game says such a word without sounding it out. Then `uv run scripts/cut_tiles.py` finds the
-  tiles' sounds in the new clip (see "Laying words").
-- Checking them: `uv run scripts/check_stretched.py` ranks the clips by how far a phoneme
-  recogniser hears them from the sounds they should have, and flags clips that run too long (a
-  voice that read "www" as an abbreviation once spelled it out, dashes included). It only hints
-  where to listen first; an ear decides.
+- Joining the sounds: `BLEND` in `src/sound.ts` holds the lengths, by ear: how long a held sound
+  or vowel plays, how long two sounds overlap, the gap after a stop, the pause before the whole
+  word. Each grapheme lights up as its clip starts. A word with a sound not recorded yet is said
+  without sounding it out; the tests fail until every sound of the words has its clip.
+
+Joined single sounds do not run together as smoothly as stretched speech, and running them
+together is the hard step for a beginner. Before, ElevenLabs read each word stretched in the
+owner's voice ("Mmm-auuu-sss") and the game guessed where each grapheme started; its timestamps
+were often 0.1-0.25 s off, so on long words the letters lit up out of step with their sounds.
 
 ## Laying words
 
@@ -242,31 +243,16 @@ with a wrong tile goes back to box 1. Once laid, the word joins its picture as a
 out (or just said, with "Laute vorsprechen" off) and goes to the shelf, and the star gets an arm.
 A round on screen keeps its kind when the setting changes, unless no word of it is done yet.
 
-Where spelling and sound part, the tile shows the letter and plays the sound: the d of "Hund"
-plays a t. That comes from where the tiles' sounds come from: each tile plays its own piece of
-its word's stretched clip (see "Sounding out"), cut out at run time with short fades.
-
-- Where each piece lies: `uv run scripts/cut_tiles.py` writes `src/tiles.json`. It starts from
-  each grapheme's start in `src/stretched.json`, puts a cut in the pause the dash between two
-  sounds often leaves, keeps the loudest run of each piece and keeps 30 ms off a seam where two
-  sounds run into each other. A stop (b, d, g, p, t, k) starts at its burst and lasts 130 ms. The
-  script's docstring has the details.
-- Where a cut fails: a piece shorter than 0.1 s (not a stop), mostly because its start lies late,
-  or one whose spectrum lies far from the other pieces of its sound, borrows the piece of another
-  word with the same sound code. 19 of the 610 tiles do (several r and the final e of "Schere",
-  "Spinne" and "Badewanne"); the script lists them. Single sounds rendered by ElevenLabs were the
-  planned way out, but borrowing needs none of their workarounds (alone, b and t come out as
-  "Be" and "Te") and keeps the voice of the clips.
-- Checking them: "Alle Wörter anhören" in the parents' corner plays each word's tiles one by one
-  in "Plättchen" mode. The cuts were checked against spectrograms, not by ear; the borrowed ones
-  are the first to listen to. A clip rendered again needs `cut_tiles.py` again; the tests fail
-  until it has run (`src/tiles.json` keeps a hash of each clip). Without a piece, the device's
-  voice reads the tile's letters.
+Each tile plays the clip of the sound its grapheme has in the word, the same clip as when the word
+is sounded out (`BLEND.tile` caps how long). Where spelling and sound part, the tile shows the
+letter and plays the sound: the d of "Hund" plays a t. "Plättchen" under "Alle Wörter anhören"
+in the parents' corner plays each word's tiles one by one. Without a clip, the device's voice
+reads the tile's letters.
 
 ## Recording the sounds
 
-The owner records each sound of the game once in their own voice, for later use in the game
-(nothing plays them yet). `src/sound-list.json` lists the 44 sounds the words have, written by
+The owner records each sound of the game once in their own voice; sounding out and the tiles
+play them. `src/sound-list.json` lists the 44 sounds the words have, written by
 `npm run words` (`sound_list` in `scripts/phonics.py`): first the sounds that can be held, then
 the vowels, then the stops, each with an early word that has it, at its start where one does.
 

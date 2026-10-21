@@ -231,6 +231,7 @@ function playTiles(w: Word, el: HTMLElement) {
 /** Every word by level, to listen through the clips once: sounded out, or as tiles. */
 function listenSection() {
   const missing = words.filter((w) => !clipUrl(w.id)).length
+  const unrecorded = [...new Set(words.flatMap((w) => w.sounds.map(([, c]) => c)))].filter((c) => !sound.soundUrl(c))
   let play: Play = 'sounded'
   const hint = h('p', 'hint')
   const mode = h('div', 'style-pick plain')
@@ -238,6 +239,7 @@ function listenSection() {
   const show = () => {
     mode.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', modes[i][0] === play))
     hint.textContent = (missing ? `${missing} Wörter haben noch keine Aufnahme (gestrichelt); dort liest das Gerät vor. ` : '') +
+      (unrecorded.length ? `Noch nicht aufgenommene Laute: ${unrecorded.join(', ')}. Wörter mit ihnen werden nicht lautiert, ihre Plättchen liest das Gerät. ` : '') +
       (play === 'sounded'
         ? 'Tippe ein Wort an: Erst kommen seine Laute, dann das ganze Wort.'
         : 'Tippe ein Wort an: Jedes Plättchen spielt seinen Laut, wie beim Wörterlegen.')

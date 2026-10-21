@@ -102,10 +102,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
     sound.preload(round.ids)
     star.set(round.matched.length, round.ids.length)
     for (const id of round.matched) shelfCards.append(shelfCard(id))
-    if (round.kind === 'lay') {
-      sound.preloadTiles(round.ids.map((id) => wordById.get(id)!))
-      return lay.build()
-    }
+    if (round.kind === 'lay') return lay.build()
     const open = round.ids.filter((id) => !round.matched.includes(id))
     items = []
     // Pictures and words are shuffled independently; their order on the mat is random anyway.
@@ -475,7 +472,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
 /** Sound a word out on the element showing it: each grapheme lights up while its sound plays,
  * those said before it turn grey, then the whole word is spoken. */
 export function soundOut(word: Word, el: HTMLElement) {
-  if (!sound.stretch(word)) return sound.sayWord(word.id, word.word)
+  if (!sound.soundUrls(word)) return sound.sayWord(word.id, word.word)
   const spans = word.sounds.map(([g]) => h('span', 'grapheme', g))
   el.replaceChildren(...spans)
   return sound.soundOut(word, (i) =>

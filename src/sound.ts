@@ -1,12 +1,12 @@
 // Spoken words come from pre-rendered clips; the jingles are synthesised with Web Audio.
-import { clipUrl, nameClipUrl, stretchedClipUrl } from './assets'
+import { clipUrl, nameClipUrl, soundClipUrl } from './assets'
 import type { Word } from './scheduler'
-import stretched from './stretched.json'
-import tiles from './tiles.json'
+import soundList from './sound-list.json'
 
 let ctx: AudioContext | null = null
 const buffers = new Map<string, Promise<AudioBuffer | null>>()
-let speaking: AudioBufferSourceNode | null = null
+/** What is playing now, stopped when something else starts. */
+let playing: AudioBufferSourceNode[] = []
 /** Counts what is played; a word being sounded out stops when another one starts. */
 let sounding = 0
 
@@ -29,171 +29,190 @@ function load(url: string): Promise<AudioBuffer | null> {
   return p
 }
 
-/** Fetch and decode clips ahead of time, so a tap plays without delay. */
+/** Stop what is playing and claim the speaker; the token tells whether something came after. */
+function claim() {
+  for (const src of playing) src.stop()
+  playing = []
+  speechSynthesis.cancel()
+  return ++sounding
+}
+
+/** No clip for this text: the device's own German voice stands in. */
+function speak(text: string) {
+  const u = new SpeechSynthesisUtterance(text)
+  u.lang = 'de-DE'
+  u.rate = 0.85
+  speechSynthesis.speak(u)
+}
+
+/** Fetch and decode clips ahead of time, so a tap plays without delay: the words' and every sound's. */
 export function preload(ids: string[]) {
   for (const id of ids) {
-    for (const url of [clipUrl(id), stretchedClipUrl(id)]) if (url) void load(url)
+    const url = clipUrl(id)
+    if (url) void load(url)
+  }
+  for (const s of soundList) {
+    const url = soundClipUrl(s.file)
+    if (url) void load(url)
   }
 }
 
 async function playClip(url: string | undefined, fallbackText: string) {
   const audio = unlock()
-  const token = ++sounding
-  speaking?.stop()
-  speaking = null
+  const token = claim()
   const buffer = url ? await load(url) : null
   if (token !== sounding) return
-  if (!buffer) {
-    // No clip rendered for this text: the device's own German voice stands in.
-    speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(fallbackText)
-    u.lang = 'de-DE'
-    u.rate = 0.85
-    speechSynthesis.speak(u)
-    return
-  }
+  if (!buffer) return speak(fallbackText)
   const src = audio.createBufferSource()
   src.buffer = buffer
   src.connect(audio.destination)
   src.start()
-  speaking = src
+  playing = [src]
 }
 
 export const sayWord = (id: string, text: string) => playClip(clipUrl(id), text)
 
-type Stretch = { graphemes: string; text: string; marks: number[] }
-const STRETCHED = stretched as Record<string, Stretch>
-/** Each grapheme lights up this long (s) before its sound: lit as it starts, it looks late. */
-const EARLY = 0.08
-/** From scheduling the stretched clip to its start (s), so the first grapheme can light up early. */
-const LEAD = 0.05
-/** The pause (ms) between the sounds and the whole word. */
-const PAUSE = 250
+/**
+ * How a word is sounded out from the sound clips (audio/sounds/, recorded by the owner), in
+ * seconds. Tune these by ear.
+ */
+export const BLEND = {
+  /** A held sound or vowel (m, s, a) plays this long at most, so all of them last alike. */
+  held: 0.45,
+  /** Two sounds overlap this long, the first fading out as the next fades in. */
+  fade: 0.06,
+  /** The silence after a stop (b, d, g, p, t, k), which no sound runs into. */
+  gap: 0.06,
+  /** From the last sound to the whole word. */
+  pause: 0.25,
+  /** A tile plays this much of its sound at most. */
+  tile: 0.8,
+}
+/** Fades at a sound's edges where it joins no other sound, so the cut makes no click. */
+const EDGE_IN = 0.005
+const EDGE_OUT = 0.025
+/** The stops, after which the next sound starts anew rather than flowing out of them. */
+const STOPS = new Set(['b', 'd', 'g', 'p', 't', 'k'])
+const SOUNDS = new Map(soundList.map((s) => [s.code, s]))
 
-/** When each of the word's graphemes starts in its stretched clip; none if it has no clip for them. */
-export function stretch(word: Word) {
-  const s = STRETCHED[word.id]
-  const url = stretchedClipUrl(word.id)
-  // A clip rendered for other graphemes than the word has now would light up the wrong letters.
-  if (!s || !url || s.graphemes !== word.sounds.map(([g]) => g).join('|')) return
-  return { url, marks: s.marks }
+/** The clip of a sound code (scripts/phonics.py); none if it has not been recorded. */
+export const soundUrl = (code: string) => {
+  const s = SOUNDS.get(code)
+  return s && soundClipUrl(s.file)
 }
 
-/** The index of the grapheme lit at time t (s) of the clip; -1 before the first. */
+/** The clips of a word's sounds, in order; none if one of them is missing. */
+export function soundUrls(word: Word) {
+  const urls = word.sounds.map(([, code]) => soundUrl(code))
+  if (urls.every((u) => u)) return urls as string[]
+}
+
+/** One sound of a word sounded out: from when, for how long, and its fades (s). */
+export interface Piece { at: number; length: number; fadeIn: number; fadeOut: number }
+
+/**
+ * Lay a word's sounds end to end, given each clip's length: held sounds and vowels cut to the same
+ * length, each sound fading into the next, except after a stop, which keeps a short gap.
+ */
+export function blend(codes: string[], durations: number[]): Piece[] {
+  const pieces: Piece[] = []
+  let end = 0
+  codes.forEach((code, i) => {
+    const length = SOUNDS.get(code)?.kind === 'stop' ? durations[i] : Math.min(durations[i], BLEND.held)
+    const prev = pieces[i - 1]
+    const joined = prev !== undefined && !STOPS.has(codes[i - 1])
+    const overlap = joined ? Math.min(BLEND.fade, prev.length / 2, length / 2) : 0
+    if (joined) prev.fadeOut = overlap
+    const at = !prev ? 0 : joined ? end - overlap : end + BLEND.gap
+    pieces.push({ at, length, fadeIn: joined ? overlap : Math.min(EDGE_IN, length / 2), fadeOut: Math.min(EDGE_OUT, length / 2) })
+    end = at + length
+  })
+  return pieces
+}
+
+/** The index of the grapheme lit at time t (s) of the sounds: each lights up as its clip starts; -1 before the first. */
 export function litAt(marks: number[], t: number) {
   let i = -1
-  while (i + 1 < marks.length && marks[i + 1] - EARLY <= t) i++
+  while (i + 1 < marks.length && marks[i + 1] <= t) i++
   return i
 }
 
-/**
- * Sound a word out: its stretched clip, calling `light(i)` as the i-th grapheme's sound starts and
- * `light(-1)` when the sounds are over, then the whole word. Resolves when the whole word starts,
- * or when something else is played instead. Without a stretched clip, says the whole word.
- */
-export async function soundOut(word: Word, light: (i: number) => void) {
-  const s = stretch(word)
-  if (!s) return sayWord(word.id, word.word)
-  const audio = unlock()
-  const token = ++sounding
-  speaking?.stop()
-  speaking = null
-  const wordUrl = clipUrl(word.id)
-  const [buffer] = await Promise.all([load(s.url), wordUrl ? load(wordUrl) : null])
-  if (token !== sounding) return
-  if (!buffer) return sayWord(word.id, word.word)
-  const src = audio.createBufferSource()
-  src.buffer = buffer
-  src.connect(audio.destination)
-  const at = audio.currentTime + LEAD
-  src.start(at)
-  speaking = src
-  const ended = new Promise((r) => (src.onended = r))
-  // Follows the audio clock, so the letters keep up with the sound even if it starts late.
-  let shown = -1
-  let over = false
-  const frame = () => {
-    if (over) return
-    const i = litAt(s.marks, audio.currentTime - at - (audio.outputLatency || audio.baseLatency || 0))
-    if (i !== shown) light((shown = i))
-    requestAnimationFrame(frame)
-  }
-  frame()
-  await ended
-  over = true
-  light(-1)
-  if (token !== sounding) return
-  await new Promise((r) => setTimeout(r, PAUSE))
-  if (token !== sounding) return
-  return sayWord(word.id, word.word)
-}
-
-type Cut = [number, number] | [number, number, string]
-type Tiles = { graphemes: string; text: string; clip: string; cuts: Cut[] }
-const TILES = tiles as unknown as Record<string, Tiles>
-/** Fades (s) at the start and end of a tile's piece, so the cut makes no click. */
-const FADE_IN = 0.008
-const FADE_OUT = 0.025
-
-/** Where the k-th grapheme's sound lies: in which word's stretched clip, from when to when (s). */
-export function tileCut(word: Word, k: number) {
-  const t = TILES[word.id]
-  const s = STRETCHED[word.id]
-  // Cut from a clip rendered for other graphemes, or rendered again since, it would be another sound.
-  if (!t || !s || t.text !== s.text || t.graphemes !== word.sounds.map(([g]) => g).join('|')) return
-  const [from, to, other] = t.cuts[k] ?? []
-  const url = stretchedClipUrl(other ?? word.id)
-  if (from === undefined || to === undefined || !url) return
-  return { url, from, to }
-}
-
-/** The clips the tiles of these words cut their sounds from, fetched ahead of time. */
-export function preloadTiles(words: Word[]) {
-  for (const w of words) w.sounds.forEach((_, k) => {
-    const c = tileCut(w, k)
-    if (c) void load(c.url)
-  })
-}
-
-/**
- * Play the sound of a word's k-th grapheme, as a tile: its piece of the word's stretched clip.
- * Resolves when it has played. Without a piece, the device's voice reads the grapheme.
- */
-export async function playTile(word: Word, k: number) {
-  const c = tileCut(word, k)
-  const audio = unlock()
-  const token = ++sounding
-  speaking?.stop()
-  speaking = null
-  const buffer = c ? await load(c.url) : null
-  if (token !== sounding) return
-  if (!c || !buffer) {
-    speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(word.sounds[k][0].toLowerCase())
-    u.lang = 'de-DE'
-    u.rate = 0.85
-    speechSynthesis.speak(u)
-    return
-  }
-  const length = Math.max(0.02, Math.min(c.to, buffer.duration) - c.from)
-  const at = audio.currentTime + 0.01
+/** Play part of a clip at a time on the audio clock, faded in and out. */
+function schedule(audio: AudioContext, buffer: AudioBuffer, at: number, p: Omit<Piece, 'at'>) {
+  const length = Math.min(p.length, buffer.duration)
   const gain = audio.createGain()
   gain.gain.setValueAtTime(0, at)
-  gain.gain.linearRampToValueAtTime(1, at + FADE_IN)
-  gain.gain.setValueAtTime(1, at + Math.max(FADE_IN, length - FADE_OUT))
+  gain.gain.linearRampToValueAtTime(1, at + p.fadeIn)
+  gain.gain.setValueAtTime(1, at + Math.max(p.fadeIn, length - p.fadeOut))
   gain.gain.linearRampToValueAtTime(0, at + length)
   gain.connect(audio.destination)
   const src = audio.createBufferSource()
   src.buffer = buffer
   src.connect(gain)
-  src.start(at, c.from, length)
-  speaking = src
-  await new Promise((r) => (src.onended = r))
+  src.start(at, 0, length)
+  playing.push(src)
+  return new Promise((r) => (src.onended = r))
+}
+
+/** From scheduling the sounds to their start (s), so they do not start late. */
+const LEAD = 0.05
+
+/**
+ * Sound a word out: its sound clips one after the other, calling `light(i)` as the i-th
+ * grapheme's sound starts and `light(-1)` when the sounds are over, then the whole word. Resolves
+ * when the whole word starts, or when something else is played instead. Without a clip for each
+ * of its sounds, says the whole word.
+ */
+export async function soundOut(word: Word, light: (i: number) => void) {
+  const urls = soundUrls(word)
+  if (!urls) return sayWord(word.id, word.word)
+  const audio = unlock()
+  const token = claim()
+  const wordUrl = clipUrl(word.id)
+  const [sounds] = await Promise.all([Promise.all(urls.map(load)), wordUrl ? load(wordUrl) : null])
+  if (token !== sounding) return
+  if (sounds.some((b) => !b)) return sayWord(word.id, word.word)
+  const pieces = blend(word.sounds.map(([, c]) => c), sounds.map((b) => b!.duration))
+  const at = audio.currentTime + LEAD
+  const ended = pieces.map((p, i) => schedule(audio, sounds[i]!, at + p.at, p))
+  const marks = pieces.map((p) => p.at)
+  // Follows the audio clock, so the letters keep up with the sound even if it starts late.
+  let shown = -1
+  let over = false
+  const frame = () => {
+    if (over || token !== sounding) return
+    const i = litAt(marks, audio.currentTime - at - (audio.outputLatency || audio.baseLatency || 0))
+    if (i !== shown) light((shown = i))
+    requestAnimationFrame(frame)
+  }
+  frame()
+  await Promise.all(ended)
+  over = true
+  light(-1)
+  if (token !== sounding) return
+  await new Promise((r) => setTimeout(r, BLEND.pause * 1000))
+  if (token !== sounding) return
+  return sayWord(word.id, word.word)
+}
+
+/**
+ * Play the sound of a word's k-th grapheme, as a tile: the clip of the sound it has in the word
+ * (the d of Hund plays a t). Resolves when it has played. Without a clip, the device's voice reads
+ * the grapheme.
+ */
+export async function playTile(word: Word, k: number) {
+  const url = soundUrl(word.sounds[k][1])
+  const audio = unlock()
+  const token = claim()
+  const buffer = url ? await load(url) : null
+  if (token !== sounding) return
+  if (!buffer) return speak(word.sounds[k][0].toLowerCase())
+  await schedule(audio, buffer, audio.currentTime + 0.01, { length: BLEND.tile, fadeIn: EDGE_IN, fadeOut: EDGE_OUT })
 }
 
 /**
  * Play a word's tiles one after the other, calling `light(i)` as the i-th starts and `light(-1)`
- * at the end, to listen through the pieces (parents' corner).
+ * at the end, to listen through them (parents' corner).
  */
 export async function playTiles(word: Word, light: (i: number) => void) {
   for (let k = 0; k < word.sounds.length; k++) {
