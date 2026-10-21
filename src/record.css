@@ -1,0 +1,268 @@
+:root {
+  --felt: #2f6b6e;
+  --felt-dark: #23585b;
+  --card: #fffdf8;
+  --ink: #1f3436;
+  --gold: #f5c542;
+  --red: #d9483b;
+  --done: #7cc47f;
+  font-family: 'Andika', system-ui, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--felt);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#record {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--card);
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.count {
+  font-size: 18px;
+  opacity: 0.85;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav {
+  font-size: 64px;
+  line-height: 1;
+  color: var(--card);
+  width: 56px;
+  height: 120px;
+  border-radius: 14px;
+}
+
+.nav:not(:disabled):hover {
+  background: var(--felt-dark);
+}
+
+.card {
+  flex: 1;
+  background: var(--card);
+  border-radius: 24px;
+  padding: 22px 28px 26px;
+  text-align: center;
+  box-shadow: 0 6px 0 var(--felt-dark);
+  border: 6px solid transparent;
+  transition: border-color 0.1s;
+}
+
+.recording .card {
+  border-color: var(--red);
+}
+
+.playing .card {
+  border-color: var(--gold);
+}
+
+.kind {
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.big {
+  font-size: 150px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.tag {
+  font-size: 24px;
+  min-height: 30px;
+  opacity: 0.75;
+}
+
+.word {
+  font-size: 44px;
+  margin-top: 10px;
+}
+
+.word mark {
+  background: var(--gold);
+  border-radius: 8px;
+  padding: 0 3px;
+}
+
+.hint {
+  font-size: 20px;
+  margin: 12px 0 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.again,
+.listen {
+  background: var(--card);
+  border-radius: 999px;
+  padding: 12px 22px;
+  font-size: 20px;
+  box-shadow: 0 4px 0 var(--felt-dark);
+}
+
+.hold {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 300px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 5px 0 var(--felt-dark);
+  touch-action: none;
+}
+
+.hold small {
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.hold .dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.recording .hold {
+  background: var(--red);
+  color: var(--card);
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--felt-dark);
+}
+
+.recording .hold .dot {
+  background: var(--card);
+  animation: pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.3;
+  }
+}
+
+.meter {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--felt-dark);
+  overflow: hidden;
+  margin: 0 auto;
+  width: 300px;
+}
+
+.meter > div {
+  height: 100%;
+  width: 0;
+  background: var(--gold);
+}
+
+.status {
+  min-height: 24px;
+  margin: 0;
+  text-align: center;
+  color: var(--card);
+  font-size: 18px;
+}
+
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.overview h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: var(--card);
+  opacity: 0.8;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  min-width: 48px;
+  height: 48px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: var(--felt-dark);
+  color: var(--card);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  line-height: 48px;
+}
+
+.chip small {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.chip.done {
+  background: var(--done);
+  color: var(--ink);
+}
+
+.chip.current {
+  outline: 4px solid var(--gold);
+}

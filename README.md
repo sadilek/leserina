@@ -263,6 +263,28 @@ its word's stretched clip (see "Sounding out"), cut out at run time with short f
   until it has run (`src/tiles.json` keeps a hash of each clip). Without a piece, the device's
   voice reads the tile's letters.
 
+## Recording the sounds
+
+The owner records each sound of the game once in their own voice, for later use in the game
+(nothing plays them yet). `src/sound-list.json` lists the 44 sounds the words have, written by
+`npm run words` (`sound_list` in `scripts/phonics.py`): first the sounds that can be held, then
+the vowels, then the stops, each with an early word that has it, at its start where one does.
+
+With `npm run dev` running, open http://localhost:5180/leserina/record.html (the page is not
+part of the build, so it is never published). It shows one sound at a time, large, with its
+example word, the grapheme for it marked, and how to say it: held sounds and vowels for about a
+second, stops short and without an "e" after them ("b", not "be"). Hold the space bar (or the big
+button), speak, let go: the take is played back and the next sound without a take comes up. The
+arrow keys go back and forth, "Nochmal" goes back to the sound just recorded, "Anhören" plays a
+sound's take, and the overview below marks the sounds recorded so far; holding the space bar on
+a recorded sound records it again. The page keeps 0.3 s from before the key went down and after
+it came up, and the dev server saves each take as `audio/sounds/raw/<file>.wav` (`vite.config.ts`),
+with an ASCII name (`a:` as `a-lang`, `ä` as `ae`, `ə` as `schwa`, `ɐ` as `er`).
+
+Then `uv run scripts/prepare_sounds.py` cuts the silence at both ends, levels each take to the
+word clips in `audio/` and writes `audio/sounds/<file>.mp3`. It lists the sounds still missing and
+those that are suspiciously short, long or quiet; those are the ones to listen to and record again.
+
 ## The learning logic
 
 Every word a child has seen sits in a box 1-5 and has the round it is due next: box 1 next round,
