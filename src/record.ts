@@ -140,8 +140,10 @@ const takes = new Map<string, AudioBuffer>() // this session's takes, and the on
 let index = 0
 let last: number | undefined // the sound recorded last, for "Nochmal"
 let recording = false
+let held = false // the key or button is down; it may come up before the microphone is on
 let pressed = 0
 let playing: AudioBufferSourceNode | undefined
+let ends: number | undefined
 let advance: number | undefined
 let status = ''
 
@@ -219,8 +221,8 @@ function overview() {
 function quiet() {
   clearTimeout(advance)
   advance = undefined
+  clearTimeout(ends)
   if (playing) {
-    playing.onended = null
     playing.stop()
     playing = undefined
   }
@@ -245,16 +247,22 @@ function next() {
 }
 
 async function down() {
-  if (recording) return
+  if (recording || held) return
+  held = true
+  pressed = performance.now()
   quiet()
   try {
     await mic.start()
   } catch (e) {
+    held = false
     status = `Kein Mikrofon: ${(e as Error).message}`
     return render()
   }
+  if (!held) {
+    status = 'Zu kurz gedrückt. Halten, sprechen, dann loslassen.'
+    return render()
+  }
   recording = true
-  pressed = performance.now()
   mic.record()
   status = 'Aufnahme läuft …'
   render()
@@ -262,6 +270,7 @@ async function down() {
 }
 
 function up() {
+  held = false
   if (!recording) return
   if (performance.now() - pressed < SLIP * 1000) {
     recording = false
@@ -297,13 +306,14 @@ function play(buffer: AudioBuffer, then?: () => void) {
   const src = (playing = ctx.createBufferSource())
   src.buffer = buffer
   src.connect(ctx.destination)
-  src.onended = () => {
+  src.start()
+  // A timer rather than onended, which a context whose output stalls never fires.
+  ends = window.setTimeout(() => {
     playing = undefined
     status = ''
     render()
     then?.()
-  }
-  src.start()
+  }, buffer.duration * 1000 + 50)
   render()
 }
 
