@@ -58,7 +58,7 @@ PIECES = {
     **{v + ":": v * 3 for v in "aeiouäöü"},
     "au": "auuu", "ei": "eiii", "eu": "euuu", "ə": "e", "ɐ": "er",
     "m": "mmm", "n": "nnn", "l": "lll", "f": "fff", "w": "w", "s": "sss", "z": "sss",
-    "sch": "schhh", "ch": "chhh", "r": "r", "ng": "ng", "j": "j", "h": "h",
+    "sch": "schhh", "ch": "chhh", "x": "chhh", "r": "r", "ng": "ng", "j": "j", "h": "h",
     "b": "b", "d": "d", "g": "g", "p": "p", "t": "t", "k": "k",
     "ts": "ts", "pf": "pf", "ks": "ks", "kw": "kw",
 }

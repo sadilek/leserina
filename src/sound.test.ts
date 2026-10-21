@@ -10,7 +10,7 @@ const times = stretched as Record<string, { graphemes: string; text: string; mar
 // The sound codes of scripts/phonics.py.
 const CODES = new Set([
   ...'aeiouäöü', ...[...'aeiouäöü'].map((v) => `${v}:`), 'au', 'ei', 'eu', 'ə', 'ɐ',
-  ...'bdgptkmnlrfwhjsz', 'sch', 'ch', 'ng', 'ts', 'pf', 'ks', 'kw',
+  ...'bdgptkmnlrfwhjsz', 'sch', 'ch', 'x', 'ng', 'ts', 'pf', 'ks', 'kw',
 ])
 
 describe('sounds of the words', () => {

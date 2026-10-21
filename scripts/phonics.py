@@ -8,12 +8,13 @@ its lengthening h as in "Kuh", the -er of "Tiger"). The sound codes:
 
   vowels      a e i o u ä ö ü short, a: e: i: o: u: ä: ö: ü: long, au ei eu, ə (the e of
               "Nase"), ɐ (the -er of "Tiger")
-  consonants  b d g p t k m n l r f w h j s z sch ch ng ts pf ks kw, where s is the sharp s of
-              "Bus", z the soft s of "Hase" (IPA, not the German letter z) and ts the German z
+  consonants  b d g p t k m n l r f w h j s z sch ch x ng ts pf ks kw, where s is the sharp s of
+              "Bus", z the soft s of "Hase" (IPA, not the German letter z), ts the German z, ch
+              the ich sound of "Milch" and x the ach sound of "Buch" (IPA, not the German letter x)
 
 The rules cover regular spellings: final devoicing ("Hund" ends in t), sp/st at the start,
 v spoken f, the soft s before a vowel, schwa in unstressed endings and the "Ge-" prefix, and the
-vowel's length from what follows it. Compounds and loan words break them, so a word's row in
+vowel's length from what follows it, and ch as the ach sound after a, o, u and au. Compounds and loan words break them, so a word's row in
 data/words-source.csv may spell its graphemes out in the column "sounds": units separated by
 "|", each either as written ("H") or with its sound ("d=t"). Units without a sound take the one
 the rules give them, in that segmentation.
@@ -37,8 +38,11 @@ DIPHTHONGS = {"au", "ei", "eu", "äu"}
 
 CODES = {
     *"aeiouäöü", *(v + ":" for v in "aeiouäöü"), "au", "ei", "eu", "ə", "ɐ",
-    *"bdgptkmnlrfwhjsz", "sch", "ch", "ng", "ts", "pf", "ks", "kw",
+    *"bdgptkmnlrfwhjsz", "sch", "ch", "x", "ng", "ts", "pf", "ks", "kw",
 }
+# Vowel sounds after which ch is the ach sound ("Buch", "Drache", "Bauch"); after any other it is
+# the ich sound ("Milch", "Eichhörnchen").
+BACK = {"a", "o", "u", "au"}
 
 
 def split(word: str) -> list[str]:
@@ -90,6 +94,8 @@ def sound_of(units: list[str], i: int) -> str:
         if nxt and is_vowel(nxt) and (i == 0 or is_vowel(prev) or prev in ("l", "m", "n", "r")):
             return "z"  # the soft s of "Sofa", "Hase"
         return "s"
+    if u == "ch":
+        return "x" if i and is_vowel(prev) and vowel_sound(units, i - 1).rstrip(":") in BACK else "ch"
     if u == "n" and nxt in ("k", "ck"):
         return "ng"  # "Geschenk", "Krankenwagen"
     return CONSONANT_SOUND.get(u, u)

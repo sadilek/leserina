@@ -107,10 +107,7 @@ def main() -> None:
             if i != prev and i != blank and names[i] not in ("<s>", "</s>", "<unk>"):
                 heard.append(names[i])
             prev = i
-        phones = []
-        for i, (_, c) in enumerate(word["sounds"]):
-            back = i and word["sounds"][i - 1][1].rstrip(":") in ("a", "o", "u", "au")
-            phones.append(["x"] if c == "ch" and back else PHONEMES.get(c, c).split())
+        phones = [PHONEMES.get(c, c).split() for _, c in word["sounds"]]
         tokens = [vocab[p] for ph in phones for p in ph]
         _, score = forced(logp, tokens, blank)
         free = logp.max(-1).sum()
