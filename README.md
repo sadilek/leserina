@@ -254,6 +254,21 @@ letter and plays the sound: the d of "Hund" plays a t. "Plättchen" under "Alle 
 in the parents' corner plays each word's tiles one by one. Without a clip, the device's voice
 reads the tile's letters.
 
+## Rune mode
+
+"Runen" in the parents' corner (off by default, per profile) shows every letter of a round as a
+rune: on the word cards, the tiles, the shelf and while a word is sounded out. Everything else stays
+as it is, the sounds included. It is for a grown-up who wants to try learning to read anew, with
+letters they have never seen, the way a child does in the game.
+
+The runes are a font, `src/fonts/runes.woff2`, built by `uv run scripts/make_runes.py` from the
+strokes listed in the script; the game screen only switches its font. Each letter has one rune,
+capital and small alike, so in a lay round the M and the m of "Mama" fit either field. Where the
+Futhark's rune for a sound does not look like a Latin letter it is that rune (ᚾ n, ᚼ h, ᛚ l, ᛏ t,
+ᚴ k, ᛞ d, ᛈ p, ᛟ o, ᛦ r, ᛘ m); for the others, which mostly do (ᚱ, ᛒ, ᛁ, ᚠ), another rune's shape or
+one drawn in the same style stands in. An umlaut is its vowel's rune with two dots. The script
+fails if a letter of `words.json` has no rune.
+
 ## Recording the sounds
 
 The owner records each sound of the game once in their own voice; sounding out and the tiles

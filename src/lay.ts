@@ -44,10 +44,12 @@ const EDGE = 4
 
 /**
  * Whether a tile showing the word's k-th grapheme belongs in field j: the same letters fit, so
- * either a of "Mama" goes into either a's field.
+ * either a of "Mama" goes into either a's field. Runes have no capitals: with `runes`, the M of
+ * "Mama" looks like its m, and either fits either field.
  */
-export function fits(word: Word, k: number, j: number) {
-  return word.sounds[k][0] === word.sounds[j][0]
+export function fits(word: Word, k: number, j: number, runes = false) {
+  const [a, b] = [word.sounds[k][0], word.sounds[j][0]]
+  return runes ? a.toLowerCase() === b.toLowerCase() : a === b
 }
 
 export function layMat(env: LayEnv) {
@@ -229,8 +231,9 @@ export function layMat(env: LayEnv) {
     // Dropped beside the fields: it stays where it was let go.
     if (j === null) return
     const taken = tiles.some((o) => o.field === j)
-    if (fits(w, t.k, j) && !taken) return land(t, j)
-    if (!fits(w, t.k, j)) {
+    const fit = fits(w, t.k, j, env.profile.runes)
+    if (fit && !taken) return land(t, j)
+    if (!fit) {
       const round = env.round()
       if (!round.wrong.includes(w.id)) round.wrong.push(w.id)
       env.commit()

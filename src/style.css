@@ -1,3 +1,10 @@
+/* Rune mode: the same text, every letter drawn as a rune (scripts/make_runes.py). */
+@font-face {
+  font-family: 'Leserina Runen';
+  src: url('./fonts/runes.woff2') format('woff2');
+  font-display: block;
+}
+
 :root {
   --felt: #2f6b6e;
   --felt-light: #3b7f80;
@@ -999,6 +1006,12 @@ input:focus-visible {
 .hint.version {
   text-align: center;
   margin-top: 8px;
+}
+
+/* With runes on, a round shows runes where it showed letters; digits (the jar's count) stay. */
+.game.runes,
+.rune-text {
+  font-family: 'Leserina Runen', 'Andika', 'Comic Sans MS', system-ui, sans-serif;
 }
 
 /* A word sounded out: the grapheme whose sound plays, and those said before it. They change at

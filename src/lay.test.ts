@@ -17,6 +17,13 @@ describe('fields', () => {
     expect(fits(mama, 2, 0)).toBe(false)
   })
 
+  it('take either M of Mama in runes, which have no capitals', () => {
+    const mama = word('mama')
+    expect(fits(mama, 0, 2, true)).toBe(true)
+    expect(fits(mama, 2, 0, true)).toBe(true)
+    expect(fits(mama, 0, 1, true)).toBe(false)
+  })
+
   it('take a tile of several letters as one: sch is one tile in Schaf', () => {
     const schaf = word('schaf')
     expect(schaf.sounds.map(([g]) => g)).toEqual(['Sch', 'a', 'f'])

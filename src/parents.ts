@@ -163,15 +163,29 @@ function profilePanel(p: Profile, rerender: () => void) {
     }))
   }
 
+  // Runes instead of letters, for a grown-up who wants to learn to read anew as a child does.
+  const runes = h('div', 'style-pick plain')
+  for (const [on, label] of [[true, 'An'], [false, 'Aus']] as const) {
+    runes.append(button(label, on === p.runes ? 'on' : '', () => {
+      setField(p, 'runes', on)
+      rerender()
+    }))
+  }
+
   const settings = h('div', 'settings',
     h('label', '', h('span', '', 'Beginnt bei'), level),
     h('label', '', h('span', '', 'Pro Runde'), pairs),
     h('div', 'setting', h('span', '', 'Bilder'), styles),
     h('div', 'setting', h('span', '', 'Laute vorsprechen'), sounds),
     h('div', 'setting', h('span', '', 'Wörter legen'), lay),
+    h('div', 'setting', h('span', '', 'Runen'), runes),
   )
   const layHint = p.layWords
     ? h('p', 'hint', 'Jede zweite Runde legt das Kind die Wörter aus Buchstaben: zu jedem Bild ein Plättchen pro Laut.')
+    : ''
+  const runesHint = p.runes
+    ? h('p', 'hint', 'Im Spiel steht jeder Buchstabe als Rune, z. B. „Maus“ als ', h('span', 'rune-text', 'Maus'),
+      '. Groß- und Kleinbuchstaben sehen gleich aus.')
     : ''
 
   const seen = Object.keys(p.learning.words).length
@@ -218,7 +232,7 @@ function profilePanel(p: Profile, rerender: () => void) {
 
   panel.append(
     h('div', 'panel-head', h('div', 'panel-avatar', avatarFace(p.avatar, p.pictures)), h('div', 'panel-name', name, nameHint)),
-    twinHint, avatars, settings, layHint, stats, boxRow, actions,
+    twinHint, avatars, settings, layHint, runesHint, stats, boxRow, actions,
   )
   return panel
 }

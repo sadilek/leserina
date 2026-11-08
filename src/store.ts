@@ -42,7 +42,7 @@ interface Data {
   current: Record<string, SavedRound>
 }
 
-interface V1Profile extends Omit<Fields, 'pictures' | 'soundOut' | 'soundApart' | 'layWords'> {
+interface V1Profile extends Omit<Fields, 'pictures' | 'soundOut' | 'soundApart' | 'layWords' | 'runes'> {
   id: string
   coins: number
   learning: LearningState

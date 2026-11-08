@@ -51,7 +51,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   const shelfCards = h('div', 'shelf-cards')
   const shelf = h('footer', 'shelf', shelfCards)
   const fx = h('div', 'fx')
-  const screen = h('div', 'screen game', bar, mat, shelf, fx)
+  const screen = h('div', `screen game${profile.runes ? ' runes' : ''}`, bar, mat, shelf, fx)
   root.replaceChildren(screen)
 
   let round: SavedRound
@@ -456,7 +456,7 @@ export function startGame(root: HTMLElement, profile: Profile, onHome: () => voi
   addEventListener('resize', onResize)
 
   // Words are measured for the layout: in the fallback font they would come out narrower.
-  const fontReady = document.fonts.load('1em Andika').catch(() => {})
+  const fontReady = document.fonts.load(profile.runes ? '1em "Leserina Runen"' : '1em Andika').catch(() => {})
   const saved = profile.current
   const next = () => composeRound(profile.learning, words, profile.pairs, profile.startLevel)
   // An untouched round of the other kind gives way too: the parents switched laying words.
